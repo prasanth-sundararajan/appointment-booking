@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Booking rescheduled{% endblock %}
+{% block content %}
+<h1>Booking rescheduled</h1>
+<p>The appointment previously at {{ old_start_local }} has moved. Your deposit carries over.</p>
+{% include "_details.html" %}
+{% if audience == "business" %}
+<p><a class="btn" href="{{ dashboard_url }}">Open calendar</a></p>
+{% else %}
+<p><a class="btn" href="{{ booking_url }}">View booking</a></p>
+{% endif %}
+{% endblock %}

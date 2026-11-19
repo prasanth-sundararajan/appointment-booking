@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Booking cancelled{% endblock %}
+{% block content %}
+<h1>Booking cancelled</h1>
+<p>
+{% if cancelled_by == "business" %}This booking was cancelled by {{ business_name }}.
+{% else %}This booking was cancelled by the customer.{% endif %}
+</p>
+{% include "_details.html" %}
+{% if refund_eligible %}
+<p class="ok">A full deposit refund of {{ refund_amount }} has been issued. It may take a few business days to appear.</p>
+{% else %}
+<p class="warn">No refund applies: the booking was cancelled less than {{ cutoff_hours }} hours before the start time{% if not deposit %} or no deposit was paid{% endif %}.</p>
+{% endif %}
+{% if audience == "business" %}
+<p><a class="btn" href="{{ dashboard_url }}">Open calendar</a></p>
+{% endif %}
+{% endblock %}

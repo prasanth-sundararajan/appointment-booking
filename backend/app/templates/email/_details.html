@@ -1,0 +1,9 @@
+<table class="details">
+  <tr><td class="label">Business</td><td>{{ business_name }}</td></tr>
+  <tr><td class="label">Service</td><td>{{ service_name }}</td></tr>
+  <tr><td class="label">With</td><td>{{ staff_name }}</td></tr>
+  {% if audience == "business" %}<tr><td class="label">Customer</td><td>{{ customer_name }}</td></tr>{% endif %}
+  <tr><td class="label">When</td><td>{{ start_local }} &ndash; {{ end_local }} ({{ timezone }})</td></tr>
+  {% if deposit %}<tr><td class="label">Deposit</td><td>{{ deposit }}</td></tr>{% endif %}
+  <tr><td class="label">Booking #</td><td>{{ booking_id }}</td></tr>
+</table>

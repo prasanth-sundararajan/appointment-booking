@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block title %}Staff invitation{% endblock %}
+{% block content %}
+<h1>Join {{ business_name }} on {{ app_name }}</h1>
+<p>You have been invited to join {{ business_name }} as a staff member. Accept the invitation to manage your hours and see your bookings.</p>
+<p><a class="btn" href="{{ invite_url }}">Accept invitation</a></p>
+<p class="note">If the button does not work, open this link: {{ invite_url }}</p>
+{% endblock %}

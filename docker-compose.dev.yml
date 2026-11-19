@@ -1,0 +1,83 @@
+# Development stack with hot reload (source mounted into containers).
+#   docker compose -f docker-compose.dev.yml up
+# Frontend (Vite): http://localhost:5173   Backend: http://localhost:8000
+name: slotease-dev
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-slotease}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-slotease}
+      POSTGRES_DB: ${POSTGRES_DB:-slotease}
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-slotease}:${POSTGRES_PASSWORD:-slotease}@db:5432/${POSTGRES_DB:-slotease}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
+      BACKEND_URL: ${BACKEND_URL:-http://localhost:8000}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
+    command: ["uvicorn", "app.main:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    volumes:
+      - ./backend/app:/app/app
+      - ./backend/alembic:/app/alembic
+      - ./backend/alembic.ini:/app/alembic.ini
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+
+  scheduler:
+    build:
+      context: ./backend
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-slotease}:${POSTGRES_PASSWORD:-slotease}@db:5432/${POSTGRES_DB:-slotease}
+      SKIP_MIGRATIONS: "1"
+    command: ["python", "-m", "app.jobs.run_scheduler"]
+    volumes:
+      - ./backend/app:/app/app
+    healthcheck:
+      disable: true
+    depends_on:
+      backend:
+        condition: service_started
+    profiles: ["scheduler"]
+
+  frontend:
+    image: node:20-alpine
+    working_dir: /app
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
+      VITE_WS_URL: ${VITE_WS_URL:-ws://localhost:8000}
+      CHOKIDAR_USEPOLLING: "true"
+    command: ["sh", "-c", "npm install && npm run dev -- --host 0.0.0.0 --port 5173"]
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+
+volumes:
+  postgres_dev_data:
+  frontend_node_modules:

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Booking confirmed{% endblock %}
+{% block content %}
+{% if audience == "business" %}
+<h1>New confirmed booking</h1>
+<p>{{ customer_name }} booked {{ service_name }} and paid the deposit.</p>
+{% else %}
+<h1>Your booking is confirmed</h1>
+<p>Hi {{ customer_name }}, your deposit was received and your appointment is confirmed.</p>
+{% endif %}
+{% include "_details.html" %}
+{% if audience == "business" %}
+<p><a class="btn" href="{{ dashboard_url }}">Open calendar</a></p>
+{% else %}
+<p>You can cancel with a full deposit refund up to {{ cutoff_hours }} hours before the start time. Later cancellations are not refunded.</p>
+<p><a class="btn" href="{{ booking_url }}">View booking</a></p>
+{% endif %}
+{% endblock %}

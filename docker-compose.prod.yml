@@ -1,0 +1,128 @@
+# Production stack for the Hostinger VPS. All secrets come from the server's .env.
+#   docker compose -f docker-compose.prod.yml up -d --build
+# See deploy/README.md for the one-time setup (including the first certificate).
+name: slotease
+
+x-backend-env: &backend-env
+  env_file:
+    - path: .env
+      required: true
+  environment: &backend-environment
+    DATABASE_URL: postgresql://${POSTGRES_USER:?POSTGRES_USER is required}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@db:5432/${POSTGRES_DB:?POSTGRES_DB is required}
+    FRONTEND_URL: https://${DOMAIN:?DOMAIN is required}
+    BACKEND_URL: https://${DOMAIN}
+    CORS_ORIGINS: https://${DOMAIN}
+    GOOGLE_LOGIN_REDIRECT_URI: https://${DOMAIN}/auth/google/callback
+    GOOGLE_CALENDAR_REDIRECT_URI: https://${DOMAIN}/api/calendar/google/callback
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks: [internal]
+
+  backend:
+    build:
+      context: ./backend
+    image: slotease-backend:latest
+    restart: always
+    <<: *backend-env
+    environment:
+      <<: *backend-environment
+      WEB_CONCURRENCY: "2"
+      # Backend is only reachable via nginx on the internal network: trust its
+      # X-Forwarded-For so rate limits are per client IP, not per proxy.
+      FORWARDED_ALLOW_IPS: "*"
+      # Shared rate-limit counters across gunicorn workers.
+      RATE_LIMIT_STORAGE_URI: redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks: [internal]
+
+  # Rate-limit storage only (ephemeral counters, no persistence, no public port).
+  redis:
+    image: redis:7-alpine
+    restart: always
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks: [internal]
+
+  # Exactly one scheduler process so APScheduler jobs never run twice.
+  scheduler:
+    image: slotease-backend:latest
+    restart: always
+    <<: *backend-env
+    environment:
+      <<: *backend-environment
+      SKIP_MIGRATIONS: "1"
+    command: ["python", "-m", "app.jobs.run_scheduler"]
+    healthcheck:
+      disable: true
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks: [internal]
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: https://${DOMAIN}
+        VITE_WS_URL: wss://${DOMAIN}
+    restart: always
+    depends_on:
+      - backend
+    networks: [internal]
+
+  nginx:
+    image: nginx:1.27-alpine
+    restart: always
+    environment:
+      DOMAIN: ${DOMAIN}
+    volumes:
+      # nginx image renders /etc/nginx/templates/*.template with envsubst (${DOMAIN}).
+      - ./deploy/nginx.conf:/etc/nginx/templates/default.conf.template:ro
+      - certbot_conf:/etc/letsencrypt:ro
+      - certbot_www:/var/www/certbot:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+      - frontend
+    networks: [internal]
+
+  certbot:
+    image: certbot/certbot:v2.11.0
+    restart: unless-stopped
+    volumes:
+      - certbot_conf:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    entrypoint: ["/bin/sh", "-c", "trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet; sleep 12h & wait $${!}; done"]
+    networks: [internal]
+
+volumes:
+  postgres_data:
+  certbot_conf:
+  certbot_www:
+
+networks:
+  internal:
