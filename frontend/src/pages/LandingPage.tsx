@@ -35,8 +35,8 @@ function StepList({ steps }: { steps: { title: string; body: string }[] }) {
             {index + 1}
           </span>
           <div>
-            <h4 className="font-semibold text-gray-900">{step.title}</h4>
-            <p className="mt-0.5 text-sm text-gray-600">{step.body}</p>
+            <h4 className="font-semibold text-ink">{step.title}</h4>
+            <p className="mt-0.5 text-sm text-ink-muted">{step.body}</p>
           </div>
         </li>
       ))}
@@ -48,46 +48,46 @@ function StepList({ steps }: { steps: { title: string; body: string }[] }) {
 function BookingPreview() {
   return (
     <div aria-hidden="true" className="relative mx-auto w-full max-w-md">
-      <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-brand-200/60 to-accent-100/60 blur-2xl" />
-      <div className="relative rounded-2xl border border-gray-200 bg-white p-5 shadow-pop sm:p-6">
+      <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-brand-500/30 to-accent-500/20 blur-2xl" />
+      <div className="relative rounded-2xl border border-line bg-surface p-5 shadow-pop sm:p-6">
         <div className="flex items-center gap-3">
           <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand-600 to-accent-500 font-bold text-white">
             G
           </span>
           <div>
-            <p className="font-semibold text-gray-900">Glow Studio</p>
-            <p className="text-xs text-gray-600">Haircut &amp; style &middot; 45 min</p>
+            <p className="font-semibold text-ink">Glow Studio</p>
+            <p className="text-xs text-ink-muted">Haircut &amp; style &middot; 45 min</p>
           </div>
-          <span className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-800">
+          <span className="ml-auto inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-300">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
             Live
           </span>
         </div>
-        <p className="mt-5 text-xs font-semibold uppercase tracking-wide text-gray-500">Thursday 12 March &middot; Morning</p>
+        <p className="mt-5 text-xs font-semibold uppercase tracking-wide text-ink-subtle">Thursday 12 March &middot; Morning</p>
         <div className="mt-2 grid grid-cols-3 gap-2">
           {MOCK_SLOTS.map((time, i) => (
             <span
               key={time}
               className={
                 i === 2
-                  ? 'rounded-lg border-2 border-brand-600 bg-brand-600 py-2 text-center text-sm font-semibold text-white'
-                  : 'rounded-lg border border-gray-200 py-2 text-center text-sm font-medium text-gray-800'
+                  ? 'rounded-lg border-2 border-brand-400 bg-brand-600 py-2 text-center text-sm font-semibold text-white'
+                  : 'rounded-lg border border-line py-2 text-center text-sm font-medium text-ink'
               }
             >
               {time}
             </span>
           ))}
         </div>
-        <div className="mt-5 space-y-1.5 rounded-xl bg-gray-50 p-4 text-sm">
-          <div className="flex justify-between text-gray-700">
+        <div className="mt-5 space-y-1.5 rounded-xl bg-white/5 p-4 text-sm">
+          <div className="flex justify-between text-slate-200">
             <span>Price</span>
             <span>{formatMoney(50000, 'INR', 'en-IN')}</span>
           </div>
-          <div className="flex justify-between font-semibold text-brand-800">
+          <div className="flex justify-between font-semibold text-brand-200">
             <span>Deposit today (15%)</span>
             <span>{formatMoney(7500, 'INR', 'en-IN')}</span>
           </div>
-          <p className="pt-1 text-xs text-gray-600">Cancel at least 8h before for a full refund.</p>
+          <p className="pt-1 text-xs text-ink-muted">Cancel at least 8h before for a full refund.</p>
         </div>
         <span className="mt-4 block rounded-lg bg-brand-600 py-2.5 text-center text-sm font-semibold text-white">
           Pay {formatMoney(7500, 'INR', 'en-IN')} deposit
@@ -116,7 +116,7 @@ export default function LandingPage() {
           <motion.p
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-white/80 px-3 py-1 text-sm font-medium text-brand-800"
+            className="inline-flex items-center gap-2 rounded-full border border-brand-400/30 bg-surface px-3 py-1 text-sm font-medium text-brand-200"
           >
             <span className="h-2 w-2 rounded-full bg-emerald-500" aria-hidden="true" />
             Real-time booking with deposits
@@ -125,16 +125,16 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.05 }}
-            className="mt-5 text-4xl font-extrabold leading-[1.08] tracking-tight text-gray-900 sm:text-5xl lg:text-display"
+            className="mt-5 text-4xl font-extrabold leading-[1.08] tracking-tight text-ink sm:text-5xl lg:text-display"
           >
             Appointments without the{' '}
-            <span className="bg-gradient-to-r from-brand-600 to-accent-600 bg-clip-text text-transparent">back-and-forth</span>
+            <span className="bg-gradient-to-r from-brand-300 to-accent-400 bg-clip-text text-transparent">back-and-forth</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.1 }}
-            className="mx-auto mt-5 max-w-xl text-lg text-gray-600 lg:mx-0"
+            className="mx-auto mt-5 max-w-xl text-lg text-ink-muted lg:mx-0"
           >
             Customers book a live slot in seconds. Businesses get a shareable booking page, deposits that cut no-shows,
             and two-way Google Calendar sync.
@@ -152,7 +152,7 @@ export default function LandingPage() {
               {ownerCta.label}
             </ButtonLink>
           </motion.div>
-          <p className="mt-4 text-sm text-gray-600">Free to start. No card needed to create your page.</p>
+          <p className="mt-4 text-sm text-ink-muted">Free to start. No card needed to create your page.</p>
         </div>
         <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
           <BookingPreview />
@@ -160,18 +160,18 @@ export default function LandingPage() {
       </section>
 
       {/* How it works */}
-      <section aria-labelledby="how-heading" className="border-y border-gray-200 bg-white">
+      <section aria-labelledby="how-heading" className="border-y border-line bg-surface">
         <div className="mx-auto max-w-page px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
           <div className="mx-auto max-w-2xl text-center">
-            <h2 id="how-heading" className="text-3xl font-bold text-gray-900">
+            <h2 id="how-heading" className="text-3xl font-bold text-ink">
               How it works
             </h2>
-            <p className="mt-3 text-gray-600">Three steps on each side of the booking.</p>
+            <p className="mt-3 text-ink-muted">Three steps on each side of the booking.</p>
           </div>
           <div className="mt-12 grid gap-6 md:grid-cols-2">
-            <div className="rounded-2xl border border-gray-200 bg-gray-50/60 p-6 sm:p-8">
-              <p className="text-sm font-semibold uppercase tracking-wide text-brand-700">For customers</p>
-              <h3 className="mt-1 text-xl font-bold text-gray-900">Book in under a minute</h3>
+            <div className="rounded-2xl border border-line bg-white/[0.03] p-6 sm:p-8">
+              <p className="text-sm font-semibold uppercase tracking-wide text-brand-300">For customers</p>
+              <h3 className="mt-1 text-xl font-bold text-ink">Book in under a minute</h3>
               <div className="mt-6">
                 <StepList steps={CUSTOMER_STEPS} />
               </div>
@@ -179,9 +179,9 @@ export default function LandingPage() {
                 Explore businesses
               </ButtonLink>
             </div>
-            <div className="rounded-2xl border border-gray-200 bg-gray-50/60 p-6 sm:p-8">
-              <p className="text-sm font-semibold uppercase tracking-wide text-brand-700">For businesses</p>
-              <h3 className="mt-1 text-xl font-bold text-gray-900">Take bookings while you work</h3>
+            <div className="rounded-2xl border border-line bg-white/[0.03] p-6 sm:p-8">
+              <p className="text-sm font-semibold uppercase tracking-wide text-brand-300">For businesses</p>
+              <h3 className="mt-1 text-xl font-bold text-ink">Take bookings while you work</h3>
               <div className="mt-6">
                 <StepList steps={BUSINESS_STEPS} />
               </div>
@@ -195,14 +195,14 @@ export default function LandingPage() {
 
       {/* Features */}
       <section aria-labelledby="features-heading" className="mx-auto max-w-page px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
-        <h2 id="features-heading" className="text-center text-3xl font-bold text-gray-900">
+        <h2 id="features-heading" className="text-center text-3xl font-bold text-ink">
           Everything a booking needs
         </h2>
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {FEATURES.map((feature) => (
-            <div key={feature.title} className="rounded-card border border-gray-200 bg-white p-6 shadow-card">
-              <h3 className="font-semibold text-gray-900">{feature.title}</h3>
-              <p className="mt-2 text-sm text-gray-600">{feature.body}</p>
+            <div key={feature.title} className="rounded-card border border-line bg-surface p-6 shadow-card">
+              <h3 className="font-semibold text-ink">{feature.title}</h3>
+              <p className="mt-2 text-sm text-ink-muted">{feature.body}</p>
             </div>
           ))}
         </div>
@@ -216,7 +216,7 @@ export default function LandingPage() {
             Find a slot that suits you, or give your customers a booking page they will actually use.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <ButtonLink to="/explore" size="lg" variant="outline" className="border-white bg-white text-brand-800 hover:bg-brand-50">
+            <ButtonLink to="/explore" size="lg" variant="outline" className="border-white bg-white text-brand-800 hover:bg-brand-100">
               Find a business
             </ButtonLink>
             <ButtonLink

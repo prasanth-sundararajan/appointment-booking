@@ -98,13 +98,13 @@ export default function CalendarPage() {
       subtitle={business ? `Times in ${formatTimezone(timezone)}. Click a booking for details.` : undefined}
       contained={false}
       actions={
-        <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800">
+        <span className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-300">
           <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" aria-hidden="true" />
           Live
         </span>
       }
     >
-      <div className="mb-6 flex flex-col gap-4 rounded-card border border-gray-200 bg-white p-3 shadow-card md:flex-row md:items-center md:justify-between">
+      <div className="mb-6 flex flex-col gap-4 rounded-card border border-line bg-surface p-3 shadow-card md:flex-row md:items-center md:justify-between">
         <div className="flex flex-wrap items-center gap-2">
           <div className="flex items-center gap-1">
             <Button
@@ -133,7 +133,7 @@ export default function CalendarPage() {
               </svg>
             </Button>
           </div>
-          <h2 className="ml-1 text-base font-semibold text-gray-900 sm:text-lg" aria-live="polite">
+          <h2 className="ml-1 text-base font-semibold text-ink sm:text-lg" aria-live="polite">
             {title}
           </h2>
         </div>
@@ -145,7 +145,7 @@ export default function CalendarPage() {
             onChange={(e) => setStaffFilter(e.target.value)}
             containerClassName="w-full sm:w-44"
           />
-          <div className="inline-flex rounded-xl bg-gray-100 p-1" role="group" aria-label="Calendar view">
+          <div className="inline-flex rounded-xl bg-white/10 p-1" role="group" aria-label="Calendar view">
             {(['day', 'week'] as const).map((v) => (
               <button
                 key={v}
@@ -154,7 +154,7 @@ export default function CalendarPage() {
                 onClick={() => setView(v)}
                 className={cn(
                   'rounded-lg px-3 py-1.5 text-sm font-medium capitalize transition-colors',
-                  view === v ? 'bg-white text-brand-800 shadow-sm' : 'text-gray-700 hover:text-gray-900',
+                  view === v ? 'bg-brand-500/25 text-white shadow-sm ring-1 ring-inset ring-brand-400/40' : 'text-slate-200 hover:text-white',
                 )}
               >
                 {v}
@@ -165,7 +165,7 @@ export default function CalendarPage() {
       </div>
 
       {(businessQuery.isLoading || bookingsQuery.isLoading) && (
-        <div role="status" aria-busy="true" className="rounded-card border border-gray-200 bg-white p-4">
+        <div role="status" aria-busy="true" className="rounded-card border border-line bg-surface p-4">
           <span className="sr-only">Loading calendar</span>
           <div className="space-y-3">
             {Array.from({ length: 6 }, (_, i) => (
@@ -184,7 +184,7 @@ export default function CalendarPage() {
         <ErrorState message={toApiError(bookingsQuery.error).message} onRetry={() => void bookingsQuery.refetch()} />
       )}
       {business && bookingsQuery.isSuccess && bookings.length === 0 && (
-        <p className="mb-4 rounded-xl border border-dashed border-gray-300 bg-white p-4 text-center text-sm text-gray-600">
+        <p className="mb-4 rounded-xl border border-dashed border-line-strong bg-surface p-4 text-center text-sm text-ink-muted">
           No bookings {view === 'day' ? 'on this day' : 'this week'}. Share your booking link from the sidebar to get some.
         </p>
       )}

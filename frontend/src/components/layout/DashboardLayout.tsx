@@ -41,13 +41,13 @@ function Icon({ path, className = 'h-4 w-4' }: { path: string; className?: strin
 const sideLinkClass = ({ isActive }: { isActive: boolean }) =>
   cn(
     'relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-    isActive ? 'bg-brand-50 text-brand-800' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900',
+    isActive ? 'bg-brand-500/10 text-brand-200' : 'text-slate-200 hover:bg-white/10 hover:text-white',
   );
 
 const tabLinkClass = ({ isActive }: { isActive: boolean }) =>
   cn(
     'flex shrink-0 items-center gap-2 border-b-2 px-3 py-3 text-sm font-medium transition-colors',
-    isActive ? 'border-brand-600 text-brand-700' : 'border-transparent text-gray-600 hover:text-gray-900',
+    isActive ? 'border-brand-400 text-brand-300' : 'border-transparent text-ink-muted hover:text-white',
   );
 
 function LayoutSkeleton() {
@@ -121,11 +121,11 @@ export function DashboardLayout() {
   return (
     <div className="mx-auto w-full max-w-page lg:flex lg:gap-8 lg:px-8 lg:py-8">
       {/* Mobile / tablet: business header, then sticky scrollable tabs */}
-      <div className="bg-white lg:hidden">
+      <div className="bg-surface lg:hidden">
         <div className="flex items-center gap-3 px-4 py-3 sm:px-6">
           <BusinessAvatar business={{ name, logo_url: business?.logo_url ?? null }} size="sm" />
           <div className="min-w-0 flex-1">
-            <p className="truncate font-semibold text-gray-900">{name}</p>
+            <p className="truncate font-semibold text-ink">{name}</p>
             <Badge tone={isOwner ? 'brand' : 'blue'}>{isOwner ? 'Owner' : 'Staff'}</Badge>
           </div>
           {slug && <CopyButton value={publicBusinessUrl(slug)} label="Copy link" aria-label="Copy public booking link" />}
@@ -133,7 +133,7 @@ export function DashboardLayout() {
       </div>
       <nav
         aria-label="Business sections"
-        className="sticky top-16 z-30 flex gap-1 overflow-x-auto border-b border-gray-200 bg-white/95 px-2 backdrop-blur [scrollbar-width:none] sm:px-4 lg:hidden"
+        className="sticky top-16 z-30 flex gap-1 overflow-x-auto border-b border-line bg-navy-900/95 px-2 backdrop-blur [scrollbar-width:none] sm:px-4 lg:hidden"
       >
         <NavLink to={`/dashboard?b=${businessId}`} className={() => tabLinkClass({ isActive: false })}>
           <Icon path={ICON_OVERVIEW} />
@@ -150,20 +150,20 @@ export function DashboardLayout() {
       {/* Desktop sidebar */}
       <aside className="hidden lg:block lg:w-64 lg:shrink-0">
         <div className="sticky top-24 space-y-4">
-          <div className="rounded-card border border-gray-200 bg-white p-4 shadow-card">
+          <div className="rounded-card border border-line bg-surface p-4 shadow-card">
             <div className="flex items-center gap-3">
               <BusinessAvatar business={{ name, logo_url: business?.logo_url ?? null }} />
               <div className="min-w-0">
-                <p className="truncate font-semibold text-gray-900" title={name}>
+                <p className="truncate font-semibold text-ink" title={name}>
                   {name}
                 </p>
                 <Badge tone={isOwner ? 'brand' : 'blue'}>{isOwner ? 'Owner' : 'Staff'}</Badge>
               </div>
             </div>
             {slug && (
-              <div className="mt-4 space-y-2 border-t border-gray-100 pt-4">
-                <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Public booking page</p>
-                <p className="truncate text-xs text-gray-600" title={publicBusinessUrl(slug)}>
+              <div className="mt-4 space-y-2 border-t border-line pt-4">
+                <p className="text-xs font-medium uppercase tracking-wide text-ink-subtle">Public booking page</p>
+                <p className="truncate text-xs text-ink-muted" title={publicBusinessUrl(slug)}>
                   {publicBusinessUrl(slug).replace(/^https?:\/\//, '')}
                 </p>
                 <div className="flex gap-2">
@@ -173,7 +173,7 @@ export function DashboardLayout() {
                     target="_blank"
                     rel="noreferrer"
                     aria-label="Open public page in a new tab"
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-control border border-gray-300 bg-white text-gray-700 shadow-sm hover:bg-gray-50"
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-control border border-line-strong bg-surface text-slate-200 shadow-sm hover:bg-white/5"
                   >
                     <Icon path={ICON_EXTERNAL} />
                   </Link>
@@ -181,7 +181,7 @@ export function DashboardLayout() {
               </div>
             )}
           </div>
-          <nav aria-label="Business sections" className="rounded-card border border-gray-200 bg-white p-2 shadow-card">
+          <nav aria-label="Business sections" className="rounded-card border border-line bg-surface p-2 shadow-card">
             <NavLink to={`/dashboard?b=${businessId}`} className={() => sideLinkClass({ isActive: false })}>
               <Icon path={ICON_OVERVIEW} />
               Overview

@@ -72,7 +72,7 @@ export function BookingDrawer({ booking, businessId, timezone, staff, onClose }:
       {booking && (
         <div className="fixed inset-0 z-40">
           <motion.div
-            className="absolute inset-0 bg-gray-950/40"
+            className="absolute inset-0 bg-navy-950/70"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -87,12 +87,12 @@ export function BookingDrawer({ booking, businessId, timezone, staff, onClose }:
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="absolute inset-y-0 right-0 flex w-full max-w-md flex-col overflow-y-auto bg-white p-6 shadow-2xl"
+            className="absolute inset-y-0 right-0 flex w-full max-w-md flex-col overflow-y-auto border-l border-line bg-navy-900/95 p-6 backdrop-blur-xl shadow-2xl"
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h2 className="text-lg font-semibold text-gray-900">{bookingServiceName(booking)}</h2>
-                <p className="text-sm text-gray-600">
+                <h2 className="text-lg font-semibold text-ink">{bookingServiceName(booking)}</h2>
+                <p className="text-sm text-ink-muted">
                   {formatInTz(booking.start_at, timezone, 'EEEE d MMM, HH:mm')} -{' '}
                   {formatInTz(booking.end_at, timezone, 'HH:mm')}
                 </p>
@@ -104,29 +104,29 @@ export function BookingDrawer({ booking, businessId, timezone, staff, onClose }:
 
             <dl className="mt-6 space-y-3 text-sm">
               <div className="flex justify-between">
-                <dt className="text-gray-600">Status</dt>
+                <dt className="text-ink-muted">Status</dt>
                 <dd>
                   <Badge tone={bookingStatusTone[booking.status]}>{formatStatus(booking.status)}</Badge>
                 </dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-gray-600">Customer</dt>
-                <dd className="font-medium text-gray-900">{bookingCustomerName(booking)}</dd>
+                <dt className="text-ink-muted">Customer</dt>
+                <dd className="font-medium text-ink">{bookingCustomerName(booking)}</dd>
               </div>
               {(booking.customer_email ?? booking.customer?.email) && (
                 <div className="flex justify-between">
-                  <dt className="text-gray-600">Email</dt>
-                  <dd className="text-gray-900">{booking.customer_email ?? booking.customer?.email}</dd>
+                  <dt className="text-ink-muted">Email</dt>
+                  <dd className="text-ink">{booking.customer_email ?? booking.customer?.email}</dd>
                 </div>
               )}
               <div className="flex justify-between">
-                <dt className="text-gray-600">Staff</dt>
-                <dd className="font-medium text-gray-900">{bookingStaffName(booking, staff)}</dd>
+                <dt className="text-ink-muted">Staff</dt>
+                <dd className="font-medium text-ink">{bookingStaffName(booking, staff)}</dd>
               </div>
               {booking.customer_note && (
                 <div>
-                  <dt className="text-gray-600">Note</dt>
-                  <dd className="mt-1 rounded-lg bg-gray-50 p-3 text-gray-800">{booking.customer_note}</dd>
+                  <dt className="text-ink-muted">Note</dt>
+                  <dd className="mt-1 rounded-lg bg-white/5 p-3 text-ink">{booking.customer_note}</dd>
                 </div>
               )}
             </dl>
@@ -158,8 +158,8 @@ export function BookingDrawer({ booking, businessId, timezone, staff, onClose }:
                 </Button>
               )}
               {isActive && confirmingCancel && (
-                <div className="rounded-xl bg-red-50 p-4">
-                  <p className="text-sm text-red-800">
+                <div className="rounded-xl bg-red-500/10 p-4">
+                  <p className="text-sm text-red-200">
                     Business cancellations always refund the customer&apos;s full deposit. Continue?
                   </p>
                   <div className="mt-3 flex justify-end gap-2">

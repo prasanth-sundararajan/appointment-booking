@@ -95,7 +95,7 @@ export default function ExplorePage() {
 
   return (
     <PageWrapper title="Explore businesses" subtitle="Find a business and book a live slot in seconds.">
-      <div role="search" className="rounded-card border border-gray-200 bg-white p-4 shadow-card sm:p-5">
+      <div role="search" className="rounded-card border border-line bg-surface p-4 shadow-card sm:p-5">
         <div className="grid gap-3 sm:grid-cols-[2fr_1fr]">
           <Input
             label="Search"
@@ -164,8 +164,8 @@ export default function ExplorePage() {
         ) : (
           <>
             <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-              <p className="text-sm text-gray-600" aria-live="polite">
-                <span className="font-semibold text-gray-900">{data.total}</span>{' '}
+              <p className="text-sm text-ink-muted" aria-live="polite">
+                <span className="font-semibold text-ink">{data.total}</span>{' '}
                 {data.total === 1 ? 'business' : 'businesses'}
                 {category ? ` in ${CATEGORY_LABELS[category]}` : ''}
               </p>
@@ -185,7 +185,7 @@ export default function ExplorePage() {
                 <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => update('page', String(page - 1))}>
                   Previous
                 </Button>
-                <span className="text-sm text-gray-700" aria-current="page">
+                <span className="text-sm text-slate-200" aria-current="page">
                   Page {page} of {totalPages}
                 </span>
                 <Button

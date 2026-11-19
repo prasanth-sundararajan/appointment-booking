@@ -6,10 +6,10 @@ import { useToast } from '@/hooks/useToast';
 export { ToastProvider } from '@/context/ToastContext';
 
 const toneStyles: Record<ToastTone, { bar: string; icon: string }> = {
-  success: { bar: 'bg-emerald-500', icon: 'text-emerald-600' },
-  error: { bar: 'bg-red-500', icon: 'text-red-600' },
-  info: { bar: 'bg-brand-500', icon: 'text-brand-600' },
-  warning: { bar: 'bg-amber-500', icon: 'text-amber-600' },
+  success: { bar: 'bg-emerald-500', icon: 'text-emerald-400' },
+  error: { bar: 'bg-red-500', icon: 'text-red-400' },
+  info: { bar: 'bg-brand-500', icon: 'text-brand-300' },
+  warning: { bar: 'bg-amber-500', icon: 'text-amber-400' },
 };
 
 const iconPath: Record<ToastTone, string> = {
@@ -39,7 +39,7 @@ export function Toaster() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, x: 40, scale: 0.96 }}
             transition={{ type: 'spring', damping: 26, stiffness: 320 }}
-            className="pointer-events-auto relative flex w-full max-w-sm overflow-hidden rounded-xl border border-gray-200 bg-white shadow-pop"
+            className="pointer-events-auto relative flex w-full max-w-sm overflow-hidden rounded-xl border border-line bg-navy-900/95 backdrop-blur-xl shadow-pop"
           >
             <span className={cn('w-1 shrink-0', toneStyles[t.tone].bar)} aria-hidden="true" />
             <div className="flex flex-1 items-start gap-3 p-4">
@@ -52,14 +52,14 @@ export function Toaster() {
                 <path fillRule="evenodd" d={iconPath[t.tone]} clipRule="evenodd" />
               </svg>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-gray-900">{t.title}</p>
-                {t.description && <p className="mt-0.5 text-sm text-gray-600">{t.description}</p>}
+                <p className="text-sm font-semibold text-ink">{t.title}</p>
+                {t.description && <p className="mt-0.5 text-sm text-ink-muted">{t.description}</p>}
               </div>
               <button
                 type="button"
                 aria-label="Dismiss notification"
                 onClick={() => dismiss(t.id)}
-                className="-m-1 rounded-md p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                className="-m-1 rounded-md p-1 text-ink-subtle hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"
               >
                 <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4" aria-hidden="true">
                   <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />

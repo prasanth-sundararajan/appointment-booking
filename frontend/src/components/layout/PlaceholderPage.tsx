@@ -15,11 +15,11 @@ export function PlaceholderPage({ title, description, components = [], children 
   return (
     <PageWrapper title={title} subtitle={description}>
       <GlassCard hoverable={false}>
-        <p className="text-sm text-gray-600">This page is scaffolded and will be built in its module phase.</p>
+        <p className="text-sm text-ink-muted">This page is scaffolded and will be built in its module phase.</p>
         {components.length > 0 && (
           <ul className="mt-4 flex flex-wrap gap-2">
             {components.map((name) => (
-              <li key={name} className="rounded-full bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700">
+              <li key={name} className="rounded-full bg-brand-500/10 px-3 py-1 text-xs font-medium text-brand-300">
                 {name}
               </li>
             ))}

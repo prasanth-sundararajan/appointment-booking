@@ -26,7 +26,7 @@ export function PageWrapper({ children, title, subtitle, actions, backTo, classN
       {backTo && (
         <Link
           to={backTo.to}
-          className="mb-3 inline-flex items-center gap-1 rounded text-sm font-medium text-gray-600 hover:text-gray-900"
+          className="mb-3 inline-flex items-center gap-1 rounded text-sm font-medium text-ink-muted hover:text-white"
         >
           <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4" aria-hidden="true">
             <path
@@ -41,8 +41,8 @@ export function PageWrapper({ children, title, subtitle, actions, backTo, classN
       {(title || actions) && (
         <header className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
           <div className="min-w-0">
-            {title && <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">{title}</h1>}
-            {subtitle && <p className="mt-1.5 max-w-2xl text-sm text-gray-600 sm:text-base">{subtitle}</p>}
+            {title && <h1 className="text-2xl font-bold text-ink sm:text-3xl">{title}</h1>}
+            {subtitle && <p className="mt-1.5 max-w-2xl text-sm text-ink-muted sm:text-base">{subtitle}</p>}
           </div>
           {actions && <div className="flex flex-wrap items-center gap-3">{actions}</div>}
         </header>

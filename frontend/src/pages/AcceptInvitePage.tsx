@@ -78,12 +78,12 @@ export default function AcceptInvitePage() {
         <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-600 to-accent-500 text-2xl font-bold text-white">
           {info.business_name.charAt(0).toUpperCase()}
         </span>
-        <h1 className="mt-4 text-2xl font-bold text-gray-900">Join {info.business_name}</h1>
-        <p className="mt-2 text-sm text-gray-700">
+        <h1 className="mt-4 text-2xl font-bold text-ink">Join {info.business_name}</h1>
+        <p className="mt-2 text-sm text-slate-200">
           You've been invited as <span className="font-medium">{info.display_name}</span>. You'll be able to manage your
           hours, time off and bookings.
         </p>
-        <p className="mt-2 text-xs text-gray-600">Invite for {info.email}</p>
+        <p className="mt-2 text-xs text-ink-muted">Invite for {info.email}</p>
 
         {!user ? (
           <div className="mt-6 space-y-3">
@@ -95,7 +95,7 @@ export default function AcceptInvitePage() {
             </Button>
           </div>
         ) : emailMismatch ? (
-          <div className="mt-6 rounded-xl bg-amber-50 p-4 text-left text-sm text-amber-800">
+          <div className="mt-6 rounded-xl bg-amber-500/10 p-4 text-left text-sm text-amber-200">
             You're signed in as <strong>{user.email}</strong>, but this invite is for <strong>{info.email}</strong>.
             <Button
               variant="outline"

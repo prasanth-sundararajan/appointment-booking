@@ -20,9 +20,9 @@ import type { BookingDetail } from '@/types';
 
 function Row({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div className="flex flex-wrap justify-between gap-2 border-b border-gray-100 py-3 text-sm last:border-0">
-      <dt className="text-gray-600">{label}</dt>
-      <dd className="text-right font-medium text-gray-900">{children}</dd>
+    <div className="flex flex-wrap justify-between gap-2 border-b border-line py-3 text-sm last:border-0">
+      <dt className="text-ink-muted">{label}</dt>
+      <dd className="text-right font-medium text-ink">{children}</dd>
     </div>
   );
 }
@@ -42,7 +42,7 @@ function BookingSummary({ booking }: { booking: BookingDetail }) {
       <Row label="With">{booking.staff.display_name}</Row>
       <Row label="When">
         {formatInTz(booking.start_at, tz, 'EEEE d MMMM yyyy, HH:mm')} - {formatInTz(booking.end_at, tz, 'HH:mm')}
-        <span className="block text-xs font-normal text-gray-600">{formatTimezone(tz)} time</span>
+        <span className="block text-xs font-normal text-ink-muted">{formatTimezone(tz)} time</span>
       </Row>
       <Row label="Price">{formatMoney(booking.service.price_minor, booking.business.currency)}</Row>
       {booking.payment && (
@@ -122,21 +122,21 @@ export default function BookingDetailPage() {
           {booking.status === 'pending_payment' && booking.hold_expires_at && (
             <HoldCountdown expiresAt={booking.hold_expires_at} />
           )}
-          <p className="rounded-lg bg-gray-50 p-3 text-sm text-gray-700">{refundRuleText(cutoff)}</p>
+          <p className="rounded-lg bg-white/5 p-3 text-sm text-slate-200">{refundRuleText(cutoff)}</p>
           {canReschedule && (
             <Button fullWidth variant="outline" onClick={() => setRescheduleOpen(true)}>
               Reschedule
             </Button>
           )}
           {booking.status === 'confirmed' && isFuture && !canReschedule && (
-            <p className="text-sm text-gray-600">Rescheduling closes {cutoff}h before the start time.</p>
+            <p className="text-sm text-ink-muted">Rescheduling closes {cutoff}h before the start time.</p>
           )}
           {canCancel && (
-            <Button fullWidth variant="danger-ghost" className="border border-red-200" onClick={() => setCancelOpen(true)}>
+            <Button fullWidth variant="danger-ghost" className="border border-red-500/30" onClick={() => setCancelOpen(true)}>
               Cancel booking
             </Button>
           )}
-          {!canCancel && !canReschedule && <p className="text-sm text-gray-600">This booking can no longer be changed.</p>}
+          {!canCancel && !canReschedule && <p className="text-sm text-ink-muted">This booking can no longer be changed.</p>}
           <ButtonLink to={`/b/${booking.business.slug}`} variant="ghost" fullWidth>
             Visit {booking.business.name}
           </ButtonLink>

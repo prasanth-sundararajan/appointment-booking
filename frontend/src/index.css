@@ -4,12 +4,18 @@
 
 @layer base {
   html {
+    @apply [color-scheme:dark];
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
   body {
-    @apply bg-gray-50 font-sans text-gray-900;
+    @apply min-h-screen bg-navy-950 bg-fixed font-sans text-ink;
+    /* App-wide navy -> indigo -> purple wash with soft violet glows. */
+    background-image:
+      radial-gradient(60rem 40rem at 15% -10%, rgb(124 58 237 / 0.22), transparent 60%),
+      radial-gradient(50rem 36rem at 100% 0%, rgb(217 70 239 / 0.12), transparent 60%),
+      linear-gradient(160deg, #0b1026 0%, #1e1b4b 55%, #2e1065 100%);
     font-feature-settings: 'cv11', 'ss01';
   }
   h1,
@@ -18,21 +24,29 @@
     @apply tracking-tight;
   }
   :focus-visible {
-    @apply outline-none ring-2 ring-brand-500 ring-offset-2;
+    @apply outline-none ring-2 ring-brand-400 ring-offset-2 ring-offset-navy-950;
   }
   ::selection {
-    @apply bg-brand-200 text-brand-950;
+    @apply bg-brand-500/40 text-white;
   }
 }
 
 @layer components {
   /* Inline text link. */
   .link {
-    @apply rounded font-medium text-brand-700 underline-offset-4 hover:text-brand-800 hover:underline;
+    @apply rounded font-medium text-brand-300 underline-offset-4 hover:text-brand-200 hover:underline;
   }
   /* Shared control surface for native inputs that are not wrapped by <Input>. */
   .control {
-    @apply rounded-control border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm transition-colors placeholder:text-gray-400 hover:border-gray-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500;
+    @apply rounded-control border border-white/15 bg-white/5 px-3 py-2 text-sm text-ink shadow-sm transition-colors placeholder:text-slate-500 hover:border-white/25 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400/40 disabled:cursor-not-allowed disabled:bg-white/[0.02] disabled:text-ink-subtle;
+  }
+}
+
+/* Native dropdown options render on an opaque popup; keep them readable. */
+@layer base {
+  option,
+  optgroup {
+    @apply bg-navy-900 text-ink;
   }
 }
 

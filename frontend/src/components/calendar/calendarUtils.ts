@@ -37,10 +37,10 @@ export function hourRange(bookings: BusinessBooking[], timezone: string): number
 }
 
 export const statusChipClass: Record<BookingStatus, string> = {
-  pending_payment: 'border-amber-300 bg-amber-50 text-amber-900',
-  confirmed: 'border-brand-300 bg-brand-50 text-brand-900',
-  completed: 'border-sky-300 bg-sky-50 text-sky-900',
-  no_show: 'border-gray-300 bg-gray-100 text-gray-700',
-  cancelled: 'border-red-200 bg-red-50 text-red-700 line-through',
-  expired: 'border-gray-200 bg-gray-50 text-gray-600',
+  pending_payment: 'border-amber-500/40 bg-amber-500/10 text-amber-100',
+  confirmed: 'border-brand-400/50 bg-brand-500/10 text-brand-100',
+  completed: 'border-sky-500/40 bg-sky-500/10 text-sky-100',
+  no_show: 'border-line-strong bg-white/10 text-slate-200',
+  cancelled: 'border-red-500/30 bg-red-500/10 text-red-300 line-through',
+  expired: 'border-line bg-white/5 text-ink-muted',
 };

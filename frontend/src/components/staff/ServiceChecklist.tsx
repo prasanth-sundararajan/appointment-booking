@@ -31,7 +31,7 @@ export function ServiceChecklist({
 
   if (services.length === 0) {
     return (
-      <div className="rounded-control border border-dashed border-gray-300 bg-gray-50 p-4 text-sm text-gray-700">
+      <div className="rounded-control border border-dashed border-line-strong bg-white/5 p-4 text-sm text-slate-200">
         <p>You haven&apos;t added any services yet. Add services first, then assign them here.</p>
         {emptyAction && <div className="mt-3">{emptyAction}</div>}
       </div>
@@ -46,13 +46,13 @@ export function ServiceChecklist({
   return (
     <div role="group" aria-labelledby={labelId}>
       <div className="mb-2 flex items-center justify-between gap-3">
-        <p id={labelId} className="text-sm font-medium text-gray-800">
+        <p id={labelId} className="text-sm font-medium text-ink">
           {label}
         </p>
         <button
           type="button"
           onClick={() => onChange(allSelected ? [] : allIds)}
-          className="rounded text-sm font-medium text-brand-700 hover:text-brand-800 hover:underline"
+          className="rounded text-sm font-medium text-brand-300 hover:text-brand-200 hover:underline"
         >
           {allSelected ? 'Clear all' : 'Select all'}
         </button>
@@ -68,14 +68,14 @@ export function ServiceChecklist({
             description={service.is_active ? undefined : 'Inactive: not bookable until re-activated'}
             aside={
               <>
-                <span className="block font-medium text-gray-900">{formatMoney(service.price_minor, currency)}</span>
-                <span className="block text-xs text-gray-600">{formatDuration(service.duration_minutes)}</span>
+                <span className="block font-medium text-ink">{formatMoney(service.price_minor, currency)}</span>
+                <span className="block text-xs text-ink-muted">{formatDuration(service.duration_minutes)}</span>
               </>
             }
           />
         ))}
       </div>
-      <p className="mt-2 text-xs text-gray-600" aria-live="polite">
+      <p className="mt-2 text-xs text-ink-muted" aria-live="polite">
         {selected.length === 0
           ? 'No services selected. Customers can’t book this person until you pick at least one.'
           : `${selected.length} of ${services.length} selected`}

@@ -19,7 +19,7 @@ const ICONS: Record<EmptyIcon, string> = {
 
 export function EmptyIconBadge({ icon = 'info', className }: { icon?: EmptyIcon; className?: string }) {
   return (
-    <span className={cn('flex h-12 w-12 items-center justify-center rounded-full bg-brand-50 text-brand-600 ring-8 ring-brand-50/50', className)}>
+    <span className={cn('flex h-12 w-12 items-center justify-center rounded-full bg-brand-500/10 text-brand-300 ring-8 ring-brand-400/10', className)}>
       <svg viewBox="0 0 20 20" fill="currentColor" className="h-6 w-6" aria-hidden="true">
         <path fillRule="evenodd" clipRule="evenodd" d={ICONS[icon]} />
       </svg>
@@ -43,13 +43,13 @@ export function EmptyState({ title, description, action, icon = 'info', classNam
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       className={cn(
-        'flex flex-col items-center justify-center rounded-card border border-dashed border-gray-300 bg-white px-6 py-12 text-center',
+        'flex flex-col items-center justify-center rounded-card border border-dashed border-line-strong bg-surface px-6 py-12 text-center',
         className,
       )}
     >
       <EmptyIconBadge icon={icon} />
-      <Heading className="mt-5 text-base font-semibold text-gray-900">{title}</Heading>
-      {description && <p className="mt-1.5 max-w-md text-sm text-gray-600">{description}</p>}
+      <Heading className="mt-5 text-base font-semibold text-ink">{title}</Heading>
+      {description && <p className="mt-1.5 max-w-md text-sm text-ink-muted">{description}</p>}
       {action && <div className="mt-6 flex flex-wrap justify-center gap-3">{action}</div>}
     </motion.div>
   );
@@ -67,9 +67,9 @@ export function ErrorState({
   className?: string;
 }) {
   return (
-    <div role="alert" className={cn('rounded-card border border-red-200 bg-red-50 p-6 text-center', className)}>
-      <p className="font-semibold text-red-800">{title}</p>
-      <p className="mt-1 text-sm text-red-700">{message}</p>
+    <div role="alert" className={cn('rounded-card border border-red-500/30 bg-red-500/10 p-6 text-center', className)}>
+      <p className="font-semibold text-red-200">{title}</p>
+      <p className="mt-1 text-sm text-red-300">{message}</p>
       {onRetry && (
         <Button variant="outline" size="sm" className="mt-4" onClick={onRetry}>
           Try again

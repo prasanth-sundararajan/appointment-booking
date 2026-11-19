@@ -18,9 +18,9 @@ export function WeekView({ days, today, bookings, timezone, onSelect, onSelectDa
   const hours = hourRange(bookings, timezone);
 
   return (
-    <div className="overflow-x-auto rounded-card border border-gray-200 bg-white shadow-card" data-testid="week-view">
+    <div className="overflow-x-auto rounded-card border border-line bg-surface shadow-card" data-testid="week-view">
       <div className="min-w-[56rem]">
-        <div className="grid grid-cols-[4rem_repeat(7,minmax(0,1fr))] border-b border-gray-100">
+        <div className="grid grid-cols-[4rem_repeat(7,minmax(0,1fr))] border-b border-line">
           <span />
           {days.map((day) => (
             <button
@@ -28,8 +28,8 @@ export function WeekView({ days, today, bookings, timezone, onSelect, onSelectDa
               type="button"
               onClick={() => onSelectDay?.(day)}
               className={cn(
-                'px-2 py-3 text-center text-sm hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-500',
-                day === today ? 'font-semibold text-brand-700' : 'text-gray-700',
+                'px-2 py-3 text-center text-sm hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-400',
+                day === today ? 'font-semibold text-brand-300' : 'text-slate-200',
               )}
             >
               <span className="block text-xs uppercase">{formatDateKey(day, 'EEE')}</span>
@@ -40,9 +40,9 @@ export function WeekView({ days, today, bookings, timezone, onSelect, onSelectDa
         {hours.map((hour) => (
           <div
             key={hour}
-            className="grid grid-cols-[4rem_repeat(7,minmax(0,1fr))] border-b border-gray-50 last:border-0"
+            className="grid grid-cols-[4rem_repeat(7,minmax(0,1fr))] border-b border-white/5 last:border-0"
           >
-            <span className="px-2 py-2 text-xs font-medium tabular-nums text-gray-500">{hour.toString().padStart(2, '0')}:00</span>
+            <span className="px-2 py-2 text-xs font-medium tabular-nums text-ink-subtle">{hour.toString().padStart(2, '0')}:00</span>
             {days.map((day) => {
               const cell = bookings.filter(
                 (b) => bookingDateKey(b, timezone) === day && bookingHour(b, timezone) === hour,
@@ -50,7 +50,7 @@ export function WeekView({ days, today, bookings, timezone, onSelect, onSelectDa
               return (
                 <div
                   key={day}
-                  className={cn('min-h-[3rem] space-y-1 border-l border-gray-50 p-1', day === today && 'bg-brand-50/30')}
+                  className={cn('min-h-[3rem] space-y-1 border-l border-white/5 p-1', day === today && 'bg-brand-500/5')}
                 >
                   <AnimatePresence>
                     {cell.map((b) => (

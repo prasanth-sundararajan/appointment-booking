@@ -247,7 +247,7 @@ export default function StaffPage() {
       ) : (
         <>
           {unassignedCount > 0 && (
-            <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900" role="status">
+            <div className="mb-4 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-100" role="status">
               <strong className="font-semibold">
                 {unassignedCount === 1 ? '1 team member has' : `${unassignedCount} team members have`} no services.
               </strong>{' '}
@@ -260,19 +260,19 @@ export default function StaffPage() {
                 <div className="flex min-w-0 flex-1 items-start gap-3">
                   <span
                     aria-hidden="true"
-                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-100 font-semibold text-brand-800"
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-500/20 font-semibold text-brand-200"
                   >
                     {initialsOf(member.display_name)}
                   </span>
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h2 className="font-semibold text-gray-900">{member.display_name}</h2>
+                      <h2 className="font-semibold text-ink">{member.display_name}</h2>
                       {member.user_id === null && <Badge tone="yellow">Invite pending</Badge>}
                       {!member.is_active && <Badge tone="gray">Inactive</Badge>}
                     </div>
-                    <p className="truncate text-sm text-gray-600">{member.email}</p>
+                    <p className="truncate text-sm text-ink-muted">{member.email}</p>
                     {member.service_ids.length === 0 ? (
-                      <p className="mt-2 text-sm font-medium text-amber-800">No services assigned</p>
+                      <p className="mt-2 text-sm font-medium text-amber-200">No services assigned</p>
                     ) : (
                       <ul className="mt-2 flex flex-wrap gap-1.5" aria-label={`Services for ${member.display_name}`}>
                         {member.service_ids.map((sid) => (
@@ -284,7 +284,7 @@ export default function StaffPage() {
                     )}
                   </div>
                 </div>
-                <div className="flex flex-wrap gap-2 border-t border-gray-100 pt-3 md:border-0 md:pt-0">
+                <div className="flex flex-wrap gap-2 border-t border-line pt-3 md:border-0 md:pt-0">
                   <Button
                     variant={member.service_ids.length === 0 ? 'primary' : 'outline'}
                     size="sm"

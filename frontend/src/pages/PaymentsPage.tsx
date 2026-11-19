@@ -19,15 +19,15 @@ import type { PaymentRow, PaymentsQuery, PaymentsTotals } from '@/types';
 
 function TotalsCard({ totals }: { totals: PaymentsTotals }) {
   const items = [
-    { label: 'Deposits collected', value: totals.collected_minor, className: 'text-gray-900' },
-    { label: 'Refunded', value: totals.refunded_minor, className: 'text-red-700' },
-    { label: 'Net', value: totals.net_minor, className: 'text-emerald-700' },
+    { label: 'Deposits collected', value: totals.collected_minor, className: 'text-ink' },
+    { label: 'Refunded', value: totals.refunded_minor, className: 'text-red-300' },
+    { label: 'Net', value: totals.net_minor, className: 'text-emerald-300' },
   ];
   return (
     <AnimatedList className="mb-6 grid gap-4 sm:grid-cols-3">
       {items.map((item) => (
         <Card key={item.label}>
-          <p className="text-sm font-medium text-gray-600">{item.label}</p>
+          <p className="text-sm font-medium text-ink-muted">{item.label}</p>
           <p className={cn('mt-1 text-2xl font-bold tabular-nums', item.className)}>{formatMoney(item.value, totals.currency)}</p>
         </Card>
       ))}
@@ -48,10 +48,10 @@ function PaymentsTable({ rows, timezone }: { rows: PaymentRow[]; timezone: strin
   }
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-200 text-sm">
+      <table className="min-w-full divide-y divide-white/10 text-sm">
         <caption className="sr-only">Payments</caption>
-        <thead className="bg-gray-50">
-          <tr className="text-left text-xs uppercase tracking-wide text-gray-600">
+        <thead className="bg-white/5">
+          <tr className="text-left text-xs uppercase tracking-wide text-ink-muted">
             <th scope="col" className="px-3 py-3 font-semibold">Date</th>
             <th scope="col" className="px-3 py-3 font-semibold">Booking</th>
             <th scope="col" className="px-3 py-3 font-semibold">Customer</th>
@@ -60,26 +60,26 @@ function PaymentsTable({ rows, timezone }: { rows: PaymentRow[]; timezone: strin
             <th scope="col" className="px-3 py-3 font-semibold">Status</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-50">
+        <tbody className="divide-y divide-white/5">
           {rows.map((p) => (
-            <tr key={p.id} className="hover:bg-gray-50">
-              <td className="whitespace-nowrap px-3 py-3 text-gray-700">
+            <tr key={p.id} className="hover:bg-white/5">
+              <td className="whitespace-nowrap px-3 py-3 text-slate-200">
                 {formatInTz(p.created_at, timezone, 'd MMM yyyy, HH:mm')}
               </td>
-              <td className="px-3 py-3 text-gray-700">
+              <td className="px-3 py-3 text-slate-200">
                 #{p.booking_id}
-                {p.service_name && <span className="text-gray-600"> · {p.service_name}</span>}
+                {p.service_name && <span className="text-ink-muted"> · {p.service_name}</span>}
                 {p.booking_start_at && (
-                  <span className="block text-xs text-gray-600">
+                  <span className="block text-xs text-ink-muted">
                     {formatInTz(p.booking_start_at, timezone, 'd MMM, HH:mm')}
                   </span>
                 )}
               </td>
-              <td className="px-3 py-3 text-gray-700">{p.customer_name ?? p.customer_email ?? '-'}</td>
-              <td className="whitespace-nowrap px-3 py-3 text-right font-medium text-gray-900">
+              <td className="px-3 py-3 text-slate-200">{p.customer_name ?? p.customer_email ?? '-'}</td>
+              <td className="whitespace-nowrap px-3 py-3 text-right font-medium text-ink">
                 {formatMoney(p.amount_minor, p.currency)}
               </td>
-              <td className="whitespace-nowrap px-3 py-3 text-right text-red-700">
+              <td className="whitespace-nowrap px-3 py-3 text-right text-red-300">
                 {p.refunded_amount_minor > 0 ? formatMoney(p.refunded_amount_minor, p.currency) : '-'}
               </td>
               <td className="px-3 py-3">

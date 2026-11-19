@@ -47,9 +47,9 @@ export function SlotGrid({
 
   if (slots.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 px-5 py-8 text-center">
-        <p className="font-medium text-gray-900">{emptyMessage}</p>
-        {emptyHint && <div className="mx-auto mt-2 max-w-md text-sm text-gray-600">{emptyHint}</div>}
+      <div className="rounded-xl border border-dashed border-line-strong bg-white/5 px-5 py-8 text-center">
+        <p className="font-medium text-ink">{emptyMessage}</p>
+        {emptyHint && <div className="mx-auto mt-2 max-w-md text-sm text-ink-muted">{emptyHint}</div>}
         {emptyAction && <div className="mt-5 flex flex-wrap justify-center gap-2">{emptyAction}</div>}
       </div>
     );
@@ -61,9 +61,9 @@ export function SlotGrid({
     <div className="space-y-5" role="group" aria-label="Available times">
       {DAY_PARTS.filter((part) => groups[part.id].length > 0).map((part) => (
         <section key={part.id} aria-labelledby={`slots-${part.id}`}>
-          <h3 id={`slots-${part.id}`} className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-gray-600">
+          <h3 id={`slots-${part.id}`} className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-ink-muted">
             {part.label}
-            <span className="font-normal normal-case tracking-normal text-gray-500">
+            <span className="font-normal normal-case tracking-normal text-ink-subtle">
               ({groups[part.id].length} {groups[part.id].length === 1 ? 'time' : 'times'})
             </span>
           </h3>
@@ -86,10 +86,10 @@ export function SlotGrid({
                       whileTap={{ scale: 0.95 }}
                       className={cn(
                         'h-11 w-full rounded-lg border text-sm font-semibold tabular-nums transition-colors',
-                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2',
+                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2',
                         isSelected
-                          ? 'border-brand-600 bg-brand-600 text-white shadow-md'
-                          : 'border-gray-300 bg-white text-gray-800 hover:border-brand-400 hover:bg-brand-50 hover:text-brand-800',
+                          ? 'border-transparent bg-gradient-to-br from-brand-500 to-accent-500 text-white shadow-lg shadow-brand-500/30'
+                          : 'border-line-strong bg-surface text-ink hover:border-brand-400 hover:bg-brand-500/10 hover:text-brand-200',
                       )}
                     >
                       {formatInTz(slot.start_at, timezone, 'HH:mm')}

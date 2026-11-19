@@ -72,7 +72,7 @@ export default function BusinessSettingsPage() {
       />
 
       {business.is_active && (
-        <Card className="mt-6 border-red-200">
+        <Card className="mt-6 border-red-500/30">
           <CardHeader
             title="Danger zone: deactivate business"
             subtitle="Hides your booking page and removes it from the directory. Existing bookings are kept."

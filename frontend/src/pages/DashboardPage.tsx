@@ -41,11 +41,11 @@ function StatCard({ label, value, hint, delay }: { label: string; value: string;
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay }}
-      className="rounded-card border border-gray-200 bg-white p-5 shadow-card"
+      className="rounded-card border border-line bg-surface p-5 shadow-card"
     >
-      <p className="text-sm font-medium text-gray-600">{label}</p>
-      <p className="mt-2 text-2xl font-bold tabular-nums tracking-tight text-gray-900 sm:text-3xl">{value}</p>
-      {hint && <p className="mt-1 text-xs text-gray-600">{hint}</p>}
+      <p className="text-sm font-medium text-ink-muted">{label}</p>
+      <p className="mt-2 text-2xl font-bold tabular-nums tracking-tight text-ink sm:text-3xl">{value}</p>
+      {hint && <p className="mt-1 text-xs text-ink-muted">{hint}</p>}
     </motion.div>
   );
 }
@@ -56,7 +56,7 @@ function StatsSkeleton() {
       <span className="sr-only">Loading stats</span>
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {[0, 1, 2, 3].map((i) => (
-          <div key={i} className="rounded-card border border-gray-200 bg-white p-5 shadow-card">
+          <div key={i} className="rounded-card border border-line bg-surface p-5 shadow-card">
             <Skeleton className="h-4 w-20" />
             <Skeleton className="mt-3 h-8 w-16" />
           </div>
@@ -76,16 +76,16 @@ function TopServices({ stats }: { stats: BusinessStats }) {
     <Card>
       <CardHeader title="Top services" subtitle="By number of bookings" />
       {stats.top_services.length === 0 ? (
-        <p className="text-sm text-gray-600">No bookings yet. Your most popular services will show here.</p>
+        <p className="text-sm text-ink-muted">No bookings yet. Your most popular services will show here.</p>
       ) : (
         <ul className="space-y-3">
           {stats.top_services.map((service) => (
             <li key={service.service_id}>
               <div className="flex justify-between gap-2 text-sm">
-                <span className="truncate font-medium text-gray-800">{service.name}</span>
-                <span className="tabular-nums text-gray-600">{service.count}</span>
+                <span className="truncate font-medium text-ink">{service.name}</span>
+                <span className="tabular-nums text-ink-muted">{service.count}</span>
               </div>
-              <div className="mt-1 h-2 overflow-hidden rounded-full bg-gray-100" aria-hidden="true">
+              <div className="mt-1 h-2 overflow-hidden rounded-full bg-white/10" aria-hidden="true">
                 <motion.div
                   className="h-full rounded-full bg-gradient-to-r from-brand-600 to-accent-500"
                   initial={{ width: 0 }}
@@ -233,9 +233,9 @@ function BusinessOverview({ businessId }: { businessId: number }) {
             }
           />
           {today.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-gray-300 px-4 py-10 text-center">
-              <p className="font-medium text-gray-900">Nothing booked for today</p>
-              <p className="mt-1 text-sm text-gray-600">
+            <div className="rounded-xl border border-dashed border-line-strong px-4 py-10 text-center">
+              <p className="font-medium text-ink">Nothing booked for today</p>
+              <p className="mt-1 text-sm text-ink-muted">
                 {data.upcoming_count > 0
                   ? `You have ${data.upcoming_count} upcoming ${data.upcoming_count === 1 ? 'booking' : 'bookings'}.`
                   : 'Share your booking link to start filling your calendar.'}
@@ -247,15 +247,15 @@ function BusinessOverview({ businessId }: { businessId: number }) {
               )}
             </div>
           ) : (
-            <AnimatedList as="ul" className="divide-y divide-gray-100">
+            <AnimatedList as="ul" className="divide-y divide-white/10">
               {today.map((booking) => (
                 <div key={booking.id} className="flex items-center gap-4 py-3">
-                  <span className="w-14 shrink-0 text-sm font-semibold tabular-nums text-gray-900">
+                  <span className="w-14 shrink-0 text-sm font-semibold tabular-nums text-ink">
                     {formatInTz(booking.start_at, timezone, 'HH:mm')}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-gray-900">{serviceName(booking.service_id)}</p>
-                    <p className="truncate text-xs text-gray-600">
+                    <p className="truncate text-sm font-medium text-ink">{serviceName(booking.service_id)}</p>
+                    <p className="truncate text-xs text-ink-muted">
                       with {staffName(booking.staff_id)} &middot; until {formatInTz(booking.end_at, timezone, 'HH:mm')}
                     </p>
                   </div>
@@ -269,7 +269,7 @@ function BusinessOverview({ businessId }: { businessId: number }) {
           {slug && (
             <Card>
               <CardHeader title="Your booking link" subtitle="Share it anywhere customers find you." />
-              <p className="truncate rounded-lg bg-gray-50 px-3 py-2 font-mono text-xs text-gray-700" title={publicBusinessUrl(slug)}>
+              <p className="truncate rounded-lg bg-white/5 px-3 py-2 font-mono text-xs text-slate-200" title={publicBusinessUrl(slug)}>
                 {publicBusinessUrl(slug).replace(/^https?:\/\//, '')}
               </p>
               <div className="mt-3 flex gap-2">
@@ -292,7 +292,7 @@ function BusinessOverview({ businessId }: { businessId: number }) {
                 <Link
                   key={item.to}
                   to={`${base}/${item.to}`}
-                  className="rounded-lg border border-gray-200 px-3 py-2.5 text-center font-medium text-gray-800 transition-colors hover:border-brand-300 hover:bg-brand-50 hover:text-brand-800"
+                  className="rounded-lg border border-line px-3 py-2.5 text-center font-medium text-ink transition-colors hover:border-brand-400/50 hover:bg-brand-500/10 hover:text-brand-200"
                 >
                   {item.label}
                 </Link>

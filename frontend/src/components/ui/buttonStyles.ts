@@ -4,14 +4,15 @@ export type ButtonVariant = 'primary' | 'gradient' | 'secondary' | 'outline' | '
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 const variants: Record<ButtonVariant, string> = {
-  primary: 'bg-brand-600 text-white shadow-sm hover:bg-brand-700 active:bg-brand-800',
+  primary:
+    'bg-gradient-to-r from-brand-600 to-accent-600 text-white shadow-md shadow-brand-900/40 hover:from-brand-500 hover:to-accent-500 active:brightness-95',
   gradient:
-    'bg-gradient-to-r from-brand-600 to-accent-600 text-white shadow-md shadow-brand-600/20 hover:shadow-lg hover:shadow-brand-600/30 hover:brightness-105',
-  secondary: 'bg-brand-50 text-brand-700 hover:bg-brand-100 active:bg-brand-200',
-  outline: 'border border-gray-300 bg-white text-gray-800 shadow-sm hover:border-gray-400 hover:bg-gray-50',
-  ghost: 'bg-transparent text-gray-700 hover:bg-gray-100 hover:text-gray-900',
+    'bg-gradient-to-r from-brand-600 to-accent-600 text-white shadow-md shadow-brand-500/30 hover:shadow-lg hover:shadow-accent-500/30 hover:brightness-110',
+  secondary: 'bg-brand-500/15 text-brand-200 ring-1 ring-inset ring-brand-400/30 hover:bg-brand-500/25 active:bg-brand-500/30',
+  outline: 'border border-white/20 bg-white/5 text-ink shadow-sm hover:border-white/35 hover:bg-white/10',
+  ghost: 'bg-transparent text-slate-200 hover:bg-white/10 hover:text-white',
   danger: 'bg-red-600 text-white shadow-sm hover:bg-red-700 active:bg-red-800',
-  'danger-ghost': 'bg-transparent text-red-700 hover:bg-red-50',
+  'danger-ghost': 'bg-transparent text-red-300 hover:bg-red-500/10',
 };
 
 const sizes: Record<ButtonSize, string> = {
@@ -36,7 +37,7 @@ export function buttonClasses({
 }: ButtonStyleOptions = {}): string {
   return cn(
     'inline-flex select-none items-center justify-center whitespace-nowrap rounded-control font-semibold transition-all duration-150',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2',
     'disabled:cursor-not-allowed disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50',
     variants[variant],
     sizes[size],

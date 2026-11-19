@@ -21,7 +21,7 @@ export function Logo({ className }: { className?: string }) {
   return (
     <Link
       to="/"
-      className={cn('flex items-center gap-2 rounded-lg text-lg font-bold tracking-tight text-gray-900', className)}
+      className={cn('flex items-center gap-2 rounded-lg text-lg font-bold tracking-tight text-ink', className)}
       aria-label="SlotEase home"
     >
       <LogoMark />

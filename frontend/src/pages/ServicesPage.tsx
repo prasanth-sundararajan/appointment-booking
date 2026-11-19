@@ -234,16 +234,16 @@ export default function ServicesPage() {
             <Card key={service.id} className="flex flex-col gap-4 sm:flex-row sm:items-center">
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h2 className="font-semibold text-gray-900">{service.name}</h2>
+                  <h2 className="font-semibold text-ink">{service.name}</h2>
                   {!service.is_active && <Badge tone="gray">Inactive</Badge>}
                 </div>
-                <p className="mt-0.5 text-sm text-gray-600">{formatDuration(service.duration_minutes)}</p>
-                {service.description && <p className="mt-1 text-sm text-gray-700">{service.description}</p>}
+                <p className="mt-0.5 text-sm text-ink-muted">{formatDuration(service.duration_minutes)}</p>
+                {service.description && <p className="mt-1 text-sm text-slate-200">{service.description}</p>}
               </div>
-              <div className="flex items-center justify-between gap-6 border-t border-gray-100 pt-3 sm:border-0 sm:pt-0">
+              <div className="flex items-center justify-between gap-6 border-t border-line pt-3 sm:border-0 sm:pt-0">
                 <div className="sm:text-right">
-                  <p className="font-semibold tabular-nums text-gray-900">{formatMoney(service.price_minor, currency)}</p>
-                  <p className="text-xs text-gray-600">
+                  <p className="font-semibold tabular-nums text-ink">{formatMoney(service.price_minor, currency)}</p>
+                  <p className="text-xs text-ink-muted">
                     {formatMoney(computeDeposit(service.price_minor, depositPercent), currency)} deposit
                   </p>
                 </div>

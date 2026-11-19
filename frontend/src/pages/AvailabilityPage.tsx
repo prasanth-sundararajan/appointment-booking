@@ -142,7 +142,7 @@ function WeeklyHoursEditor({ staffId }: { staffId: number }) {
           </Button>
         }
       />
-      <div className="divide-y divide-gray-100">
+      <div className="divide-y divide-white/10">
         {WEEKDAYS.map((day) => {
           const intervals = week[day];
           const open = intervals.length > 0;
@@ -160,7 +160,7 @@ function WeeklyHoursEditor({ staffId }: { staffId: number }) {
                 }
               />
               <div className="flex-1 space-y-2">
-                {!open && <p className="pt-2 text-sm text-gray-600">Closed</p>}
+                {!open && <p className="pt-2 text-sm text-ink-muted">Closed</p>}
                 <AnimatePresence initial={false}>
                   {intervals.map((interval, idx) => (
                     <motion.div
@@ -183,7 +183,7 @@ function WeeklyHoursEditor({ staffId }: { staffId: number }) {
                         }
                         className="control w-32 tabular-nums"
                       />
-                      <span className="text-sm text-gray-600">to</span>
+                      <span className="text-sm text-ink-muted">to</span>
                       <input
                         type="time"
                         step={900}
@@ -217,7 +217,7 @@ function WeeklyHoursEditor({ staffId }: { staffId: number }) {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="text-brand-600"
+                    className="text-brand-300"
                     onClick={() =>
                       change((draft) => {
                         const last = draft[day][draft[day].length - 1];
@@ -230,7 +230,7 @@ function WeeklyHoursEditor({ staffId }: { staffId: number }) {
                   </Button>
                 )}
                 {errors[day] && (
-                  <p className="text-sm text-red-700" role="alert">
+                  <p className="text-sm text-red-300" role="alert">
                     {errors[day]}
                   </p>
                 )}
@@ -239,9 +239,9 @@ function WeeklyHoursEditor({ staffId }: { staffId: number }) {
           );
         })}
       </div>
-      <div className="sticky bottom-0 -mx-5 -mb-5 mt-4 flex items-center justify-end gap-3 rounded-b-card border-t border-gray-100 bg-white/95 px-5 py-4 backdrop-blur sm:-mx-6 sm:-mb-6 sm:px-6">
+      <div className="sticky bottom-0 -mx-5 -mb-5 mt-4 flex items-center justify-end gap-3 rounded-b-card border-t border-line bg-navy-900/95 px-5 py-4 backdrop-blur sm:-mx-6 sm:-mb-6 sm:px-6">
         {dirty && (
-          <span className="text-sm font-medium text-amber-800" role="status">
+          <span className="text-sm font-medium text-amber-200" role="status">
             Unsaved changes
           </span>
         )}
@@ -374,7 +374,7 @@ function TimeOffList({ staffId, timezone }: { staffId: number; timezone: string 
       ) : query.isError ? (
         <ErrorState message={query.error.message} onRetry={() => void query.refetch()} />
       ) : items.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-gray-300 p-4 text-center text-sm text-gray-600">
+        <p className="rounded-xl border border-dashed border-line-strong p-4 text-center text-sm text-ink-muted">
           No upcoming time off. Add holidays or appointments to block those times.
         </p>
       ) : (
@@ -387,13 +387,13 @@ function TimeOffList({ staffId, timezone }: { staffId: number; timezone: string 
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, x: 20 }}
-                className="flex items-start justify-between gap-3 rounded-xl bg-gray-50 p-3"
+                className="flex items-start justify-between gap-3 rounded-xl bg-white/5 p-3"
               >
                 <div className="min-w-0 text-sm">
-                  <p className="font-medium text-gray-900">
+                  <p className="font-medium text-ink">
                     {formatInTz(t.start_at, timezone, 'EEE d MMM, HH:mm')} &ndash; {formatInTz(t.end_at, timezone, 'EEE d MMM, HH:mm')}
                   </p>
-                  {t.reason && <p className="truncate text-gray-600">{t.reason}</p>}
+                  {t.reason && <p className="truncate text-ink-muted">{t.reason}</p>}
                 </div>
                 <Button
                   variant="danger-ghost"

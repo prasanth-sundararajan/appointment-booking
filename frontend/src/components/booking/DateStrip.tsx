@@ -59,17 +59,17 @@ export function DateStrip({ dates, selected, onSelect, today }: DateStripProps) 
             onClick={() => onSelect(date)}
             className={cn(
               'flex min-w-[4.25rem] snap-start flex-col items-center rounded-xl border px-3 py-2 transition-colors',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2',
               isSelected
-                ? 'border-brand-600 bg-brand-600 text-white shadow-md'
-                : 'border-gray-300 bg-white text-gray-800 hover:border-brand-400 hover:bg-brand-50',
+                ? 'border-transparent bg-gradient-to-br from-brand-500 to-accent-500 text-white shadow-lg shadow-brand-500/30'
+                : 'border-line-strong bg-surface text-ink hover:border-brand-400 hover:bg-brand-500/10',
             )}
           >
-            <span className={cn('text-xs font-medium uppercase tracking-wide', isSelected ? 'text-brand-100' : 'text-gray-600')}>
+            <span className={cn('text-xs font-medium uppercase tracking-wide', isSelected ? 'text-brand-100' : 'text-ink-muted')}>
               {isToday ? 'Today' : formatDateKey(date, 'EEE')}
             </span>
             <span className="text-lg font-semibold tabular-nums">{formatDateKey(date, 'd')}</span>
-            <span className={cn('text-xs', isSelected ? 'text-brand-100' : 'text-gray-600')}>{formatDateKey(date, 'MMM')}</span>
+            <span className={cn('text-xs', isSelected ? 'text-brand-100' : 'text-ink-muted')}>{formatDateKey(date, 'MMM')}</span>
           </button>
         );
       })}

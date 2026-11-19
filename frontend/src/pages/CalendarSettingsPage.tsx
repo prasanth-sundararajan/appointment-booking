@@ -21,16 +21,16 @@ function SyncStatus({ status }: { status: CalendarStatus }) {
   return (
     <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
       <div>
-        <dt className="text-gray-600">Calendar</dt>
-        <dd className="font-medium text-gray-900">{status.google_calendar_id ?? status.email ?? 'Primary'}</dd>
+        <dt className="text-ink-muted">Calendar</dt>
+        <dd className="font-medium text-ink">{status.google_calendar_id ?? status.email ?? 'Primary'}</dd>
       </div>
       <div>
-        <dt className="text-gray-600">Last synced</dt>
-        <dd className="font-medium text-gray-900">{formatWhen(status.last_synced_at)}</dd>
+        <dt className="text-ink-muted">Last synced</dt>
+        <dd className="font-medium text-ink">{formatWhen(status.last_synced_at)}</dd>
       </div>
       <div>
-        <dt className="text-gray-600">Live updates until</dt>
-        <dd className="font-medium text-gray-900">{formatWhen(status.watch_expires_at)}</dd>
+        <dt className="text-ink-muted">Live updates until</dt>
+        <dd className="font-medium text-ink">{formatWhen(status.watch_expires_at)}</dd>
       </div>
     </dl>
   );
@@ -105,7 +105,7 @@ export default function CalendarSettingsPage() {
             {connected ? (
               <SyncStatus status={status.data} />
             ) : (
-              <ul className="list-disc space-y-1 pl-5 text-sm text-gray-700">
+              <ul className="list-disc space-y-1 pl-5 text-sm text-slate-200">
                 <li>New and rescheduled bookings are added to your Google Calendar.</li>
                 <li>Events marked busy in Google block those times for customers.</li>
                 <li>You can disconnect at any time.</li>

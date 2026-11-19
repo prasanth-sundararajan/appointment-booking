@@ -4,8 +4,8 @@ import { cn } from '@/lib/cn';
 /** Shimmering placeholder block. Size it with className (h-*, w-*). */
 export function Skeleton({ className }: { className?: string }) {
   return (
-    <span aria-hidden="true" className={cn('relative block overflow-hidden rounded-md bg-gray-200/80', className)}>
-      <span className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/60 to-transparent" />
+    <span aria-hidden="true" className={cn('relative block overflow-hidden rounded-md bg-white/10', className)}>
+      <span className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/10 to-transparent" />
     </span>
   );
 }
@@ -32,7 +32,7 @@ export function ListSkeleton({
   return (
     <SkeletonRegion label={label} className={cn('space-y-3', className)}>
       {Array.from({ length: rows }, (_, i) => (
-        <div key={i} className="flex items-center gap-4 rounded-card border border-gray-200 bg-white p-5 shadow-card">
+        <div key={i} className="flex items-center gap-4 rounded-card border border-line bg-surface p-5 shadow-card">
           <Skeleton className="h-11 w-11 shrink-0 rounded-full" />
           <div className="flex-1 space-y-2">
             <Skeleton className="h-4 w-1/3" />
@@ -58,7 +58,7 @@ export function CardGridSkeleton({
   return (
     <SkeletonRegion label={label} className={className}>
       {Array.from({ length: count }, (_, i) => (
-        <div key={i} className="rounded-card border border-gray-200 bg-white p-5 shadow-card">
+        <div key={i} className="rounded-card border border-line bg-surface p-5 shadow-card">
           <div className="flex items-center gap-4">
             <Skeleton className="h-12 w-12 rounded-xl" />
             <div className="flex-1 space-y-2">

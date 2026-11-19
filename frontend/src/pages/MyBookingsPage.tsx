@@ -48,7 +48,7 @@ export default function MyBookingsPage() {
         role="tablist"
         aria-label="Booking scope"
         onKeyDown={onTabKey}
-        className="mb-6 inline-flex rounded-xl bg-gray-200/70 p-1"
+        className="mb-6 inline-flex rounded-xl bg-white/10 p-1"
       >
         {TABS.map((tab) => (
           <button
@@ -62,11 +62,11 @@ export default function MyBookingsPage() {
             onClick={() => setScope(tab.id)}
             className={cn(
               'relative rounded-lg px-4 py-1.5 text-sm font-medium transition-colors',
-              scope === tab.id ? 'text-brand-800' : 'text-gray-700 hover:text-gray-900',
+              scope === tab.id ? 'text-brand-200' : 'text-slate-200 hover:text-white',
             )}
           >
             {scope === tab.id && (
-              <motion.span layoutId="bookings-tab" className="absolute inset-0 rounded-lg bg-white shadow-sm" />
+              <motion.span layoutId="bookings-tab" className="absolute inset-0 rounded-lg bg-brand-500/25 shadow-sm ring-1 ring-inset ring-brand-400/40" />
             )}
             <span className="relative">{tab.label}</span>
           </button>

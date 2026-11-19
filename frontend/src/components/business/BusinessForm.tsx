@@ -144,7 +144,7 @@ export function BusinessForm({ initialValues, onSubmit, submitLabel, serverError
           error={errorFor('cancellation_cutoff_hours')}
           hint="Default 8 hours."
         />
-        <div className="rounded-xl border border-brand-200 bg-brand-50 p-4 text-sm text-brand-950 sm:col-span-2" data-testid="refund-rule">
+        <div className="rounded-xl border border-brand-400/30 bg-brand-500/10 p-4 text-sm text-brand-100 sm:col-span-2" data-testid="refund-rule">
           <p className="font-semibold">How refunds work</p>
           <ul className="mt-2 list-disc space-y-1 pl-5">
             <li>
@@ -198,9 +198,9 @@ export function BusinessForm({ initialValues, onSubmit, submitLabel, serverError
         />
       </Section>
 
-      <div className="sticky bottom-0 z-10 -mx-4 flex items-center justify-end gap-3 border-t border-gray-200 bg-white/95 px-4 py-3 backdrop-blur sm:mx-0 sm:rounded-card sm:border sm:shadow-card">
+      <div className="sticky bottom-0 z-10 -mx-4 flex items-center justify-end gap-3 border-t border-line bg-navy-900/95 px-4 py-3 backdrop-blur sm:mx-0 sm:rounded-card sm:border sm:shadow-card">
         {Object.values(errors).some(Boolean) && (
-          <p className="mr-auto text-sm text-red-700" role="alert">
+          <p className="mr-auto text-sm text-red-300" role="alert">
             Please fix the highlighted fields.
           </p>
         )}

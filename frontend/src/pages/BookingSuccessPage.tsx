@@ -80,10 +80,10 @@ export default function BookingSuccessPage() {
         {(!booking || status === 'pending_payment') && !query.isError && (
           <div className="flex flex-col items-center gap-4 py-6">
             <Spinner size="lg" label="Confirming payment" />
-            <h1 className="text-xl font-semibold text-gray-900">
+            <h1 className="text-xl font-semibold text-ink">
               {timedOut ? 'Still waiting for payment confirmation' : 'Confirming your payment...'}
             </h1>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-ink-muted">
               {timedOut
                 ? 'This is taking longer than usual. We will email you as soon as it is confirmed.'
                 : 'This usually takes a few seconds.'}
@@ -103,7 +103,7 @@ export default function BookingSuccessPage() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: 'spring', stiffness: 260, damping: 16 }}
-              className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600"
+              className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-400"
             >
               <svg viewBox="0 0 20 20" fill="currentColor" className="h-8 w-8" aria-hidden="true">
                 <path
@@ -113,33 +113,33 @@ export default function BookingSuccessPage() {
                 />
               </svg>
             </motion.div>
-            <h1 className="mt-4 text-2xl font-bold text-gray-900">You are booked!</h1>
-            <p className="mt-2 text-gray-700">
+            <h1 className="mt-4 text-2xl font-bold text-ink">You are booked!</h1>
+            <p className="mt-2 text-slate-200">
               {booking.service.name} at {booking.business.name} with {booking.staff.display_name}
             </p>
-            <dl className="mx-auto mt-6 max-w-sm divide-y divide-gray-100 rounded-xl border border-gray-200 bg-gray-50 text-left text-sm">
+            <dl className="mx-auto mt-6 max-w-sm divide-y divide-white/10 rounded-xl border border-line bg-white/5 text-left text-sm">
               <div className="flex justify-between gap-3 px-4 py-3">
-                <dt className="text-gray-600">When</dt>
-                <dd className="text-right font-medium text-gray-900">
+                <dt className="text-ink-muted">When</dt>
+                <dd className="text-right font-medium text-ink">
                   {formatInTz(booking.start_at, booking.business.timezone, 'EEE d MMM yyyy, HH:mm')}
                 </dd>
               </div>
               {booking.payment && (
                 <div className="flex justify-between gap-3 px-4 py-3">
-                  <dt className="text-gray-600">Deposit paid</dt>
-                  <dd className="font-medium text-gray-900">
+                  <dt className="text-ink-muted">Deposit paid</dt>
+                  <dd className="font-medium text-ink">
                     {formatMoney(booking.payment.amount_minor, booking.payment.currency)}
                   </dd>
                 </div>
               )}
               <div className="flex justify-between gap-3 px-4 py-3">
-                <dt className="text-gray-600">Free cancellation</dt>
-                <dd className="text-right font-medium text-gray-900">
+                <dt className="text-ink-muted">Free cancellation</dt>
+                <dd className="text-right font-medium text-ink">
                   Until {booking.business.cancellation_cutoff_hours}h before
                 </dd>
               </div>
             </dl>
-            <p className="mt-4 text-sm text-gray-600">A confirmation email is on its way.</p>
+            <p className="mt-4 text-sm text-ink-muted">A confirmation email is on its way.</p>
             <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
               <ButtonLink to={`/bookings/${booking.id}`}>View booking</ButtonLink>
               <ButtonLink to="/bookings" variant="outline">
@@ -151,10 +151,10 @@ export default function BookingSuccessPage() {
 
         {booking && (status === 'expired' || status === 'cancelled') && (
           <div className="py-6">
-            <h1 className="text-xl font-semibold text-gray-900">
+            <h1 className="text-xl font-semibold text-ink">
               {status === 'expired' ? 'Your hold expired' : 'This booking was cancelled'}
             </h1>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-sm text-ink-muted">
               {status === 'expired'
                 ? 'Payment was not completed in time, so the slot was released. If you were charged, the deposit will be refunded automatically.'
                 : 'Any deposit paid will be refunded according to the cancellation rule.'}
@@ -167,7 +167,7 @@ export default function BookingSuccessPage() {
 
         {booking && (status === 'completed' || status === 'no_show') && (
           <div className="py-6">
-            <h1 className="text-xl font-semibold text-gray-900">This booking is {formatStatus(status)}</h1>
+            <h1 className="text-xl font-semibold text-ink">This booking is {formatStatus(status)}</h1>
             <ButtonLink to={`/bookings/${booking.id}`} className="mt-6">
               View booking
             </ButtonLink>

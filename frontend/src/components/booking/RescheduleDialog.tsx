@@ -110,7 +110,7 @@ export function RescheduleDialog({ booking, isOpen, onClose }: RescheduleDialogP
           emptyMessage="No other open times on this day."
           emptyHint={`${booking.staff.display_name} may be fully booked or not working. Try another date.`}
         />
-        {slots.isError && <p className="text-sm text-red-700">{toApiError(slots.error).message}</p>}
+        {slots.isError && <p className="text-sm text-red-300">{toApiError(slots.error).message}</p>}
       </div>
     </Modal>
   );

@@ -91,7 +91,7 @@ export function CancelDialog({
         </div>
       )}
       {preview.isError && (
-        <p className="rounded-xl bg-red-50 p-4 text-sm text-red-800" role="alert">
+        <p className="rounded-xl bg-red-500/10 p-4 text-sm text-red-200" role="alert">
           We could not check your refund right now. {toApiError(preview.error).message}
         </p>
       )}
@@ -100,8 +100,8 @@ export function CancelDialog({
           data-testid="refund-message"
           className={
             isEligible
-              ? 'rounded-xl bg-emerald-50 p-4 text-sm text-emerald-800'
-              : 'rounded-xl bg-amber-50 p-4 text-sm text-amber-800'
+              ? 'rounded-xl bg-emerald-500/10 p-4 text-sm text-emerald-300'
+              : 'rounded-xl bg-amber-500/10 p-4 text-sm text-amber-200'
           }
         >
           {refundMessage(refund, currency, cutoffHours)}

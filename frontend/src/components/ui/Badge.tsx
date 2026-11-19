@@ -4,14 +4,14 @@ import type { BookingStatus, PaymentStatus } from '@/types';
 
 export type BadgeTone = 'gray' | 'brand' | 'green' | 'yellow' | 'red' | 'blue';
 
-// 700/800 text on 50 backgrounds keeps contrast above WCAG AA (4.5:1).
+// Light 200/300 text on tinted translucent fills keeps WCAG AA contrast on the dark theme.
 const tones: Record<BadgeTone, { body: string; dot: string }> = {
-  gray: { body: 'bg-gray-100 text-gray-700 ring-gray-200', dot: 'bg-gray-500' },
-  brand: { body: 'bg-brand-50 text-brand-700 ring-brand-200', dot: 'bg-brand-500' },
-  green: { body: 'bg-emerald-50 text-emerald-800 ring-emerald-200', dot: 'bg-emerald-500' },
-  yellow: { body: 'bg-amber-50 text-amber-800 ring-amber-200', dot: 'bg-amber-500' },
-  red: { body: 'bg-red-50 text-red-700 ring-red-200', dot: 'bg-red-500' },
-  blue: { body: 'bg-sky-50 text-sky-800 ring-sky-200', dot: 'bg-sky-500' },
+  gray: { body: 'bg-white/10 text-slate-200 ring-white/10', dot: 'bg-slate-400' },
+  brand: { body: 'bg-brand-500/10 text-brand-300 ring-brand-400/30', dot: 'bg-brand-500' },
+  green: { body: 'bg-emerald-500/10 text-emerald-300 ring-emerald-500/30', dot: 'bg-emerald-500' },
+  yellow: { body: 'bg-amber-500/10 text-amber-200 ring-amber-500/30', dot: 'bg-amber-500' },
+  red: { body: 'bg-red-500/10 text-red-300 ring-red-500/30', dot: 'bg-red-500' },
+  blue: { body: 'bg-sky-500/10 text-sky-200 ring-sky-500/30', dot: 'bg-sky-500' },
 };
 
 export interface BadgeProps {

@@ -18,13 +18,13 @@ function LinkCard({ item }: { item: SettingsLink }) {
   return (
     <Link
       to={item.to}
-      className="group flex h-full items-center justify-between gap-4 rounded-card border border-gray-200 bg-white p-5 shadow-card transition-all hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-card-hover"
+      className="group flex h-full items-center justify-between gap-4 rounded-card border border-line bg-surface p-5 shadow-card transition-all hover:-translate-y-0.5 hover:border-brand-400/40 hover:shadow-card-hover"
     >
       <span className="min-w-0">
-        <span className="block font-semibold text-gray-900 group-hover:text-brand-700">{item.title}</span>
-        <span className="mt-0.5 block text-sm text-gray-600">{item.body}</span>
+        <span className="block font-semibold text-ink group-hover:text-brand-200">{item.title}</span>
+        <span className="mt-0.5 block text-sm text-ink-muted">{item.body}</span>
       </span>
-      <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5 shrink-0 text-gray-400 group-hover:text-brand-600" aria-hidden="true">
+      <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5 shrink-0 text-slate-500 group-hover:text-brand-200" aria-hidden="true">
         <path
           fillRule="evenodd"
           clipRule="evenodd"
@@ -86,15 +86,15 @@ export default function SettingsPage() {
         />
         <dl className="grid gap-4 text-sm sm:grid-cols-3">
           <div>
-            <dt className="text-gray-600">Name</dt>
-            <dd className="mt-0.5 font-medium text-gray-900">{user.full_name || 'Not set'}</dd>
+            <dt className="text-ink-muted">Name</dt>
+            <dd className="mt-0.5 font-medium text-ink">{user.full_name || 'Not set'}</dd>
           </div>
           <div>
-            <dt className="text-gray-600">Email</dt>
-            <dd className="mt-0.5 break-all font-medium text-gray-900">{user.email}</dd>
+            <dt className="text-ink-muted">Email</dt>
+            <dd className="mt-0.5 break-all font-medium text-ink">{user.email}</dd>
           </div>
           <div>
-            <dt className="text-gray-600">Role</dt>
+            <dt className="text-ink-muted">Role</dt>
             <dd className="mt-0.5">
               <Badge tone="brand">{formatStatus(user.role)}</Badge>
             </dd>
@@ -102,7 +102,7 @@ export default function SettingsPage() {
         </dl>
       </Card>
 
-      <h2 className="mb-3 mt-8 text-sm font-semibold uppercase tracking-wide text-gray-600">Manage</h2>
+      <h2 className="mb-3 mt-8 text-sm font-semibold uppercase tracking-wide text-ink-muted">Manage</h2>
       <div className="grid gap-4 md:grid-cols-2">
         {links.map((item) => (
           <LinkCard key={`${item.to}-${item.title}`} item={item} />

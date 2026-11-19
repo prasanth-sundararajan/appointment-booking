@@ -36,10 +36,10 @@ export default function AuthCallbackPage() {
 
   return (
     <div className="flex min-h-[60vh] items-center justify-center px-4">
-      <div className="w-full max-w-sm rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-card">
+      <div className="w-full max-w-sm rounded-2xl border border-line bg-surface p-8 text-center shadow-card">
         <Spinner size="lg" label="Signing you in" />
-        <h1 className="mt-5 text-lg font-semibold text-gray-900">Signing you in</h1>
-        <p className="mt-1 text-sm text-gray-600">Finishing Google sign-in. This only takes a moment.</p>
+        <h1 className="mt-5 text-lg font-semibold text-ink">Signing you in</h1>
+        <p className="mt-1 text-sm text-ink-muted">Finishing Google sign-in. This only takes a moment.</p>
       </div>
     </div>
   );

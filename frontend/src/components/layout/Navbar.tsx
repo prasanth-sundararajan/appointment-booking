@@ -22,20 +22,20 @@ function navItemsFor(isAuthenticated: boolean, business: boolean): NavItem[] {
 const desktopLinkClass = ({ isActive }: { isActive: boolean }) =>
   cn(
     'rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-    isActive ? 'bg-brand-50 text-brand-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900',
+    isActive ? 'bg-brand-500/10 text-brand-300' : 'text-slate-200 hover:bg-white/10 hover:text-white',
   );
 
 const mobileLinkClass = ({ isActive }: { isActive: boolean }) =>
   cn(
     'flex items-center rounded-lg px-3 py-2.5 text-base font-medium transition-colors',
-    isActive ? 'bg-brand-50 text-brand-700' : 'text-gray-800 hover:bg-gray-100',
+    isActive ? 'bg-brand-500/10 text-brand-300' : 'text-ink hover:bg-white/10',
   );
 
 function Avatar({ name, email }: { name: string | null; email: string }) {
   return (
     <span
       aria-hidden="true"
-      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-100 text-xs font-semibold text-brand-800"
+      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-500/20 text-xs font-semibold text-brand-200"
     >
       {initialsOf(name, email)}
     </span>
@@ -82,7 +82,7 @@ function UserMenu({ onLogout, business }: { onLogout: () => void; business: bool
 
   if (!user) return null;
   const itemClass =
-    'flex w-full items-center rounded-md px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:outline-none';
+    'flex w-full items-center rounded-md px-3 py-2 text-left text-sm text-slate-200 hover:bg-white/10 hover:text-white focus:bg-white/10 focus:outline-none';
 
   return (
     <div ref={rootRef} className="relative">
@@ -93,11 +93,11 @@ function UserMenu({ onLogout, business }: { onLogout: () => void; business: bool
         aria-expanded={open}
         aria-label="Account menu"
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 rounded-full py-1 pl-1 pr-2 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-100"
+        className="flex items-center gap-2 rounded-full py-1 pl-1 pr-2 text-sm font-medium text-ink transition-colors hover:bg-white/10"
       >
         <Avatar name={user.full_name} email={user.email} />
         <span className="hidden max-w-[10rem] truncate lg:inline">{user.full_name || user.email}</span>
-        <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4 text-gray-500" aria-hidden="true">
+        <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4 text-ink-subtle" aria-hidden="true">
           <path
             fillRule="evenodd"
             clipRule="evenodd"
@@ -115,11 +115,11 @@ function UserMenu({ onLogout, business }: { onLogout: () => void; business: bool
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -4, scale: 0.98 }}
             transition={{ duration: 0.12 }}
-            className="absolute right-0 mt-2 w-64 origin-top-right rounded-xl border border-gray-200 bg-white p-1.5 shadow-pop"
+            className="absolute right-0 mt-2 w-64 origin-top-right rounded-xl border border-line bg-navy-900/95 backdrop-blur-xl p-1.5 shadow-pop"
           >
-            <div className="border-b border-gray-100 px-3 pb-2.5 pt-2">
-              <p className="truncate text-sm font-semibold text-gray-900">{user.full_name || 'Your account'}</p>
-              <p className="truncate text-xs text-gray-600">{user.email}</p>
+            <div className="border-b border-line px-3 pb-2.5 pt-2">
+              <p className="truncate text-sm font-semibold text-ink">{user.full_name || 'Your account'}</p>
+              <p className="truncate text-xs text-ink-muted">{user.email}</p>
             </div>
             <div className="py-1">
               <Link role="menuitem" to="/profile" className={itemClass} onClick={() => setOpen(false)}>
@@ -137,11 +137,11 @@ function UserMenu({ onLogout, business }: { onLogout: () => void; business: bool
                 Settings
               </Link>
             </div>
-            <div className="border-t border-gray-100 pt-1">
+            <div className="border-t border-line pt-1">
               <button
                 role="menuitem"
                 type="button"
-                className={cn(itemClass, 'text-red-700 hover:bg-red-50 hover:text-red-800 focus:bg-red-50')}
+                className={cn(itemClass, 'text-red-300 hover:bg-red-500/10 hover:text-red-200 focus:bg-red-500/10')}
                 onClick={() => {
                   setOpen(false);
                   onLogout();
@@ -190,10 +190,10 @@ export function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-gray-200/80 bg-white/85 backdrop-blur-lg">
+    <header className="sticky top-0 z-40 border-b border-line bg-navy-950/75 backdrop-blur-lg">
       <a
         href="#main"
-        className="sr-only rounded-md bg-white px-3 py-2 text-sm font-medium text-brand-700 shadow focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50"
+        className="sr-only rounded-md bg-navy-900 px-3 py-2 text-sm font-medium text-brand-300 shadow focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50"
       >
         Skip to content
       </a>
@@ -216,7 +216,7 @@ export function Navbar() {
             <>
               <Link
                 to="/register?role=owner"
-                className="rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                className="rounded-lg px-3 py-2 text-sm font-medium text-slate-200 hover:bg-white/10 hover:text-white"
               >
                 For businesses
               </Link>
@@ -232,7 +232,7 @@ export function Navbar() {
 
         <button
           type="button"
-          className="-mr-2 rounded-lg p-2 text-gray-700 hover:bg-gray-100 md:hidden"
+          className="-mr-2 rounded-lg p-2 text-slate-200 hover:bg-white/10 md:hidden"
           aria-label={open ? 'Close menu' : 'Open menu'}
           aria-expanded={open}
           aria-controls="mobile-menu"
@@ -252,7 +252,7 @@ export function Navbar() {
         {open && (
           <div className="fixed inset-0 z-50 md:hidden">
             <motion.div
-              className="absolute inset-0 bg-gray-950/40"
+              className="absolute inset-0 bg-navy-950/70"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -268,15 +268,15 @@ export function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 32, stiffness: 320 }}
-              className="absolute inset-y-0 right-0 flex w-[85%] max-w-xs flex-col bg-white shadow-pop"
+              className="absolute inset-y-0 right-0 flex w-[85%] max-w-xs flex-col border-l border-line bg-navy-900/95 shadow-pop backdrop-blur-xl"
             >
-              <div className="flex h-16 items-center justify-between border-b border-gray-100 px-4">
+              <div className="flex h-16 items-center justify-between border-b border-line px-4">
                 <Logo />
                 <button
                   type="button"
                   aria-label="Close menu"
                   onClick={() => setOpen(false)}
-                  className="rounded-lg p-2 text-gray-600 hover:bg-gray-100"
+                  className="rounded-lg p-2 text-ink-muted hover:bg-white/10"
                 >
                   <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5" aria-hidden="true">
                     <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
@@ -284,11 +284,11 @@ export function Navbar() {
                 </button>
               </div>
               {isAuthenticated && user && (
-                <div className="flex items-center gap-3 border-b border-gray-100 px-4 py-4">
+                <div className="flex items-center gap-3 border-b border-line px-4 py-4">
                   <Avatar name={user.full_name} email={user.email} />
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-gray-900">{user.full_name || 'Your account'}</p>
-                    <p className="truncate text-xs text-gray-600">{user.email}</p>
+                    <p className="truncate text-sm font-semibold text-ink">{user.full_name || 'Your account'}</p>
+                    <p className="truncate text-xs text-ink-muted">{user.email}</p>
                   </div>
                 </div>
               )}
@@ -313,12 +313,12 @@ export function Navbar() {
                   </NavLink>
                 )}
               </div>
-              <div className="border-t border-gray-100 p-4">
+              <div className="border-t border-line p-4">
                 {isAuthenticated ? (
                   <button
                     type="button"
                     onClick={handleLogout}
-                    className="w-full rounded-lg px-3 py-2.5 text-left text-base font-medium text-red-700 hover:bg-red-50"
+                    className="w-full rounded-lg px-3 py-2.5 text-left text-base font-medium text-red-300 hover:bg-red-500/10"
                   >
                     Log out
                   </button>

@@ -55,7 +55,7 @@ export function HoldCountdown({ expiresAt, onExpire, className }: HoldCountdownP
       aria-live="polite"
       className={cn(
         'inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-medium',
-        expired ? 'bg-gray-100 text-gray-600' : urgent ? 'bg-red-50 text-red-700' : 'bg-amber-50 text-amber-800',
+        expired ? 'bg-white/10 text-ink-muted' : urgent ? 'bg-red-500/10 text-red-300' : 'bg-amber-500/10 text-amber-200',
         className,
       )}
     >

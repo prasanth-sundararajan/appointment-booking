@@ -6,6 +6,29 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Dark theme base (deep navy).
+        navy: {
+          700: '#232d5a',
+          800: '#182044',
+          900: '#111733',
+          950: '#0b1026',
+        },
+        // Semantic dark-theme tokens.
+        surface: {
+          DEFAULT: 'rgb(255 255 255 / 0.05)',
+          raised: 'rgb(255 255 255 / 0.08)',
+          sunken: 'rgb(0 0 0 / 0.2)',
+          solid: '#141b3d',
+        },
+        line: {
+          DEFAULT: 'rgb(255 255 255 / 0.10)',
+          strong: 'rgb(255 255 255 / 0.18)',
+        },
+        ink: {
+          DEFAULT: '#f1f5f9',
+          muted: '#cbd5e1',
+          subtle: '#94a3b8',
+        },
         // Primary brand (violet). 600+ passes WCAG AA on white for text.
         brand: {
           50: '#f5f3ff',
@@ -54,9 +77,12 @@ export default {
         card: '1rem',
       },
       boxShadow: {
-        card: '0 1px 2px 0 rgb(15 23 42 / 0.04), 0 1px 3px 0 rgb(15 23 42 / 0.06)',
-        'card-hover': '0 10px 30px -12px rgb(76 29 149 / 0.25), 0 4px 8px -4px rgb(15 23 42 / 0.08)',
-        pop: '0 20px 50px -12px rgb(15 23 42 / 0.35)',
+        card: '0 1px 2px 0 rgb(0 0 0 / 0.25), 0 8px 24px -12px rgb(2 6 23 / 0.6)',
+        'card-hover': '0 16px 40px -12px rgb(139 92 246 / 0.35), 0 4px 12px -4px rgb(2 6 23 / 0.6)',
+        pop: '0 24px 60px -12px rgb(2 6 23 / 0.8)',
+      },
+      ringOffsetColor: {
+        DEFAULT: '#0b1026',
       },
       maxWidth: {
         page: '72rem',

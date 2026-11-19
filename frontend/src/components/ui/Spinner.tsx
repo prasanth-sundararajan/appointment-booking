@@ -16,7 +16,7 @@ export interface SpinnerProps {
 
 export function Spinner({ size = 'md', className, label = 'Loading' }: SpinnerProps) {
   return (
-    <span role="status" aria-label={label} className={cn('inline-flex text-brand-600', className)}>
+    <span role="status" aria-label={label} className={cn('inline-flex text-brand-300', className)}>
       <span className={cn('animate-spin rounded-full border-current border-t-transparent', sizes[size])} />
     </span>
   );

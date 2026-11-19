@@ -17,8 +17,8 @@ export function Card({ children, hoverable = false, padded = true, className, ..
       whileHover={hoverable ? { y: -2 } : undefined}
       transition={{ duration: 0.2 }}
       className={cn(
-        'rounded-card border border-gray-200 bg-white shadow-card',
-        hoverable && 'transition-shadow hover:border-brand-200 hover:shadow-card-hover',
+        'rounded-card border border-line bg-surface shadow-card backdrop-blur-md',
+        hoverable && 'transition-shadow hover:border-brand-400/40 hover:shadow-card-hover',
         padded && 'p-5 sm:p-6',
         className,
       )}
@@ -41,8 +41,8 @@ export function CardHeader({ title, subtitle, action, as: Heading = 'h2' }: Card
   return (
     <div className="mb-4 flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
       <div className="min-w-0">
-        <Heading className="text-base font-semibold text-gray-900">{title}</Heading>
-        {subtitle && <p className="mt-0.5 text-sm text-gray-600">{subtitle}</p>}
+        <Heading className="text-base font-semibold text-ink">{title}</Heading>
+        {subtitle && <p className="mt-0.5 text-sm text-ink-muted">{subtitle}</p>}
       </div>
       {action && <div className="shrink-0">{action}</div>}
     </div>

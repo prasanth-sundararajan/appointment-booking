@@ -34,8 +34,8 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
         'group flex items-start gap-3',
         disabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer',
         card &&
-          'rounded-control border px-4 py-3 transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand-500 has-[:focus-visible]:ring-offset-1',
-        card && (checked ? 'border-brand-500 bg-brand-50/70' : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'),
+          'rounded-control border px-4 py-3 transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand-400 has-[:focus-visible]:ring-offset-1',
+        card && (checked ? 'border-brand-500 bg-brand-500/15' : 'border-line bg-surface hover:border-white/25 hover:bg-white/5'),
         containerClassName,
       )}
     >
@@ -48,25 +48,25 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
         aria-labelledby={labelId}
         aria-describedby={describedBy}
         className={cn(
-          'mt-0.5 h-[1.125rem] w-[1.125rem] shrink-0 cursor-pointer rounded border-gray-400 text-brand-600 accent-brand-600',
-          'focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2',
+          'mt-0.5 h-[1.125rem] w-[1.125rem] shrink-0 cursor-pointer rounded border-white/30 text-brand-300 accent-brand-500',
+          'focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2',
           card && 'focus-visible:ring-0 focus-visible:ring-offset-0',
           className,
         )}
         {...props}
       />
       <span className="min-w-0 flex-1">
-        <span id={labelId} className="block text-sm font-medium text-gray-900">
+        <span id={labelId} className="block text-sm font-medium text-ink">
           {label}
         </span>
         {description && (
-          <span id={descriptionId} className="mt-0.5 block text-sm text-gray-600">
+          <span id={descriptionId} className="mt-0.5 block text-sm text-ink-muted">
             {description}
           </span>
         )}
       </span>
       {aside && (
-        <span id={asideId} className="shrink-0 text-right text-sm text-gray-700">
+        <span id={asideId} className="shrink-0 text-right text-sm text-slate-200">
           {aside}
         </span>
       )}
@@ -93,11 +93,11 @@ export function ToggleChip({ pressed, onPressedChange, children, disabled, class
       whileTap={{ scale: 0.96 }}
       className={cn(
         'inline-flex h-9 items-center gap-1.5 rounded-full border px-3.5 text-sm font-medium transition-colors',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2',
         'disabled:cursor-not-allowed disabled:opacity-50',
         pressed
-          ? 'border-brand-600 bg-brand-600 text-white shadow-sm'
-          : 'border-gray-300 bg-white text-gray-700 hover:border-brand-300 hover:bg-brand-50 hover:text-brand-800',
+          ? 'border-transparent bg-gradient-to-br from-brand-500 to-accent-500 text-white shadow-lg shadow-brand-500/30'
+          : 'border-line-strong bg-surface text-slate-200 hover:border-brand-400/50 hover:bg-brand-500/10 hover:text-brand-200',
         className,
       )}
     >

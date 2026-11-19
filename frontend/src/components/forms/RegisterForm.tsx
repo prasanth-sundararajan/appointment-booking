@@ -51,7 +51,7 @@ export function RegisterForm({ initialRole = 'customer', onSubmit, serverErrors 
   return (
     <form noValidate onSubmit={handleSubmit} className="space-y-4" aria-label="Create account">
       <fieldset>
-        <legend className="mb-2 text-sm font-medium text-gray-800">How will you use SlotEase?</legend>
+        <legend className="mb-2 text-sm font-medium text-ink">How will you use SlotEase?</legend>
         <div className="grid gap-3 sm:grid-cols-2">
           {ROLE_CHOICES.map((choice) => {
             const active = role === choice.value;
@@ -60,8 +60,8 @@ export function RegisterForm({ initialRole = 'customer', onSubmit, serverErrors 
                 key={choice.value}
                 className={cn(
                   'relative flex cursor-pointer gap-3 rounded-xl border-2 p-4 transition-colors',
-                  'has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand-500 has-[:focus-visible]:ring-offset-2',
-                  active ? 'border-brand-600 bg-brand-50' : 'border-gray-200 bg-white hover:border-brand-300',
+                  'has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand-400 has-[:focus-visible]:ring-offset-2',
+                  active ? 'border-brand-400 bg-brand-500/10' : 'border-line bg-surface hover:border-brand-400/50',
                 )}
               >
                 <input
@@ -70,11 +70,11 @@ export function RegisterForm({ initialRole = 'customer', onSubmit, serverErrors 
                   value={choice.value}
                   checked={active}
                   onChange={() => setRole(choice.value)}
-                  className="mt-0.5 h-4 w-4 shrink-0 accent-brand-600 focus:outline-none focus-visible:ring-0"
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-brand-500 focus:outline-none focus-visible:ring-0"
                 />
                 <span>
-                  <span className="block font-semibold text-gray-900">{choice.title}</span>
-                  <span className="mt-0.5 block text-sm text-gray-600">{choice.body}</span>
+                  <span className="block font-semibold text-ink">{choice.title}</span>
+                  <span className="mt-0.5 block text-sm text-ink-muted">{choice.body}</span>
                 </span>
               </label>
             );

@@ -4,10 +4,10 @@ import { controlClasses } from './fieldStyles';
 
 export function FieldLabel({ htmlFor, children, required }: { htmlFor: string; children: ReactNode; required?: boolean }) {
   return (
-    <label htmlFor={htmlFor} className="mb-1.5 block text-sm font-medium text-gray-800">
+    <label htmlFor={htmlFor} className="mb-1.5 block text-sm font-medium text-ink">
       {children}
       {required && (
-        <span className="ml-0.5 text-red-600" aria-hidden="true">
+        <span className="ml-0.5 text-red-400" aria-hidden="true">
           *
         </span>
       )}
@@ -18,7 +18,7 @@ export function FieldLabel({ htmlFor, children, required }: { htmlFor: string; c
 export function FieldMessage({ id, error, hint }: { id: string; error?: string; hint?: ReactNode }) {
   if (error) {
     return (
-      <p id={`${id}-error`} className="mt-1.5 flex items-start gap-1 text-sm text-red-700">
+      <p id={`${id}-error`} className="mt-1.5 flex items-start gap-1 text-sm text-red-300">
         <svg viewBox="0 0 20 20" fill="currentColor" className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true">
           <path
             fillRule="evenodd"
@@ -32,7 +32,7 @@ export function FieldMessage({ id, error, hint }: { id: string; error?: string; 
   }
   if (hint) {
     return (
-      <p id={`${id}-hint`} className="mt-1.5 text-sm text-gray-600">
+      <p id={`${id}-hint`} className="mt-1.5 text-sm text-ink-muted">
         {hint}
       </p>
     );
@@ -70,7 +70,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       )}
       <div className="relative">
         {leftIcon && (
-          <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-gray-400">{leftIcon}</span>
+          <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-slate-500">{leftIcon}</span>
         )}
         <input
           ref={ref}

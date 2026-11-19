@@ -18,13 +18,13 @@ function BecomeOwnerCard({ onClick, isLoading }: { onClick: () => void; isLoadin
   return (
     <section
       aria-labelledby="run-business-heading"
-      className="mb-6 flex flex-col gap-5 overflow-hidden rounded-card border border-brand-200 bg-gradient-to-br from-brand-50 via-white to-accent-50 p-6 shadow-card sm:flex-row sm:items-center sm:p-8"
+      className="mb-6 flex flex-col gap-5 overflow-hidden rounded-card border border-brand-400/30 bg-gradient-to-br from-brand-500/10 via-transparent to-accent-500/10 p-6 shadow-card sm:flex-row sm:items-center sm:p-8"
     >
       <div className="min-w-0 flex-1">
-        <h2 id="run-business-heading" className="text-lg font-bold text-gray-900">
+        <h2 id="run-business-heading" className="text-lg font-bold text-ink">
           Run a business? Take bookings on SlotEase.
         </h2>
-        <p className="mt-1 text-sm text-gray-700">
+        <p className="mt-1 text-sm text-slate-200">
           Get a public booking page, collect deposits that cut no-shows, and manage your team&apos;s hours. Your customer
           bookings stay right where they are.
         </p>
@@ -123,34 +123,34 @@ export default function ProfilePage() {
           <div className="mb-5 flex items-center gap-3">
             <span
               aria-hidden="true"
-              className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-100 text-base font-semibold text-brand-800"
+              className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-500/20 text-base font-semibold text-brand-200"
             >
               {initialsOf(user.full_name, user.email)}
             </span>
             <div className="min-w-0">
-              <h2 className="truncate font-semibold text-gray-900">{user.full_name || 'Your account'}</h2>
-              <p className="truncate text-sm text-gray-600">{user.email}</p>
+              <h2 className="truncate font-semibold text-ink">{user.full_name || 'Your account'}</h2>
+              <p className="truncate text-sm text-ink-muted">{user.email}</p>
             </div>
           </div>
-          <dl className="space-y-3 border-t border-gray-100 pt-4 text-sm">
+          <dl className="space-y-3 border-t border-line pt-4 text-sm">
             <div className="flex items-center justify-between gap-2">
-              <dt className="text-gray-600">Role</dt>
+              <dt className="text-ink-muted">Role</dt>
               <dd>
                 <Badge tone="brand">{formatStatus(user.role)}</Badge>
               </dd>
             </div>
             <div className="flex items-center justify-between gap-2">
-              <dt className="text-gray-600">Sign-in</dt>
-              <dd className="font-medium text-gray-900">{user.oauth_provider === 'google' ? 'Google' : 'Email & password'}</dd>
+              <dt className="text-ink-muted">Sign-in</dt>
+              <dd className="font-medium text-ink">{user.oauth_provider === 'google' ? 'Google' : 'Email & password'}</dd>
             </div>
             <div className="flex items-center justify-between gap-2">
-              <dt className="text-gray-600">Verified</dt>
+              <dt className="text-ink-muted">Verified</dt>
               <dd>{user.is_verified ? <Badge tone="green">Yes</Badge> : <Badge tone="yellow">Pending</Badge>}</dd>
             </div>
           </dl>
           {(user.owned_businesses.length > 0 || user.staff_memberships.length > 0) && (
-            <div className="mt-6 border-t border-gray-100 pt-4">
-              <h3 className="text-sm font-semibold text-gray-900">Businesses</h3>
+            <div className="mt-6 border-t border-line pt-4">
+              <h3 className="text-sm font-semibold text-ink">Businesses</h3>
               <ul className="mt-2 space-y-2 text-sm">
                 {user.owned_businesses.map((b) => (
                   <li key={`o-${b.id}`} className="flex items-center justify-between gap-2">

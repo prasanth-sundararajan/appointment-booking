@@ -96,7 +96,7 @@ export function Modal({
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center sm:p-4">
           <motion.div
-            className="absolute inset-0 bg-gray-950/50 backdrop-blur-sm"
+            className="absolute inset-0 bg-navy-950/70 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -115,19 +115,19 @@ export function Modal({
             exit={{ opacity: 0, y: 32 }}
             transition={{ type: 'spring', damping: 30, stiffness: 340 }}
             className={cn(
-              'relative flex max-h-[92vh] w-full flex-col rounded-t-2xl bg-white shadow-pop focus:outline-none sm:rounded-2xl',
+              'relative flex max-h-[92vh] w-full flex-col rounded-t-2xl border border-line bg-navy-900/95 backdrop-blur-xl shadow-pop focus:outline-none sm:rounded-2xl',
               sizes[size],
             )}
           >
-            <div className="flex items-start gap-4 border-b border-gray-100 px-5 pb-4 pt-5 sm:px-6">
+            <div className="flex items-start gap-4 border-b border-line px-5 pb-4 pt-5 sm:px-6">
               <div className="min-w-0 flex-1">
                 {title && (
-                  <h2 id={titleId} className="text-lg font-semibold text-gray-900">
+                  <h2 id={titleId} className="text-lg font-semibold text-ink">
                     {title}
                   </h2>
                 )}
                 {description && (
-                  <p id={descriptionId} className="mt-1 text-sm text-gray-600">
+                  <p id={descriptionId} className="mt-1 text-sm text-ink-muted">
                     {description}
                   </p>
                 )}
@@ -136,7 +136,7 @@ export function Modal({
                 type="button"
                 aria-label="Close"
                 onClick={onClose}
-                className="-mr-1 -mt-1 rounded-lg p-1.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                className="-mr-1 -mt-1 rounded-lg p-1.5 text-ink-subtle transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"
               >
                 <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5" aria-hidden="true">
                   <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
@@ -145,7 +145,7 @@ export function Modal({
             </div>
             {children && <div className="overflow-y-auto px-5 py-5 sm:px-6">{children}</div>}
             {footer && (
-              <div className="flex flex-col-reverse gap-2 border-t border-gray-100 bg-gray-50/60 px-5 py-4 sm:flex-row sm:justify-end sm:gap-3 sm:rounded-b-2xl sm:px-6">
+              <div className="flex flex-col-reverse gap-2 border-t border-line bg-white/[0.03] px-5 py-4 sm:flex-row sm:justify-end sm:gap-3 sm:rounded-b-2xl sm:px-6">
                 {footer}
               </div>
             )}
@@ -160,7 +160,7 @@ export function Modal({
 /** Footer row for forms rendered inside a Modal body. */
 export function ModalActions({ children }: { children: ReactNode }) {
   return (
-    <div className="-mx-5 -mb-5 mt-6 flex flex-col-reverse gap-2 border-t border-gray-100 bg-gray-50/60 px-5 py-4 sm:-mx-6 sm:flex-row sm:justify-end sm:gap-3 sm:px-6">
+    <div className="-mx-5 -mb-5 mt-6 flex flex-col-reverse gap-2 border-t border-line bg-white/[0.03] px-5 py-4 sm:-mx-6 sm:flex-row sm:justify-end sm:gap-3 sm:px-6">
       {children}
     </div>
   );

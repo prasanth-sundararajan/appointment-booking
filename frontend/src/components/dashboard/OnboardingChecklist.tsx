@@ -25,7 +25,7 @@ function StepIcon({ done, index }: { done: boolean; index: number }) {
     );
   }
   return (
-    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-gray-300 bg-white text-xs font-semibold text-gray-600">
+    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-line-strong bg-surface text-xs font-semibold text-ink-muted">
       {index + 1}
     </span>
   );
@@ -39,22 +39,22 @@ export function OnboardingChecklist({ steps, publicUrl, onLinkCopied }: Onboardi
   return (
     <section
       aria-labelledby="onboarding-heading"
-      className="mb-6 overflow-hidden rounded-card border border-brand-200 bg-white shadow-card"
+      className="mb-6 overflow-hidden rounded-card border border-brand-400/30 bg-surface shadow-card"
     >
-      <div className="bg-gradient-to-r from-brand-50 to-white px-5 py-5 sm:px-6">
+      <div className="bg-gradient-to-r from-brand-500/10 to-transparent px-5 py-5 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 id="onboarding-heading" className="text-lg font-semibold text-gray-900">
+            <h2 id="onboarding-heading" className="text-lg font-semibold text-ink">
               Finish setting up your booking page
             </h2>
-            <p className="mt-0.5 text-sm text-gray-700">Customers can book as soon as these steps are done.</p>
+            <p className="mt-0.5 text-sm text-slate-200">Customers can book as soon as these steps are done.</p>
           </div>
-          <p className="text-sm font-semibold text-brand-800">
+          <p className="text-sm font-semibold text-brand-200">
             {done} of {total} complete
           </p>
         </div>
         <div
-          className="mt-3 h-2 overflow-hidden rounded-full bg-brand-100"
+          className="mt-3 h-2 overflow-hidden rounded-full bg-brand-500/20"
           role="progressbar"
           aria-label="Setup progress"
           aria-valuemin={0}
@@ -69,22 +69,22 @@ export function OnboardingChecklist({ steps, publicUrl, onLinkCopied }: Onboardi
           />
         </div>
       </div>
-      <ol className="divide-y divide-gray-100">
+      <ol className="divide-y divide-white/10">
         {steps.map((step, index) => {
           const isNext = step.id === nextId;
           return (
             <li
               key={step.id}
-              className={cn('flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:px-6', isNext && 'bg-brand-50/40')}
+              className={cn('flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:px-6', isNext && 'bg-brand-500/10')}
             >
               <div className="flex min-w-0 flex-1 items-start gap-3">
                 <StepIcon done={step.done} index={index} />
                 <div className="min-w-0">
-                  <p className={cn('font-medium', step.done ? 'text-gray-600 line-through decoration-gray-400' : 'text-gray-900')}>
+                  <p className={cn('font-medium', step.done ? 'text-ink-muted line-through decoration-gray-400' : 'text-ink')}>
                     {step.title}
                     <span className="sr-only">{step.done ? ' (done)' : ' (to do)'}</span>
                   </p>
-                  {!step.done && <p className="mt-0.5 text-sm text-gray-600">{step.description}</p>}
+                  {!step.done && <p className="mt-0.5 text-sm text-ink-muted">{step.description}</p>}
                 </div>
               </div>
               {!step.done && (

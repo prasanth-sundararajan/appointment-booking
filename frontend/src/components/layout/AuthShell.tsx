@@ -26,14 +26,14 @@ export function AuthShell({
       <MeshBackground />
       <div className="mx-auto grid w-full max-w-page items-center gap-12 px-4 py-10 sm:px-6 sm:py-16 lg:grid-cols-2 lg:px-8">
         <section className="hidden lg:block" aria-hidden="true">
-          <p className="text-sm font-semibold uppercase tracking-wider text-brand-700">SlotEase</p>
-          <p className="mt-3 text-4xl font-extrabold leading-tight tracking-tight text-gray-900">
+          <p className="text-sm font-semibold uppercase tracking-wider text-brand-300">SlotEase</p>
+          <p className="mt-3 text-4xl font-extrabold leading-tight tracking-tight text-ink">
             Booking that just works, for both sides of the counter.
           </p>
           <ul className="mt-8 space-y-4">
             {POINTS.map((point) => (
-              <li key={point} className="flex items-start gap-3 text-gray-700">
-                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-100 text-brand-700">
+              <li key={point} className="flex items-start gap-3 text-slate-200">
+                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-500/20 text-brand-300">
                   <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
                     <path
                       fillRule="evenodd"
@@ -51,12 +51,12 @@ export function AuthShell({
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.25 }}
-          className="mx-auto w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-xl shadow-brand-900/5 sm:p-8"
+          className="mx-auto w-full max-w-md rounded-2xl border border-line bg-surface p-6 shadow-xl shadow-black/30 sm:p-8"
         >
-          <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
-          {subtitle && <p className="mt-1.5 text-sm text-gray-600">{subtitle}</p>}
+          <h1 className="text-2xl font-bold text-ink">{title}</h1>
+          {subtitle && <p className="mt-1.5 text-sm text-ink-muted">{subtitle}</p>}
           <div className="mt-6">{children}</div>
-          {footer && <div className="mt-6 border-t border-gray-100 pt-5 text-center text-sm text-gray-600">{footer}</div>}
+          {footer && <div className="mt-6 border-t border-line pt-5 text-center text-sm text-ink-muted">{footer}</div>}
         </motion.div>
       </div>
     </>

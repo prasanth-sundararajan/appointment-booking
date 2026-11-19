@@ -42,10 +42,10 @@ function Stepper({ current, onJump }: { current: Step; onJump: (step: Step) => v
     <nav aria-label="Booking progress" className="mb-6">
       {/* Compact progress for phones */}
       <div className="sm:hidden">
-        <p className="text-sm font-medium text-gray-900">
-          Step {currentIndex + 1} of {STEPS.length}: <span className="text-brand-700">{STEPS[currentIndex].label}</span>
+        <p className="text-sm font-medium text-ink">
+          Step {currentIndex + 1} of {STEPS.length}: <span className="text-brand-300">{STEPS[currentIndex].label}</span>
         </p>
-        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-gray-200" aria-hidden="true">
+        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/15" aria-hidden="true">
           <motion.div
             className="h-full rounded-full bg-brand-600"
             initial={false}
@@ -63,8 +63,8 @@ function Stepper({ current, onJump }: { current: Step; onJump: (step: Step) => v
                 className={cn(
                   'flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-colors',
                   done && 'bg-brand-600 text-white',
-                  active && 'bg-white text-brand-700 ring-2 ring-brand-600',
-                  !done && !active && 'bg-gray-100 text-gray-500 ring-1 ring-gray-300',
+                  active && 'bg-surface text-brand-300 ring-2 ring-brand-400',
+                  !done && !active && 'bg-white/10 text-ink-subtle ring-1 ring-white/20',
                 )}
               >
                 {done ? (
@@ -79,7 +79,7 @@ function Stepper({ current, onJump }: { current: Step; onJump: (step: Step) => v
                   index + 1
                 )}
               </span>
-              <span className={cn('text-sm', active ? 'font-semibold text-gray-900' : done ? 'font-medium text-gray-800' : 'text-gray-500')}>
+              <span className={cn('text-sm', active ? 'font-semibold text-ink' : done ? 'font-medium text-ink' : 'text-ink-subtle')}>
                 {step.label}
                 {done && <span className="sr-only"> (completed)</span>}
               </span>
@@ -91,7 +91,7 @@ function Stepper({ current, onJump }: { current: Step; onJump: (step: Step) => v
                 <button
                   type="button"
                   onClick={() => onJump(step.id)}
-                  className="flex items-center gap-2 rounded-lg px-1 py-1 hover:bg-gray-100"
+                  className="flex items-center gap-2 rounded-lg px-1 py-1 hover:bg-white/10"
                   aria-label={`Back to ${step.label}`}
                 >
                   {marker}
@@ -100,7 +100,7 @@ function Stepper({ current, onJump }: { current: Step; onJump: (step: Step) => v
                 <span className="flex items-center gap-2 px-1 py-1">{marker}</span>
               )}
               {index < STEPS.length - 1 && (
-                <span className={cn('mx-2 h-0.5 flex-1 rounded', done ? 'bg-brand-600' : 'bg-gray-200')} aria-hidden="true" />
+                <span className={cn('mx-2 h-0.5 flex-1 rounded', done ? 'bg-brand-600' : 'bg-white/15')} aria-hidden="true" />
               )}
             </li>
           );
@@ -132,18 +132,18 @@ function OptionButton({
       aria-pressed={selected}
       className={cn(
         'flex w-full items-center justify-between gap-4 rounded-xl border p-4 text-left transition-colors',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2',
-        selected ? 'border-brand-600 bg-brand-50 ring-1 ring-brand-600' : 'border-gray-300 bg-white hover:border-brand-400 hover:bg-brand-50/40',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2',
+        selected ? 'border-brand-400 bg-brand-500/10 ring-1 ring-brand-400' : 'border-line-strong bg-surface hover:border-brand-400 hover:bg-brand-500/10',
       )}
     >
       <span className="min-w-0">
-        <span className="block font-semibold text-gray-900">{title}</span>
-        {subtitle && <span className="mt-0.5 block text-sm text-gray-600">{subtitle}</span>}
+        <span className="block font-semibold text-ink">{title}</span>
+        {subtitle && <span className="mt-0.5 block text-sm text-ink-muted">{subtitle}</span>}
       </span>
       {aside && (
         <span className="shrink-0 text-right">
-          <span className="block font-semibold text-gray-900">{aside}</span>
-          {asideHint && <span className="block text-xs text-gray-600">{asideHint}</span>}
+          <span className="block font-semibold text-ink">{aside}</span>
+          {asideHint && <span className="block text-xs text-ink-muted">{asideHint}</span>}
         </span>
       )}
     </button>
@@ -153,8 +153,8 @@ function OptionButton({
 function SummaryRow({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="flex justify-between gap-3 py-2">
-      <dt className="text-gray-600">{label}</dt>
-      <dd className="text-right font-medium text-gray-900">{children}</dd>
+      <dt className="text-ink-muted">{label}</dt>
+      <dd className="text-right font-medium text-ink">{children}</dd>
     </div>
   );
 }
@@ -174,15 +174,15 @@ function BookingSummary({
 }) {
   const money = (minor: number) => formatMoney(minor, business.currency);
   const deposit = service ? computeDeposit(service.price_minor, business.deposit_percent) : null;
-  const placeholder = <span className="font-normal text-gray-500">Not chosen</span>;
+  const placeholder = <span className="font-normal text-ink-subtle">Not chosen</span>;
 
   return (
     <Card aria-labelledby="summary-heading">
-      <h2 id="summary-heading" className="text-base font-semibold text-gray-900">
+      <h2 id="summary-heading" className="text-base font-semibold text-ink">
         Your booking
       </h2>
-      <p className="text-sm text-gray-600">{business.name}</p>
-      <dl className="mt-3 divide-y divide-gray-100 border-y border-gray-100 text-sm">
+      <p className="text-sm text-ink-muted">{business.name}</p>
+      <dl className="mt-3 divide-y divide-white/10 border-y border-line text-sm">
         <SummaryRow label="Service">
           {service ? `${service.name} · ${formatDuration(service.duration_minutes)}` : placeholder}
         </SummaryRow>
@@ -196,23 +196,23 @@ function BookingSummary({
       </dl>
       {service && deposit !== null ? (
         <div className="mt-4 space-y-1.5 text-sm">
-          <div className="flex justify-between text-gray-700">
+          <div className="flex justify-between text-slate-200">
             <span>Price</span>
             <span className="tabular-nums">{money(service.price_minor)}</span>
           </div>
-          <div className="flex justify-between text-base font-semibold text-brand-800">
+          <div className="flex justify-between text-base font-semibold text-brand-200">
             <span>Deposit today ({business.deposit_percent}%)</span>
             <span className="tabular-nums">{money(deposit)}</span>
           </div>
-          <div className="flex justify-between text-gray-700">
+          <div className="flex justify-between text-slate-200">
             <span>Pay at appointment</span>
             <span className="tabular-nums">{money(service.price_minor - deposit)}</span>
           </div>
         </div>
       ) : (
-        <p className="mt-4 text-sm text-gray-600">Pick a service to see the price and deposit.</p>
+        <p className="mt-4 text-sm text-ink-muted">Pick a service to see the price and deposit.</p>
       )}
-      <p className="mt-4 rounded-lg bg-gray-50 p-3 text-xs text-gray-700">
+      <p className="mt-4 rounded-lg bg-white/5 p-3 text-xs text-slate-200">
         {refundRuleText(business.cancellation_cutoff_hours)} Times are in {formatTimezone(business.timezone)}.
       </p>
     </Card>
@@ -221,7 +221,7 @@ function BookingSummary({
 
 function StepHeading({ children, headingRef }: { children: ReactNode; headingRef: RefObject<HTMLHeadingElement> }) {
   return (
-    <h2 ref={headingRef} tabIndex={-1} className="text-lg font-semibold text-gray-900 focus:outline-none">
+    <h2 ref={headingRef} tabIndex={-1} className="text-lg font-semibold text-ink focus:outline-none">
       {children}
     </h2>
   );
@@ -410,8 +410,8 @@ export default function BookingWizardPage() {
       <Stepper current={step} onJump={jump} />
 
       {hold && (
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4" role="status">
-          <p className="text-sm font-medium text-amber-900">Redirecting you to secure checkout...</p>
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4" role="status">
+          <p className="text-sm font-medium text-amber-100">Redirecting you to secure checkout...</p>
           <HoldCountdown expiresAt={hold} />
         </div>
       )}
@@ -467,7 +467,7 @@ export default function BookingWizardPage() {
                 <section className="space-y-4">
                   <StepHeading headingRef={headingRef}>Who would you like?</StepHeading>
                   {staffForService.length === 0 ? (
-                    <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+                    <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-100">
                       No team member offers {service.name} yet, so there are no times to book. Please choose another
                       service or check back later.
                     </div>
@@ -506,7 +506,7 @@ export default function BookingWizardPage() {
               {step === 'date' && (
                 <section className="space-y-4">
                   <StepHeading headingRef={headingRef}>Pick a date</StepHeading>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-ink-muted">
                     You can book up to {business.max_advance_days} days ahead. Use the arrow keys to move between days.
                   </p>
                   <DateStrip
@@ -529,7 +529,7 @@ export default function BookingWizardPage() {
                 <section className="space-y-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <StepHeading headingRef={headingRef}>{formatDateKey(date, 'EEEE d MMMM')}</StepHeading>
-                    <span className="inline-flex items-center gap-2 text-xs font-medium text-emerald-800">
+                    <span className="inline-flex items-center gap-2 text-xs font-medium text-emerald-300">
                       <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" aria-hidden="true" />
                       Live availability
                     </span>
@@ -584,7 +584,7 @@ export default function BookingWizardPage() {
                       }
                     />
                   )}
-                  <div className="flex justify-between gap-3 border-t border-gray-100 pt-4">
+                  <div className="flex justify-between gap-3 border-t border-line pt-4">
                     <Button variant="ghost" onClick={() => setStep('date')}>
                       Back
                     </Button>
@@ -622,16 +622,16 @@ export default function BookingWizardPage() {
 
       {/* Phone / tablet: compact sticky summary with price */}
       {service && deposit !== null && step !== 'confirm' && (
-        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-gray-200 bg-white/95 px-4 py-3 shadow-[0_-4px_16px_-8px_rgb(15_23_42/0.15)] backdrop-blur lg:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-navy-900/95 px-4 py-3 shadow-[0_-8px_24px_-8px_rgb(0_0_0/0.5)] backdrop-blur lg:hidden">
           <div className="mx-auto flex max-w-page items-center justify-between gap-4">
             <div className="min-w-0 text-sm">
-              <p className="truncate font-semibold text-gray-900">
+              <p className="truncate font-semibold text-ink">
                 {service.name}
                 {slot && ` · ${formatInTz(slot.start_at, business.timezone, 'EEE d MMM, HH:mm')}`}
               </p>
-              <p className="text-gray-600">
+              <p className="text-ink-muted">
                 {formatMoney(service.price_minor, business.currency)} &middot;{' '}
-                <span className="font-semibold text-brand-800">{formatMoney(deposit, business.currency)} deposit</span>
+                <span className="font-semibold text-brand-200">{formatMoney(deposit, business.currency)} deposit</span>
               </p>
             </div>
             {step === 'slot' && (
