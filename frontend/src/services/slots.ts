@@ -8,6 +8,13 @@ export const slotKeys = {
 };
 
 /** GET /api/businesses/{id}/slots (public). */
-export function getSlots(businessId: number, query: SlotQuery): Promise<Slot[]> {
-  return get<Slot[]>(`/api/businesses/${businessId}/slots`, { params: query });
+interface SlotsResponse {
+  slots: Slot[];
+}
+
+export async function getSlots(businessId: number, query: SlotQuery): Promise<Slot[]> {
+  const data = await get<SlotsResponse | Slot[]>(`/api/businesses/${businessId}/slots`, {
+    params: query,
+  });
+  return Array.isArray(data) ? data : data.slots;
 }
