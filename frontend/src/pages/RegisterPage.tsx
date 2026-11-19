@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { MeshBackground } from '@/components/layout/MeshBackground';
-import { GlassCard } from '@/components/ui/GlassCard';
-import { PageWrapper } from '@/components/ui/PageWrapper';
+import { AuthShell } from '@/components/layout/AuthShell';
 import { RegisterForm } from '@/components/forms/RegisterForm';
 import { GoogleButton, OrDivider } from '@/components/forms/GoogleButton';
 import { useAuth } from '@/hooks/useAuth';
@@ -46,25 +44,25 @@ export default function RegisterPage() {
   };
 
   return (
-    <>
-      <MeshBackground />
-      <PageWrapper className="flex justify-center">
-        <GlassCard hoverable={false} className="w-full max-w-lg">
-          <h1 className="text-2xl font-bold text-gray-900">Create your account</h1>
-          <p className="mt-1 text-sm text-gray-500">Book appointments or run your business on SlotEase.</p>
-          <div className="mt-6">
-            <GoogleButton label="Sign up with Google" />
-            <OrDivider />
-            <RegisterForm initialRole={initialRole} onSubmit={handleSubmit} serverErrors={serverErrors} />
-          </div>
-          <p className="mt-6 text-center text-sm text-gray-600">
-            Already have an account?{' '}
-            <Link to="/login" state={location.state} className="font-medium text-brand-600 hover:underline">
-              Log in
-            </Link>
-          </p>
-        </GlassCard>
-      </PageWrapper>
-    </>
+    <AuthShell
+      title={initialRole === 'owner' ? 'Create your business account' : 'Create your account'}
+      subtitle={
+        initialRole === 'owner'
+          ? 'Set up a booking page with deposits and staff in a few minutes.'
+          : 'Book appointments or run your business on SlotEase.'
+      }
+      footer={
+        <>
+          Already have an account?{' '}
+          <Link to="/login" state={location.state} className="link">
+            Log in
+          </Link>
+        </>
+      }
+    >
+      <GoogleButton label="Sign up with Google" />
+      <OrDivider />
+      <RegisterForm initialRole={initialRole} onSubmit={handleSubmit} serverErrors={serverErrors} />
+    </AuthShell>
   );
 }

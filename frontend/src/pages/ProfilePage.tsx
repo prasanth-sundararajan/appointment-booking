@@ -1,29 +1,51 @@
-import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, type FormEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { Badge, formatStatus } from '@/components/ui/Badge';
 import { Card, CardHeader } from '@/components/ui/Card';
 import { GradientButton } from '@/components/ui/GradientButton';
 import { Input } from '@/components/ui/Input';
 import { PageWrapper } from '@/components/ui/PageWrapper';
+import { PageSkeleton } from '@/components/ui/Skeleton';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
+import { initialsOf } from '@/lib/roles';
 import { toApiError } from '@/services/api';
 import { authService } from '@/services/auth';
 import type { ApiError, ProfileUpdate, User } from '@/types';
 
+function BecomeOwnerCard({ onClick, isLoading }: { onClick: () => void; isLoading: boolean }) {
+  return (
+    <section
+      aria-labelledby="run-business-heading"
+      className="mb-6 flex flex-col gap-5 overflow-hidden rounded-card border border-brand-200 bg-gradient-to-br from-brand-50 via-white to-accent-50 p-6 shadow-card sm:flex-row sm:items-center sm:p-8"
+    >
+      <div className="min-w-0 flex-1">
+        <h2 id="run-business-heading" className="text-lg font-bold text-gray-900">
+          Run a business? Take bookings on SlotEase.
+        </h2>
+        <p className="mt-1 text-sm text-gray-700">
+          Get a public booking page, collect deposits that cut no-shows, and manage your team&apos;s hours. Your customer
+          bookings stay right where they are.
+        </p>
+      </div>
+      <GradientButton size="lg" className="shrink-0" isLoading={isLoading} onClick={onClick}>
+        I run a business
+      </GradientButton>
+    </section>
+  );
+}
+
 export default function ProfilePage() {
   const { user, reload } = useAuth();
   const toast = useToast();
+  const navigate = useNavigate();
   const [fullName, setFullName] = useState(user?.full_name ?? '');
   const [error, setError] = useState<string | undefined>();
 
   useEffect(() => {
     setFullName(user?.full_name ?? '');
   }, [user?.full_name]);
-
-  const navigate = useNavigate();
 
   const mutation = useMutation<User, ApiError, ProfileUpdate>({
     mutationFn: (payload) => authService.updateMe(payload),
@@ -48,7 +70,13 @@ export default function ProfilePage() {
     onError: (err) => toast.error('Could not switch account', toApiError(err).message),
   });
 
-  if (!user) return null;
+  if (!user) {
+    return (
+      <PageWrapper>
+        <PageSkeleton label="Loading profile" />
+      </PageWrapper>
+    );
+  }
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -60,57 +88,73 @@ export default function ProfilePage() {
     mutation.mutate({ full_name: fullName.trim() });
   };
 
+  const unchanged = fullName.trim() === (user.full_name ?? '');
+
   return (
-    <PageWrapper title="Profile" subtitle="Your personal details.">
+    <PageWrapper title="Profile" subtitle="Your personal details and account." backTo={{ to: '/settings', label: 'Settings' }}>
+      {user.role === 'customer' && (
+        <BecomeOwnerCard onClick={() => ownerMutation.mutate()} isLoading={ownerMutation.isPending} />
+      )}
+
       <div className="grid gap-6 lg:grid-cols-3">
-        <Card hoverable={false} className="lg:col-span-2">
-          <CardHeader title="Personal info" />
+        <Card className="lg:col-span-2">
+          <CardHeader title="Personal info" subtitle="Businesses see this name on your bookings." />
           <form noValidate onSubmit={handleSubmit} className="space-y-4">
-            <Input label="Full name" value={fullName} onChange={(e) => setFullName(e.target.value)} error={error} />
+            <Input
+              label="Full name"
+              autoComplete="name"
+              value={fullName}
+              onChange={(e) => {
+                setFullName(e.target.value);
+                setError(undefined);
+              }}
+              error={error}
+            />
             <Input label="Email" value={user.email} disabled hint="Email can't be changed." />
             <div className="flex justify-end">
-              <GradientButton type="submit" isLoading={mutation.isPending}>
+              <GradientButton type="submit" isLoading={mutation.isPending} disabled={unchanged}>
                 Save changes
               </GradientButton>
             </div>
           </form>
         </Card>
 
-        <Card hoverable={false}>
-          <CardHeader title="Account" />
-          <dl className="space-y-3 text-sm">
-            <div className="flex justify-between gap-2">
-              <dt className="text-gray-500">Role</dt>
+        <Card>
+          <div className="mb-5 flex items-center gap-3">
+            <span
+              aria-hidden="true"
+              className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-100 text-base font-semibold text-brand-800"
+            >
+              {initialsOf(user.full_name, user.email)}
+            </span>
+            <div className="min-w-0">
+              <h2 className="truncate font-semibold text-gray-900">{user.full_name || 'Your account'}</h2>
+              <p className="truncate text-sm text-gray-600">{user.email}</p>
+            </div>
+          </div>
+          <dl className="space-y-3 border-t border-gray-100 pt-4 text-sm">
+            <div className="flex items-center justify-between gap-2">
+              <dt className="text-gray-600">Role</dt>
               <dd>
                 <Badge tone="brand">{formatStatus(user.role)}</Badge>
               </dd>
             </div>
-            {user.role === 'customer' && (
-              <GradientButton
-                type="button"
-                className="w-full"
-                isLoading={ownerMutation.isPending}
-                onClick={() => ownerMutation.mutate()}
-              >
-                I run a business
-              </GradientButton>
-            )}
-            <div className="flex justify-between gap-2">
-              <dt className="text-gray-500">Sign-in</dt>
-              <dd className="text-gray-900">{user.oauth_provider === 'google' ? 'Google' : 'Email & password'}</dd>
+            <div className="flex items-center justify-between gap-2">
+              <dt className="text-gray-600">Sign-in</dt>
+              <dd className="font-medium text-gray-900">{user.oauth_provider === 'google' ? 'Google' : 'Email & password'}</dd>
             </div>
-            <div className="flex justify-between gap-2">
-              <dt className="text-gray-500">Verified</dt>
+            <div className="flex items-center justify-between gap-2">
+              <dt className="text-gray-600">Verified</dt>
               <dd>{user.is_verified ? <Badge tone="green">Yes</Badge> : <Badge tone="yellow">Pending</Badge>}</dd>
             </div>
           </dl>
           {(user.owned_businesses.length > 0 || user.staff_memberships.length > 0) && (
-            <div className="mt-6">
-              <p className="text-sm font-medium text-gray-700">Businesses</p>
+            <div className="mt-6 border-t border-gray-100 pt-4">
+              <h3 className="text-sm font-semibold text-gray-900">Businesses</h3>
               <ul className="mt-2 space-y-2 text-sm">
                 {user.owned_businesses.map((b) => (
                   <li key={`o-${b.id}`} className="flex items-center justify-between gap-2">
-                    <Link to={`/dashboard?b=${b.id}`} className="truncate text-brand-600 hover:underline">
+                    <Link to={`/dashboard?b=${b.id}`} className="link truncate">
                       {b.name}
                     </Link>
                     <Badge tone="brand">Owner</Badge>
@@ -118,7 +162,7 @@ export default function ProfilePage() {
                 ))}
                 {user.staff_memberships.map((m) => (
                   <li key={`s-${m.staff_id}`} className="flex items-center justify-between gap-2">
-                    <Link to={`/dashboard?b=${m.business_id}`} className="truncate text-brand-600 hover:underline">
+                    <Link to={`/dashboard?b=${m.business_id}`} className="link truncate">
                       {m.business_name}
                     </Link>
                     <Badge tone="blue">Staff</Badge>

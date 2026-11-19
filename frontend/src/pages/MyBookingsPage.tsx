@@ -1,10 +1,11 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, type KeyboardEvent } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { PageWrapper } from '@/components/ui/PageWrapper';
 import { AnimatedList } from '@/components/ui/AnimatedList';
-import { FullPageSpinner } from '@/components/ui/Spinner';
+import { ButtonLink } from '@/components/ui/Button';
+import { ListSkeleton } from '@/components/ui/Skeleton';
+import { EmptyState, ErrorState } from '@/components/common/EmptyState';
 import { BookingCard } from '@/components/booking/BookingCard';
 import { cn } from '@/lib/cn';
 import { toApiError } from '@/services/api';
@@ -24,19 +25,44 @@ export default function MyBookingsPage() {
   });
   const bookings = query.data ?? [];
 
+  const onTabKey = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+    event.preventDefault();
+    const index = TABS.findIndex((t) => t.id === scope);
+    const next = TABS[(index + (event.key === 'ArrowRight' ? 1 : TABS.length - 1)) % TABS.length];
+    setScope(next.id);
+    document.getElementById(`tab-${next.id}`)?.focus();
+  };
+
   return (
-    <PageWrapper title="My bookings" subtitle="Manage, cancel or reschedule your appointments.">
-      <div role="tablist" aria-label="Booking scope" className="mb-6 inline-flex rounded-xl bg-gray-100 p-1">
+    <PageWrapper
+      title="My bookings"
+      subtitle="Manage, cancel or reschedule your appointments."
+      actions={
+        <ButtonLink to="/explore" variant="outline">
+          Book something new
+        </ButtonLink>
+      }
+    >
+      <div
+        role="tablist"
+        aria-label="Booking scope"
+        onKeyDown={onTabKey}
+        className="mb-6 inline-flex rounded-xl bg-gray-200/70 p-1"
+      >
         {TABS.map((tab) => (
           <button
             key={tab.id}
+            id={`tab-${tab.id}`}
             type="button"
             role="tab"
             aria-selected={scope === tab.id}
+            aria-controls="bookings-panel"
+            tabIndex={scope === tab.id ? 0 : -1}
             onClick={() => setScope(tab.id)}
             className={cn(
               'relative rounded-lg px-4 py-1.5 text-sm font-medium transition-colors',
-              scope === tab.id ? 'text-brand-700' : 'text-gray-600 hover:text-gray-900',
+              scope === tab.id ? 'text-brand-800' : 'text-gray-700 hover:text-gray-900',
             )}
           >
             {scope === tab.id && (
@@ -47,25 +73,35 @@ export default function MyBookingsPage() {
         ))}
       </div>
 
-      {query.isLoading && <FullPageSpinner />}
-      {query.isError && <p className="text-red-600">{toApiError(query.error).message}</p>}
-      {query.isSuccess && bookings.length === 0 && (
-        <div className="rounded-2xl bg-white p-10 text-center shadow-sm">
-          <p className="text-gray-600">
-            {scope === 'upcoming' ? 'You have no upcoming bookings.' : 'No past bookings yet.'}
-          </p>
-          <Link to="/explore" className="mt-3 inline-block font-medium text-brand-700 hover:underline">
-            Find a business
-          </Link>
-        </div>
-      )}
-      {bookings.length > 0 && (
-        <AnimatedList className="space-y-3" key={scope}>
-          {bookings.map((booking) => (
-            <BookingCard key={booking.id} booking={booking} />
-          ))}
-        </AnimatedList>
-      )}
+      <div id="bookings-panel" role="tabpanel" aria-labelledby={`tab-${scope}`}>
+        {query.isLoading && <ListSkeleton rows={3} label="Loading bookings" />}
+        {query.isError && (
+          <ErrorState message={toApiError(query.error).message} onRetry={() => void query.refetch()} />
+        )}
+        {query.isSuccess && bookings.length === 0 && (
+          <EmptyState
+            icon="calendar"
+            title={scope === 'upcoming' ? 'No upcoming bookings' : 'No past bookings yet'}
+            description={
+              scope === 'upcoming'
+                ? 'Find a business, pick a live time, and it will show up here.'
+                : 'Completed and cancelled appointments will appear here.'
+            }
+            action={
+              <ButtonLink to="/explore" variant="gradient">
+                Find a business
+              </ButtonLink>
+            }
+          />
+        )}
+        {bookings.length > 0 && (
+          <AnimatedList as="ul" className="space-y-3" key={scope}>
+            {bookings.map((booking) => (
+              <BookingCard key={booking.id} booking={booking} />
+            ))}
+          </AnimatedList>
+        )}
+      </div>
     </PageWrapper>
   );
 }

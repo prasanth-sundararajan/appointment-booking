@@ -1,52 +1,79 @@
 import type { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/cn';
+import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Spinner';
+
+export type EmptyIcon = 'info' | 'calendar' | 'search' | 'users' | 'list' | 'lock' | 'card';
+
+const ICONS: Record<EmptyIcon, string> = {
+  info: 'M10 2a8 8 0 100 16 8 8 0 000-16zm-.75 4h1.5v5h-1.5V6zm0 6.5h1.5V14h-1.5v-1.5z',
+  calendar: 'M6 2v2H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2V2h-2v2H8V2H6zm-2 6h12v8H4V8z',
+  search: 'M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.45 4.39l3.08 3.08-1.06 1.06-3.08-3.08A7 7 0 012 9z',
+  users:
+    'M7 8a3 3 0 100-6 3 3 0 000 6zm6 1a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM1 16c0-3 3-5 6-5s6 2 6 5v1H1v-1zm13 1v-1c0-1.3-.4-2.5-1.1-3.4 2.4.2 5.1 1.5 5.1 4.4H14z',
+  list: 'M3 4h14v2H3V4zm0 5h14v2H3V9zm0 5h9v2H3v-2z',
+  lock: 'M10 2a4 4 0 00-4 4v2H5a1 1 0 00-1 1v8a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1h-1V6a4 4 0 00-4-4zm-2 6V6a2 2 0 114 0v2H8z',
+  card: 'M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm2 1v2h12V6H4zm0 5v4h12v-4H4z',
+};
+
+export function EmptyIconBadge({ icon = 'info', className }: { icon?: EmptyIcon; className?: string }) {
+  return (
+    <span className={cn('flex h-12 w-12 items-center justify-center rounded-full bg-brand-50 text-brand-600 ring-8 ring-brand-50/50', className)}>
+      <svg viewBox="0 0 20 20" fill="currentColor" className="h-6 w-6" aria-hidden="true">
+        <path fillRule="evenodd" clipRule="evenodd" d={ICONS[icon]} />
+      </svg>
+    </span>
+  );
+}
 
 export interface EmptyStateProps {
   title: string;
   description?: ReactNode;
   action?: ReactNode;
+  icon?: EmptyIcon;
   className?: string;
+  /** Heading level for the title (default h2). */
+  as?: 'h1' | 'h2' | 'h3';
 }
 
-export function EmptyState({ title, description, action, className }: EmptyStateProps) {
+export function EmptyState({ title, description, action, icon = 'info', className, as: Heading = 'h2' }: EmptyStateProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       className={cn(
-        'flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-200 bg-white/60 px-6 py-12 text-center',
+        'flex flex-col items-center justify-center rounded-card border border-dashed border-gray-300 bg-white px-6 py-12 text-center',
         className,
       )}
     >
-      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-50 text-brand-500">
-        <svg viewBox="0 0 20 20" fill="currentColor" className="h-6 w-6" aria-hidden="true">
-          <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm-.75 4h1.5v5h-1.5V6zm0 6.5h1.5V14h-1.5v-1.5z" />
-        </svg>
-      </span>
-      <h3 className="mt-4 font-semibold text-gray-900">{title}</h3>
-      {description && <p className="mt-1 max-w-sm text-sm text-gray-500">{description}</p>}
-      {action && <div className="mt-6">{action}</div>}
+      <EmptyIconBadge icon={icon} />
+      <Heading className="mt-5 text-base font-semibold text-gray-900">{title}</Heading>
+      {description && <p className="mt-1.5 max-w-md text-sm text-gray-600">{description}</p>}
+      {action && <div className="mt-6 flex flex-wrap justify-center gap-3">{action}</div>}
     </motion.div>
   );
 }
 
-export function ErrorState({ message, onRetry }: { message: string; onRetry?: () => void }) {
+export function ErrorState({
+  message,
+  onRetry,
+  title = 'Something went wrong',
+  className,
+}: {
+  message: string;
+  onRetry?: () => void;
+  title?: string;
+  className?: string;
+}) {
   return (
-    <div className="rounded-2xl border border-red-100 bg-red-50 p-6 text-center">
-      <p className="font-medium text-red-700">Something went wrong</p>
-      <p className="mt-1 text-sm text-red-600">{message}</p>
+    <div role="alert" className={cn('rounded-card border border-red-200 bg-red-50 p-6 text-center', className)}>
+      <p className="font-semibold text-red-800">{title}</p>
+      <p className="mt-1 text-sm text-red-700">{message}</p>
       {onRetry && (
-        <motion.button
-          type="button"
-          onClick={onRetry}
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-          className="mt-4 rounded-lg bg-white px-4 py-2 text-sm font-medium text-red-700 shadow-sm hover:bg-red-100"
-        >
+        <Button variant="outline" size="sm" className="mt-4" onClick={onRetry}>
           Try again
-        </motion.button>
+        </Button>
       )}
     </div>
   );

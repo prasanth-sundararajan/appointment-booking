@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { BusinessForm } from '@/components/business/BusinessForm';
-import { EmptyState, ErrorState, LoadingBlock } from '@/components/common/EmptyState';
+import { EmptyState, ErrorState } from '@/components/common/EmptyState';
 import { Button } from '@/components/ui/Button';
 import { Card, CardHeader } from '@/components/ui/Card';
 import { Modal } from '@/components/ui/Modal';
 import { PageWrapper } from '@/components/ui/PageWrapper';
+import { PageSkeleton } from '@/components/ui/Skeleton';
+import { publicBusinessUrl } from '@/lib/url';
 import { useAuth } from '@/hooks/useAuth';
 import { useDashboardBusiness } from '@/hooks/useMyBusinesses';
 import { useToast } from '@/hooks/useToast';
@@ -36,8 +38,8 @@ export default function BusinessSettingsPage() {
     onError: (err) => toast.error('Could not deactivate', toApiError(err).message),
   });
 
-  if (isLoading) return <LoadingBlock />;
-  if (!isOwner) return <EmptyState title="Owners only" description="Only the business owner can change settings." />;
+  if (isLoading) return <PageSkeleton label="Loading settings" />;
+  if (!isOwner) return <EmptyState icon="lock" title="Owners only" description="Only the business owner can change settings." />;
   if (error) return <ErrorState message={error.message} onRetry={refetch} />;
   if (!business) return null;
 
@@ -56,7 +58,11 @@ export default function BusinessSettingsPage() {
   };
 
   return (
-    <PageWrapper title="Business settings" subtitle={`Public page: /b/${business.slug}`} contained={false}>
+    <PageWrapper
+      title="Business settings"
+      subtitle={`Public page: ${publicBusinessUrl(business.slug).replace(/^https?:\/\//, '')}`}
+      contained={false}
+    >
       <BusinessForm
         key={business.updated_at}
         initialValues={businessToFormValues(business)}
@@ -66,9 +72,9 @@ export default function BusinessSettingsPage() {
       />
 
       {business.is_active && (
-        <Card hoverable={false} className="mt-6 border-red-100">
+        <Card className="mt-6 border-red-200">
           <CardHeader
-            title="Deactivate business"
+            title="Danger zone: deactivate business"
             subtitle="Hides your booking page and removes it from the directory. Existing bookings are kept."
             action={
               <Button variant="danger" size="sm" onClick={() => setConfirmOpen(true)}>
@@ -82,6 +88,7 @@ export default function BusinessSettingsPage() {
       <Modal
         isOpen={confirmOpen}
         onClose={() => setConfirmOpen(false)}
+        size="sm"
         title={`Deactivate ${business.name}?`}
         description="Customers will no longer be able to find or book this business."
         footer={

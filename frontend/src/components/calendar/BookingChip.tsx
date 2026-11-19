@@ -22,7 +22,7 @@ export function BookingChip({ booking, timezone, onSelect, compact = false }: Bo
       whileHover={{ y: -1 }}
       onClick={() => onSelect(booking)}
       className={cn(
-        'w-full rounded-lg border px-2 py-1 text-left text-xs shadow-sm transition-colors hover:shadow',
+        'w-full rounded-lg border px-2 py-1 text-left text-xs shadow-sm transition-colors hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500',
         statusChipClass[booking.status],
       )}
     >

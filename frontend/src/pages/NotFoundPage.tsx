@@ -1,20 +1,22 @@
-import { useNavigate } from 'react-router-dom';
-import { GlassCard } from '@/components/ui/GlassCard';
-import { GradientButton } from '@/components/ui/GradientButton';
+import { ButtonLink } from '@/components/ui/Button';
 import { PageWrapper } from '@/components/ui/PageWrapper';
 
 export default function NotFoundPage() {
-  const navigate = useNavigate();
   return (
     <PageWrapper>
-      <GlassCard hoverable={false} className="mx-auto max-w-md text-center">
-        <p className="text-5xl font-extrabold text-brand-600">404</p>
-        <h1 className="mt-2 text-xl font-semibold text-gray-900">Page not found</h1>
-        <p className="mt-1 text-sm text-gray-500">The page you are looking for does not exist.</p>
-        <GradientButton className="mt-6" onClick={() => navigate('/')}>
-          Back home
-        </GradientButton>
-      </GlassCard>
+      <div className="mx-auto max-w-md py-12 text-center">
+        <p className="text-sm font-semibold uppercase tracking-wider text-brand-700">Error 404</p>
+        <h1 className="mt-2 text-3xl font-bold text-gray-900">Page not found</h1>
+        <p className="mt-3 text-gray-600">The page you are looking for does not exist or has moved.</p>
+        <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+          <ButtonLink to="/" variant="gradient">
+            Back home
+          </ButtonLink>
+          <ButtonLink to="/explore" variant="outline">
+            Explore businesses
+          </ButtonLink>
+        </div>
+      </div>
     </PageWrapper>
   );
 }

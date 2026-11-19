@@ -4,19 +4,24 @@ import { cn } from '@/lib/cn';
 
 export interface CardProps extends Omit<HTMLMotionProps<'div'>, 'children'> {
   children?: ReactNode;
-  /** Lift on hover (default true). */
+  /** Lift on hover. Only use for cards that are themselves clickable. */
   hoverable?: boolean;
   padded?: boolean;
 }
 
-export function Card({ children, hoverable = true, padded = true, className, ...props }: CardProps) {
+export function Card({ children, hoverable = false, padded = true, className, ...props }: CardProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={hoverable ? { y: -4, boxShadow: '0 12px 24px -8px rgba(76, 29, 149, 0.18)' } : undefined}
-      transition={{ duration: 0.25 }}
-      className={cn('rounded-2xl border border-gray-100 bg-white shadow-sm', padded && 'p-6', className)}
+      whileHover={hoverable ? { y: -2 } : undefined}
+      transition={{ duration: 0.2 }}
+      className={cn(
+        'rounded-card border border-gray-200 bg-white shadow-card',
+        hoverable && 'transition-shadow hover:border-brand-200 hover:shadow-card-hover',
+        padded && 'p-5 sm:p-6',
+        className,
+      )}
       {...props}
     >
       {children}
@@ -24,14 +29,22 @@ export function Card({ children, hoverable = true, padded = true, className, ...
   );
 }
 
-export function CardHeader({ title, subtitle, action }: { title: ReactNode; subtitle?: ReactNode; action?: ReactNode }) {
+export interface CardHeaderProps {
+  title: ReactNode;
+  subtitle?: ReactNode;
+  action?: ReactNode;
+  /** Heading level; pages use h1, so cards default to h2. */
+  as?: 'h2' | 'h3';
+}
+
+export function CardHeader({ title, subtitle, action, as: Heading = 'h2' }: CardHeaderProps) {
   return (
-    <div className="mb-4 flex items-start justify-between gap-4">
-      <div>
-        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
-        {subtitle && <p className="mt-0.5 text-sm text-gray-500">{subtitle}</p>}
+    <div className="mb-4 flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
+      <div className="min-w-0">
+        <Heading className="text-base font-semibold text-gray-900">{title}</Heading>
+        {subtitle && <p className="mt-0.5 text-sm text-gray-600">{subtitle}</p>}
       </div>
-      {action}
+      {action && <div className="shrink-0">{action}</div>}
     </div>
   );
 }

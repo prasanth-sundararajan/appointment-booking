@@ -2,8 +2,9 @@ import type { ReactNode } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { MeshBackground } from '@/components/layout/MeshBackground';
-import { EmptyState, LoadingBlock } from '@/components/common/EmptyState';
-import { Button } from '@/components/ui/Button';
+import { EmptyState } from '@/components/common/EmptyState';
+import { Button, ButtonLink } from '@/components/ui/Button';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { GradientButton } from '@/components/ui/GradientButton';
 import { PageWrapper } from '@/components/ui/PageWrapper';
@@ -47,30 +48,46 @@ export default function AcceptInvitePage() {
 
   let body: ReactNode;
   if (invite.isLoading || authLoading) {
-    body = <LoadingBlock />;
+    body = (
+      <GlassCard className="mx-auto max-w-md" role="status" aria-busy="true">
+        <span className="sr-only">Loading invite</span>
+        <Skeleton className="mx-auto h-14 w-14 rounded-2xl" />
+        <Skeleton className="mx-auto mt-4 h-6 w-48" />
+        <Skeleton className="mx-auto mt-3 h-4 w-64 max-w-full" />
+        <Skeleton className="mt-6 h-12 w-full" />
+      </GlassCard>
+    );
   } else if (invite.isError || !info) {
     body = (
       <EmptyState
+        as="h1"
+        icon="lock"
+        className="mx-auto max-w-lg"
         title="Invite not found"
         description="This invite link is invalid, was already used, or has been revoked. Ask the business owner for a new one."
+        action={
+          <ButtonLink to="/" variant="outline">
+            Go to home page
+          </ButtonLink>
+        }
       />
     );
   } else {
     body = (
-      <GlassCard hoverable={false} className="mx-auto max-w-md text-center">
-        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-500 to-pink-500 text-2xl font-bold text-white">
+      <GlassCard className="mx-auto max-w-md text-center">
+        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-600 to-accent-500 text-2xl font-bold text-white">
           {info.business_name.charAt(0).toUpperCase()}
         </span>
-        <h1 className="mt-4 text-xl font-bold text-gray-900">Join {info.business_name}</h1>
-        <p className="mt-2 text-sm text-gray-600">
+        <h1 className="mt-4 text-2xl font-bold text-gray-900">Join {info.business_name}</h1>
+        <p className="mt-2 text-sm text-gray-700">
           You've been invited as <span className="font-medium">{info.display_name}</span>. You'll be able to manage your
           hours, time off and bookings.
         </p>
-        <p className="mt-1 text-xs text-gray-500">Invite for {info.email}</p>
+        <p className="mt-2 text-xs text-gray-600">Invite for {info.email}</p>
 
         {!user ? (
           <div className="mt-6 space-y-3">
-            <GradientButton fullWidth onClick={() => navigate('/login', { state: { from } })}>
+            <GradientButton size="lg" fullWidth onClick={() => navigate('/login', { state: { from } })}>
               Log in to accept
             </GradientButton>
             <Button variant="outline" fullWidth onClick={() => navigate('/register', { state: { from } })}>
@@ -93,7 +110,7 @@ export default function AcceptInvitePage() {
             </Button>
           </div>
         ) : (
-          <GradientButton className="mt-6" fullWidth isLoading={accept.isPending} onClick={() => accept.mutate()}>
+          <GradientButton className="mt-6" size="lg" fullWidth isLoading={accept.isPending} onClick={() => accept.mutate()}>
             Accept invite
           </GradientButton>
         )}

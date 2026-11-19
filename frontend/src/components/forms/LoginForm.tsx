@@ -31,13 +31,17 @@ export function LoginForm({ onSubmit, serverErrors = {} }: LoginFormProps) {
   };
 
   return (
-    <form noValidate onSubmit={handleSubmit} className="space-y-4">
+    <form noValidate onSubmit={handleSubmit} className="space-y-4" aria-label="Log in">
       <Input
         label="Email"
         type="email"
         autoComplete="email"
+        placeholder="you@example.com"
         value={values.email}
-        onChange={(e) => setValues((v) => ({ ...v, email: e.target.value }))}
+        onChange={(e) => {
+          setValues((v) => ({ ...v, email: e.target.value }));
+          setErrors((err) => ({ ...err, email: undefined }));
+        }}
         error={errors.email ?? serverErrors.email}
       />
       <Input
@@ -45,10 +49,13 @@ export function LoginForm({ onSubmit, serverErrors = {} }: LoginFormProps) {
         type="password"
         autoComplete="current-password"
         value={values.password}
-        onChange={(e) => setValues((v) => ({ ...v, password: e.target.value }))}
+        onChange={(e) => {
+          setValues((v) => ({ ...v, password: e.target.value }));
+          setErrors((err) => ({ ...err, password: undefined }));
+        }}
         error={errors.password ?? serverErrors.password}
       />
-      <GradientButton type="submit" fullWidth isLoading={submitting}>
+      <GradientButton type="submit" size="lg" fullWidth isLoading={submitting} loadingText="Logging in">
         Log in
       </GradientButton>
     </form>

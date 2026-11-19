@@ -6,7 +6,8 @@ import { DateStrip } from '@/components/booking/DateStrip';
 import { SlotGrid } from '@/components/booking/SlotGrid';
 import { useToast } from '@/hooks/useToast';
 import { useBusinessSocket } from '@/hooks/useBusinessSocket';
-import { formatInTz, upcomingDateKeys } from '@/lib/datetime';
+import { formatInTz, todayInTz, upcomingDateKeys } from '@/lib/datetime';
+import { formatTimezone } from '@/lib/format';
 import { toApiError } from '@/services/api';
 import { bookingKeys, rescheduleBooking } from '@/services/bookings';
 import { getSlots, slotKeys } from '@/services/slots';
@@ -72,7 +73,7 @@ export function RescheduleDialog({ booking, isOpen, onClose }: RescheduleDialogP
       onClose={onClose}
       size="lg"
       title="Reschedule booking"
-      description={`Currently ${formatInTz(booking.start_at, timezone, 'EEE d MMM, HH:mm')} with ${booking.staff.display_name}. Times are in ${timezone}.`}
+      description={`Currently ${formatInTz(booking.start_at, timezone, 'EEE d MMM, HH:mm')} with ${booking.staff.display_name}. Times are in ${formatTimezone(timezone)}.`}
       footer={
         <>
           <Button variant="ghost" onClick={onClose} disabled={mutation.isPending}>
@@ -83,7 +84,9 @@ export function RescheduleDialog({ booking, isOpen, onClose }: RescheduleDialogP
             disabled={!selectedStillOpen}
             isLoading={mutation.isPending}
           >
-            Move to {selectedStillOpen && selected ? formatInTz(selected.start_at, timezone, 'EEE d MMM, HH:mm') : '...'}
+            {selectedStillOpen && selected
+              ? `Move to ${formatInTz(selected.start_at, timezone, 'EEE d MMM, HH:mm')}`
+              : 'Pick a new time'}
           </Button>
         </>
       }
@@ -92,6 +95,7 @@ export function RescheduleDialog({ booking, isOpen, onClose }: RescheduleDialogP
         <DateStrip
           dates={dates}
           selected={date}
+          today={todayInTz(timezone)}
           onSelect={(d) => {
             setDate(d);
             setSelected(null);
@@ -103,7 +107,10 @@ export function RescheduleDialog({ booking, isOpen, onClose }: RescheduleDialogP
           selectedStart={selectedStillOpen ? selected?.start_at : null}
           onSelect={setSelected}
           isLoading={slots.isLoading}
+          emptyMessage="No other open times on this day."
+          emptyHint={`${booking.staff.display_name} may be fully booked or not working. Try another date.`}
         />
+        {slots.isError && <p className="text-sm text-red-700">{toApiError(slots.error).message}</p>}
       </div>
     </Modal>
   );

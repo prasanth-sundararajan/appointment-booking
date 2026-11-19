@@ -1,29 +1,17 @@
 import { forwardRef, type ReactNode } from 'react';
 import { motion, type HTMLMotionProps } from 'framer-motion';
-import { cn } from '@/lib/cn';
+import { Link, type LinkProps } from 'react-router-dom';
 import { Spinner } from './Spinner';
+import { buttonClasses, type ButtonSize, type ButtonVariant } from './buttonStyles';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
-export type ButtonSize = 'sm' | 'md' | 'lg';
-
-const variants: Record<ButtonVariant, string> = {
-  primary: 'bg-brand-600 text-white hover:bg-brand-700 shadow-sm',
-  secondary: 'bg-brand-50 text-brand-700 hover:bg-brand-100',
-  outline: 'border border-gray-300 bg-white text-gray-800 hover:bg-gray-50',
-  ghost: 'bg-transparent text-gray-700 hover:bg-gray-100',
-  danger: 'bg-red-600 text-white hover:bg-red-700 shadow-sm',
-};
-
-const sizes: Record<ButtonSize, string> = {
-  sm: 'h-8 px-3 text-sm',
-  md: 'h-10 px-4 text-sm',
-  lg: 'h-12 px-6 text-base',
-};
+export type { ButtonSize, ButtonVariant } from './buttonStyles';
 
 export interface ButtonProps extends Omit<HTMLMotionProps<'button'>, 'children'> {
   variant?: ButtonVariant;
   size?: ButtonSize;
   isLoading?: boolean;
+  /** Accessible text announced while loading (default "Loading"). */
+  loadingText?: string;
   fullWidth?: boolean;
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
@@ -35,6 +23,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     variant = 'primary',
     size = 'md',
     isLoading = false,
+    loadingText = 'Loading',
     fullWidth = false,
     leftIcon,
     rightIcon,
@@ -52,22 +41,37 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       ref={ref}
       type={type}
       disabled={isDisabled}
-      whileHover={isDisabled ? undefined : { scale: 1.02, y: -1 }}
+      aria-busy={isLoading || undefined}
       whileTap={isDisabled ? undefined : { scale: 0.97 }}
-      className={cn(
-        'inline-flex items-center justify-center gap-2 rounded-xl font-medium transition-colors',
-        'focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2',
-        'disabled:cursor-not-allowed disabled:opacity-60',
-        variants[variant],
-        sizes[size],
-        fullWidth && 'w-full',
-        className,
-      )}
+      className={buttonClasses({ variant, size, fullWidth, className })}
       {...props}
     >
-      {isLoading ? <Spinner size="sm" className="text-current" /> : leftIcon}
+      {isLoading ? <Spinner size="sm" className="text-current" label={loadingText} /> : leftIcon}
       {children}
       {!isLoading && rightIcon}
     </motion.button>
+  );
+});
+
+export interface ButtonLinkProps extends Omit<LinkProps, 'className'> {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  fullWidth?: boolean;
+  leftIcon?: ReactNode;
+  rightIcon?: ReactNode;
+  className?: string;
+}
+
+/** A router link styled as a button (never nest a <button> inside an <a>). */
+export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(function ButtonLink(
+  { variant = 'primary', size = 'md', fullWidth = false, leftIcon, rightIcon, className, children, ...props },
+  ref,
+) {
+  return (
+    <Link ref={ref} className={buttonClasses({ variant, size, fullWidth, className })} {...props}>
+      {leftIcon}
+      {children}
+      {rightIcon}
+    </Link>
   );
 });

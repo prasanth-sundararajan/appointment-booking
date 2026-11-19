@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { PageWrapper } from '@/components/ui/PageWrapper';
 import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+import { formatStatus } from '@/components/ui/Badge';
+import { Button, ButtonLink } from '@/components/ui/Button';
+import { EmptyState, ErrorState } from '@/components/common/EmptyState';
 import { Spinner } from '@/components/ui/Spinner';
 import { HoldCountdown } from '@/components/booking/HoldCountdown';
 import { formatInTz } from '@/lib/datetime';
@@ -49,11 +51,14 @@ export default function BookingSuccessPage() {
 
   if (bookingId === null) {
     return (
-      <PageWrapper title="Booking not found">
-        <p className="text-gray-600">We could not find the booking you just paid for.</p>
-        <Link to="/bookings" className="mt-4 inline-block text-brand-700 underline">
-          Go to my bookings
-        </Link>
+      <PageWrapper>
+        <EmptyState
+          as="h1"
+          icon="search"
+          title="Booking not found"
+          description="We could not find the booking you just paid for. If you were charged, it will appear in your bookings shortly."
+          action={<ButtonLink to="/bookings">Go to my bookings</ButtonLink>}
+        />
       </PageWrapper>
     );
   }
@@ -62,9 +67,15 @@ export default function BookingSuccessPage() {
   const status = booking?.status;
 
   return (
-    <PageWrapper contained className="mx-auto max-w-xl px-4 py-12">
-      <Card hoverable={false} className="text-center">
-        {query.isError && <p className="text-red-600">{toApiError(query.error).message}</p>}
+    <PageWrapper className="max-w-xl">
+      <Card className="text-center" aria-live="polite">
+        {query.isError && (
+          <ErrorState
+            title="We couldn't load your booking"
+            message={toApiError(query.error).message}
+            onRetry={() => void query.refetch()}
+          />
+        )}
 
         {(!booking || status === 'pending_payment') && !query.isError && (
           <div className="flex flex-col items-center gap-4 py-6">
@@ -72,7 +83,7 @@ export default function BookingSuccessPage() {
             <h1 className="text-xl font-semibold text-gray-900">
               {timedOut ? 'Still waiting for payment confirmation' : 'Confirming your payment...'}
             </h1>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-600">
               {timedOut
                 ? 'This is taking longer than usual. We will email you as soon as it is confirmed.'
                 : 'This usually takes a few seconds.'}
@@ -103,24 +114,37 @@ export default function BookingSuccessPage() {
               </svg>
             </motion.div>
             <h1 className="mt-4 text-2xl font-bold text-gray-900">You are booked!</h1>
-            <p className="mt-2 text-gray-600">
+            <p className="mt-2 text-gray-700">
               {booking.service.name} at {booking.business.name} with {booking.staff.display_name}
             </p>
-            <p className="mt-1 font-medium text-gray-900">
-              {formatInTz(booking.start_at, booking.business.timezone, 'EEEE d MMMM yyyy, HH:mm')}
-            </p>
-            {booking.payment && (
-              <p className="mt-2 text-sm text-gray-500">
-                Deposit paid: {formatMoney(booking.payment.amount_minor, booking.payment.currency)}
-              </p>
-            )}
-            <div className="mt-6 flex justify-center gap-3">
-              <Link to={`/bookings/${booking.id}`}>
-                <Button>View booking</Button>
-              </Link>
-              <Link to="/bookings">
-                <Button variant="outline">My bookings</Button>
-              </Link>
+            <dl className="mx-auto mt-6 max-w-sm divide-y divide-gray-100 rounded-xl border border-gray-200 bg-gray-50 text-left text-sm">
+              <div className="flex justify-between gap-3 px-4 py-3">
+                <dt className="text-gray-600">When</dt>
+                <dd className="text-right font-medium text-gray-900">
+                  {formatInTz(booking.start_at, booking.business.timezone, 'EEE d MMM yyyy, HH:mm')}
+                </dd>
+              </div>
+              {booking.payment && (
+                <div className="flex justify-between gap-3 px-4 py-3">
+                  <dt className="text-gray-600">Deposit paid</dt>
+                  <dd className="font-medium text-gray-900">
+                    {formatMoney(booking.payment.amount_minor, booking.payment.currency)}
+                  </dd>
+                </div>
+              )}
+              <div className="flex justify-between gap-3 px-4 py-3">
+                <dt className="text-gray-600">Free cancellation</dt>
+                <dd className="text-right font-medium text-gray-900">
+                  Until {booking.business.cancellation_cutoff_hours}h before
+                </dd>
+              </div>
+            </dl>
+            <p className="mt-4 text-sm text-gray-600">A confirmation email is on its way.</p>
+            <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+              <ButtonLink to={`/bookings/${booking.id}`}>View booking</ButtonLink>
+              <ButtonLink to="/bookings" variant="outline">
+                My bookings
+              </ButtonLink>
             </div>
           </motion.div>
         )}
@@ -135,17 +159,18 @@ export default function BookingSuccessPage() {
                 ? 'Payment was not completed in time, so the slot was released. If you were charged, the deposit will be refunded automatically.'
                 : 'Any deposit paid will be refunded according to the cancellation rule.'}
             </p>
-            <Link to={`/b/${booking.business.slug}/book`} className="mt-6 inline-block">
-              <Button>Book again</Button>
-            </Link>
+            <ButtonLink to={`/b/${booking.business.slug}/book`} className="mt-6">
+              Book again
+            </ButtonLink>
           </div>
         )}
 
         {booking && (status === 'completed' || status === 'no_show') && (
           <div className="py-6">
-            <Link to={`/bookings/${booking.id}`}>
-              <Button>View booking</Button>
-            </Link>
+            <h1 className="text-xl font-semibold text-gray-900">This booking is {formatStatus(status)}</h1>
+            <ButtonLink to={`/bookings/${booking.id}`} className="mt-6">
+              View booking
+            </ButtonLink>
           </div>
         )}
       </Card>

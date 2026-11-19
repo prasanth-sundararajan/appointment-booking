@@ -1,6 +1,7 @@
 import { lazy, Suspense, useState, type ReactNode } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { QueryClientProvider, type QueryClient } from '@tanstack/react-query';
+import { MotionConfig } from 'framer-motion';
 import { AuthProvider } from '@/context/AuthContext';
 import { ToastProvider } from '@/context/ToastContext';
 import { Layout } from '@/components/layout/Layout';
@@ -89,11 +90,13 @@ export function AppRoutes() {
 export function AppProviders({ children, queryClient }: { children: ReactNode; queryClient?: QueryClient }) {
   const [client] = useState<QueryClient>(() => queryClient ?? createQueryClient());
   return (
-    <QueryClientProvider client={client}>
-      <ToastProvider>
-        <AuthProvider>{children}</AuthProvider>
-      </ToastProvider>
-    </QueryClientProvider>
+    <MotionConfig reducedMotion="user">
+      <QueryClientProvider client={client}>
+        <ToastProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </ToastProvider>
+      </QueryClientProvider>
+    </MotionConfig>
   );
 }
 

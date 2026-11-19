@@ -1,5 +1,4 @@
 import { useState, type FormEvent } from 'react';
-import { motion } from 'framer-motion';
 import { cn } from '@/lib/cn';
 import { GradientButton } from '@/components/ui/GradientButton';
 import { Input } from '@/components/ui/Input';
@@ -26,7 +25,10 @@ export function RegisterForm({ initialRole = 'customer', onSubmit, serverErrors 
   const [errors, setErrors] = useState<Errors>({});
   const [submitting, setSubmitting] = useState(false);
 
-  const set = (field: keyof typeof values) => (value: string) => setValues((v) => ({ ...v, [field]: value }));
+  const set = (field: keyof typeof values) => (value: string) => {
+    setValues((v) => ({ ...v, [field]: value }));
+    setErrors((err) => ({ ...err, [field]: undefined }));
+  };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -47,29 +49,34 @@ export function RegisterForm({ initialRole = 'customer', onSubmit, serverErrors 
   };
 
   return (
-    <form noValidate onSubmit={handleSubmit} className="space-y-4">
+    <form noValidate onSubmit={handleSubmit} className="space-y-4" aria-label="Create account">
       <fieldset>
-        <legend className="mb-2 text-sm font-medium text-gray-700">How will you use SlotEase?</legend>
-        <div className="grid gap-3 sm:grid-cols-2" role="radiogroup">
+        <legend className="mb-2 text-sm font-medium text-gray-800">How will you use SlotEase?</legend>
+        <div className="grid gap-3 sm:grid-cols-2">
           {ROLE_CHOICES.map((choice) => {
             const active = role === choice.value;
             return (
-              <motion.button
+              <label
                 key={choice.value}
-                type="button"
-                role="radio"
-                aria-checked={active}
-                onClick={() => setRole(choice.value)}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
                 className={cn(
-                  'rounded-xl border-2 p-4 text-left transition-colors',
-                  active ? 'border-brand-500 bg-brand-50' : 'border-gray-200 bg-white hover:border-brand-200',
+                  'relative flex cursor-pointer gap-3 rounded-xl border-2 p-4 transition-colors',
+                  'has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand-500 has-[:focus-visible]:ring-offset-2',
+                  active ? 'border-brand-600 bg-brand-50' : 'border-gray-200 bg-white hover:border-brand-300',
                 )}
               >
-                <span className="block font-semibold text-gray-900">{choice.title}</span>
-                <span className="mt-1 block text-xs text-gray-500">{choice.body}</span>
-              </motion.button>
+                <input
+                  type="radio"
+                  name="role"
+                  value={choice.value}
+                  checked={active}
+                  onChange={() => setRole(choice.value)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-brand-600 focus:outline-none focus-visible:ring-0"
+                />
+                <span>
+                  <span className="block font-semibold text-gray-900">{choice.title}</span>
+                  <span className="mt-0.5 block text-sm text-gray-600">{choice.body}</span>
+                </span>
+              </label>
             );
           })}
         </div>
@@ -85,28 +92,31 @@ export function RegisterForm({ initialRole = 'customer', onSubmit, serverErrors 
         label="Email"
         type="email"
         autoComplete="email"
+        placeholder="you@example.com"
         value={values.email}
         onChange={(e) => set('email')(e.target.value)}
         error={errors.email ?? serverErrors.email}
       />
-      <Input
-        label="Password"
-        type="password"
-        autoComplete="new-password"
-        hint="At least 8 characters"
-        value={values.password}
-        onChange={(e) => set('password')(e.target.value)}
-        error={errors.password ?? serverErrors.password}
-      />
-      <Input
-        label="Confirm password"
-        type="password"
-        autoComplete="new-password"
-        value={values.confirm}
-        onChange={(e) => set('confirm')(e.target.value)}
-        error={errors.confirm}
-      />
-      <GradientButton type="submit" fullWidth isLoading={submitting}>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Input
+          label="Password"
+          type="password"
+          autoComplete="new-password"
+          hint="At least 8 characters"
+          value={values.password}
+          onChange={(e) => set('password')(e.target.value)}
+          error={errors.password ?? serverErrors.password}
+        />
+        <Input
+          label="Confirm password"
+          type="password"
+          autoComplete="new-password"
+          value={values.confirm}
+          onChange={(e) => set('confirm')(e.target.value)}
+          error={errors.confirm}
+        />
+      </div>
+      <GradientButton type="submit" size="lg" fullWidth isLoading={submitting} loadingText="Creating account">
         Create account
       </GradientButton>
     </form>

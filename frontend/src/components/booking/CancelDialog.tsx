@@ -67,9 +67,11 @@ export function CancelDialog({
       isOpen={isOpen}
       onClose={onClose}
       title="Cancel this booking?"
+      description="The time will be released for other customers."
+      size="sm"
       footer={
         <>
-          <Button variant="ghost" onClick={onClose} disabled={mutation.isPending}>
+          <Button variant="outline" onClick={onClose} disabled={mutation.isPending}>
             Keep booking
           </Button>
           <Button
@@ -89,7 +91,9 @@ export function CancelDialog({
         </div>
       )}
       {preview.isError && (
-        <p className="text-sm text-red-600">We could not check your refund right now. {toApiError(preview.error).message}</p>
+        <p className="rounded-xl bg-red-50 p-4 text-sm text-red-800" role="alert">
+          We could not check your refund right now. {toApiError(preview.error).message}
+        </p>
       )}
       {refund && (
         <p

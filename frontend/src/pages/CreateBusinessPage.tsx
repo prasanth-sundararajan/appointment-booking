@@ -36,6 +36,7 @@ export default function CreateBusinessPage() {
     <PageWrapper
       title="Create your business"
       subtitle="Set up your public booking page. You can change everything later in settings."
+      backTo={{ to: '/dashboard', label: 'Dashboard' }}
       className="max-w-4xl"
     >
       <BusinessForm

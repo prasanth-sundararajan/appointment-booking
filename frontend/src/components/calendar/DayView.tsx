@@ -15,12 +15,12 @@ export function DayView({ date, bookings, timezone, onSelect }: DayViewProps) {
   const hours = hourRange(dayBookings, timezone);
 
   return (
-    <div className="divide-y divide-gray-100 rounded-2xl border border-gray-100 bg-white" data-testid="day-view">
+    <div className="divide-y divide-gray-100 rounded-card border border-gray-200 bg-white shadow-card" data-testid="day-view">
       {hours.map((hour) => {
         const inHour = dayBookings.filter((b) => bookingHour(b, timezone) === hour);
         return (
           <div key={hour} className="grid grid-cols-[4rem_1fr] gap-3 px-3 py-2">
-            <span className="pt-1 text-xs font-medium text-gray-400">{hour.toString().padStart(2, '0')}:00</span>
+            <span className="pt-1 text-xs font-medium tabular-nums text-gray-500">{hour.toString().padStart(2, '0')}:00</span>
             <div className="flex min-h-[2.5rem] flex-wrap gap-2">
               <AnimatePresence>
                 {inHour.map((b) => (

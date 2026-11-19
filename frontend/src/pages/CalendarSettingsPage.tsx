@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { PageWrapper } from '@/components/ui/PageWrapper';
 import { Card, CardHeader } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { Spinner } from '@/components/ui/Spinner';
+import { Skeleton } from '@/components/ui/Skeleton';
+import { ErrorState } from '@/components/common/EmptyState';
 import { useToast } from '@/hooks/useToast';
 import { toApiError } from '@/services/api';
 import { calendarKeys, disconnectGoogleCalendar, getCalendarStatus, getGoogleConnectUrl } from '@/services/calendar';
@@ -20,15 +21,15 @@ function SyncStatus({ status }: { status: CalendarStatus }) {
   return (
     <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
       <div>
-        <dt className="text-gray-500">Calendar</dt>
+        <dt className="text-gray-600">Calendar</dt>
         <dd className="font-medium text-gray-900">{status.google_calendar_id ?? status.email ?? 'Primary'}</dd>
       </div>
       <div>
-        <dt className="text-gray-500">Last synced</dt>
+        <dt className="text-gray-600">Last synced</dt>
         <dd className="font-medium text-gray-900">{formatWhen(status.last_synced_at)}</dd>
       </div>
       <div>
-        <dt className="text-gray-500">Live updates until</dt>
+        <dt className="text-gray-600">Live updates until</dt>
         <dd className="font-medium text-gray-900">{formatWhen(status.watch_expires_at)}</dd>
       </div>
     </dl>
@@ -73,8 +74,12 @@ export default function CalendarSettingsPage() {
   const connected = status.data?.connected ?? false;
 
   return (
-    <PageWrapper title="Calendar sync" subtitle="Keep SlotEase and Google Calendar in sync, both ways.">
-      <Card hoverable={false} className="max-w-2xl">
+    <PageWrapper
+      title="Calendar sync"
+      subtitle="Keep SlotEase and Google Calendar in sync, both ways."
+      backTo={{ to: '/settings', label: 'Settings' }}
+    >
+      <Card className="max-w-2xl">
         <CardHeader
           title="Google Calendar"
           subtitle="Confirmed bookings are added to your calendar, and busy times in Google block your slots."
@@ -83,12 +88,29 @@ export default function CalendarSettingsPage() {
           }
         />
 
-        {status.isLoading && <Spinner label="Loading calendar status" />}
-        {status.isError && <p className="text-sm text-red-600">{toApiError(status.error).message}</p>}
+        {status.isLoading && (
+          <div role="status" aria-busy="true" className="space-y-3">
+            <span className="sr-only">Loading calendar status</span>
+            <Skeleton className="h-4 w-2/3" />
+            <Skeleton className="h-4 w-1/2" />
+            <Skeleton className="mt-4 h-10 w-48" />
+          </div>
+        )}
+        {status.isError && (
+          <ErrorState message={toApiError(status.error).message} onRetry={() => void status.refetch()} />
+        )}
 
         {status.data && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            {connected && <SyncStatus status={status.data} />}
+            {connected ? (
+              <SyncStatus status={status.data} />
+            ) : (
+              <ul className="list-disc space-y-1 pl-5 text-sm text-gray-700">
+                <li>New and rescheduled bookings are added to your Google Calendar.</li>
+                <li>Events marked busy in Google block those times for customers.</li>
+                <li>You can disconnect at any time.</li>
+              </ul>
+            )}
             <div className="mt-6 flex flex-wrap gap-3">
               {connected ? (
                 <>
@@ -108,9 +130,6 @@ export default function CalendarSettingsPage() {
           </motion.div>
         )}
       </Card>
-      <Link to="/settings" className="mt-6 inline-block text-sm text-brand-700 hover:underline">
-        Back to settings
-      </Link>
     </PageWrapper>
   );
 }

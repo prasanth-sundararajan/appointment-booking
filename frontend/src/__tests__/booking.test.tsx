@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -9,6 +9,7 @@ import { CancelDialog } from '@/components/booking/CancelDialog';
 import { ToastProvider } from '@/context/ToastContext';
 import { computeDeposit } from '@/lib/deposit';
 import { removeTakenSlot } from '@/hooks/useBusinessSocket';
+import { groupSlotsByDayPart } from '@/lib/slots';
 import type { CancelPreview, Slot } from '@/types';
 
 const getCancelPreview = vi.fn<(id: number) => Promise<CancelPreview>>();
@@ -72,6 +73,70 @@ describe('SlotGrid', () => {
   it('shows an empty state', () => {
     render(<SlotGrid slots={[]} timezone="UTC" onSelect={() => undefined} />);
     expect(screen.getByText(/no open slots/i)).toBeInTheDocument();
+  });
+
+  it('explains why there are no times and offers a next action', async () => {
+    const onNext = vi.fn();
+    render(
+      <SlotGrid
+        slots={[]}
+        timezone="UTC"
+        onSelect={() => undefined}
+        emptyMessage="No open slots on Tuesday 1 December."
+        emptyHint="Sam isn't working that day."
+        emptyAction={
+          <button type="button" onClick={onNext}>
+            Try Wed 2 Dec
+          </button>
+        }
+      />,
+    );
+    expect(screen.getByText('No open slots on Tuesday 1 December.')).toBeInTheDocument();
+    expect(screen.getByText("Sam isn't working that day.")).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Try Wed 2 Dec' }));
+    expect(onNext).toHaveBeenCalled();
+  });
+
+  it('groups slots into Morning, Afternoon and Evening in the business timezone', () => {
+    const mixed: Slot[] = [
+      slot('2026-12-01T08:00:00Z', '2026-12-01T08:30:00Z'),
+      slot('2026-12-01T13:00:00Z', '2026-12-01T13:30:00Z'),
+      slot('2026-12-01T18:30:00Z', '2026-12-01T19:00:00Z'),
+    ];
+    render(<SlotGrid slots={mixed} timezone="UTC" onSelect={() => undefined} />);
+    const morning = screen.getByRole('region', { name: /Morning/ });
+    const afternoon = screen.getByRole('region', { name: /Afternoon/ });
+    const evening = screen.getByRole('region', { name: /Evening/ });
+    expect(within(morning).getByRole('button', { name: '08:00' })).toBeInTheDocument();
+    expect(within(afternoon).getByRole('button', { name: '13:00' })).toBeInTheDocument();
+    expect(within(evening).getByRole('button', { name: '18:30' })).toBeInTheDocument();
+  });
+
+  it('hides empty day parts and shifts by timezone', () => {
+    // 10:00 UTC is 21:00 in Sydney (UTC+11 in December) -> Evening only.
+    render(
+      <SlotGrid slots={[slot('2026-12-01T10:00:00Z', '2026-12-01T10:30:00Z')]} timezone="Australia/Sydney" onSelect={() => undefined} />,
+    );
+    expect(screen.queryByRole('region', { name: /Morning/ })).not.toBeInTheDocument();
+    expect(screen.getByRole('region', { name: /Evening/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '21:00' })).toBeInTheDocument();
+  });
+});
+
+describe('groupSlotsByDayPart', () => {
+  it('splits at 12:00 and 17:00', () => {
+    const groups = groupSlotsByDayPart(
+      [
+        slot('2026-12-01T11:59:00Z', '2026-12-01T12:30:00Z'),
+        slot('2026-12-01T12:00:00Z', '2026-12-01T12:30:00Z'),
+        slot('2026-12-01T16:59:00Z', '2026-12-01T17:30:00Z'),
+        slot('2026-12-01T17:00:00Z', '2026-12-01T17:30:00Z'),
+      ],
+      'UTC',
+    );
+    expect(groups.morning).toHaveLength(1);
+    expect(groups.afternoon).toHaveLength(2);
+    expect(groups.evening).toHaveLength(1);
   });
 });
 

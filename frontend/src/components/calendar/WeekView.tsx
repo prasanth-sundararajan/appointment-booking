@@ -18,7 +18,7 @@ export function WeekView({ days, today, bookings, timezone, onSelect, onSelectDa
   const hours = hourRange(bookings, timezone);
 
   return (
-    <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white" data-testid="week-view">
+    <div className="overflow-x-auto rounded-card border border-gray-200 bg-white shadow-card" data-testid="week-view">
       <div className="min-w-[56rem]">
         <div className="grid grid-cols-[4rem_repeat(7,minmax(0,1fr))] border-b border-gray-100">
           <span />
@@ -28,8 +28,8 @@ export function WeekView({ days, today, bookings, timezone, onSelect, onSelectDa
               type="button"
               onClick={() => onSelectDay?.(day)}
               className={cn(
-                'px-2 py-3 text-center text-sm hover:bg-gray-50',
-                day === today ? 'font-semibold text-brand-700' : 'text-gray-600',
+                'px-2 py-3 text-center text-sm hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-500',
+                day === today ? 'font-semibold text-brand-700' : 'text-gray-700',
               )}
             >
               <span className="block text-xs uppercase">{formatDateKey(day, 'EEE')}</span>
@@ -42,7 +42,7 @@ export function WeekView({ days, today, bookings, timezone, onSelect, onSelectDa
             key={hour}
             className="grid grid-cols-[4rem_repeat(7,minmax(0,1fr))] border-b border-gray-50 last:border-0"
           >
-            <span className="px-2 py-2 text-xs font-medium text-gray-400">{hour.toString().padStart(2, '0')}:00</span>
+            <span className="px-2 py-2 text-xs font-medium tabular-nums text-gray-500">{hour.toString().padStart(2, '0')}:00</span>
             {days.map((day) => {
               const cell = bookings.filter(
                 (b) => bookingDateKey(b, timezone) === day && bookingHour(b, timezone) === hour,

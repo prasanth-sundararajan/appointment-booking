@@ -1,11 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { Badge, formatStatus } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Card, CardHeader } from '@/components/ui/Card';
 import { PageWrapper } from '@/components/ui/PageWrapper';
+import { PageSkeleton } from '@/components/ui/Skeleton';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
+import { canOwnBusiness, isBusinessUser } from '@/lib/roles';
 
 interface SettingsLink {
   to: string;
@@ -15,20 +16,22 @@ interface SettingsLink {
 
 function LinkCard({ item }: { item: SettingsLink }) {
   return (
-    <motion.div whileHover={{ y: -3 }} whileTap={{ scale: 0.98 }}>
-      <Link
-        to={item.to}
-        className="flex h-full items-center justify-between gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm hover:shadow-md"
-      >
-        <span>
-          <span className="block font-semibold text-gray-900">{item.title}</span>
-          <span className="mt-0.5 block text-sm text-gray-500">{item.body}</span>
-        </span>
-        <span className="text-brand-500" aria-hidden="true">
-          &rarr;
-        </span>
-      </Link>
-    </motion.div>
+    <Link
+      to={item.to}
+      className="group flex h-full items-center justify-between gap-4 rounded-card border border-gray-200 bg-white p-5 shadow-card transition-all hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-card-hover"
+    >
+      <span className="min-w-0">
+        <span className="block font-semibold text-gray-900 group-hover:text-brand-700">{item.title}</span>
+        <span className="mt-0.5 block text-sm text-gray-600">{item.body}</span>
+      </span>
+      <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5 shrink-0 text-gray-400 group-hover:text-brand-600" aria-hidden="true">
+        <path
+          fillRule="evenodd"
+          clipRule="evenodd"
+          d="M7.2 4.2a.75.75 0 011.06 0l5.27 5.27a.75.75 0 010 1.06L8.26 15.8a.75.75 0 11-1.06-1.06L11.94 10 7.2 5.26a.75.75 0 010-1.06z"
+        />
+      </svg>
+    </Link>
   );
 }
 
@@ -36,15 +39,19 @@ export default function SettingsPage() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const toast = useToast();
-  if (!user) return null;
-
-  const isBusinessUser = user.role !== 'customer' || user.owned_businesses.length > 0 || user.staff_memberships.length > 0;
+  if (!user) {
+    return (
+      <PageWrapper>
+        <PageSkeleton label="Loading settings" />
+      </PageWrapper>
+    );
+  }
 
   const links: SettingsLink[] = [
     { to: '/profile', title: 'Profile', body: 'Your name and account details.' },
     { to: '/bookings', title: 'My bookings', body: 'Upcoming and past appointments.' },
   ];
-  if (isBusinessUser) {
+  if (isBusinessUser(user)) {
     links.push({
       to: '/settings/calendar',
       title: 'Google Calendar',
@@ -52,12 +59,12 @@ export default function SettingsPage() {
     });
   }
   user.owned_businesses.forEach((b) =>
-    links.push({ to: `/dashboard/b/${b.id}/settings`, title: `${b.name} settings`, body: 'Deposit, cancellation cutoff, hours rules.' }),
+    links.push({ to: `/dashboard/b/${b.id}/settings`, title: `${b.name} settings`, body: 'Deposit, cancellation cutoff, booking window.' }),
   );
-  if (user.role === 'owner' || user.owned_businesses.length > 0) {
+  if (canOwnBusiness(user)) {
     links.push({ to: '/dashboard/businesses/new', title: 'Create a business', body: 'Add another booking page.' });
   } else {
-    links.push({ to: '/dashboard/businesses/new', title: 'Run a business?', body: 'Create a booking page for your business.' });
+    links.push({ to: '/profile', title: 'Run a business?', body: 'Switch on business tools from your profile.' });
   }
 
   const handleLogout = async () => {
@@ -68,7 +75,7 @@ export default function SettingsPage() {
 
   return (
     <PageWrapper title="Settings" subtitle="Manage your account and integrations.">
-      <Card hoverable={false}>
+      <Card>
         <CardHeader
           title="Account"
           action={
@@ -79,15 +86,15 @@ export default function SettingsPage() {
         />
         <dl className="grid gap-4 text-sm sm:grid-cols-3">
           <div>
-            <dt className="text-gray-500">Name</dt>
+            <dt className="text-gray-600">Name</dt>
             <dd className="mt-0.5 font-medium text-gray-900">{user.full_name || 'Not set'}</dd>
           </div>
           <div>
-            <dt className="text-gray-500">Email</dt>
+            <dt className="text-gray-600">Email</dt>
             <dd className="mt-0.5 break-all font-medium text-gray-900">{user.email}</dd>
           </div>
           <div>
-            <dt className="text-gray-500">Role</dt>
+            <dt className="text-gray-600">Role</dt>
             <dd className="mt-0.5">
               <Badge tone="brand">{formatStatus(user.role)}</Badge>
             </dd>
@@ -95,9 +102,10 @@ export default function SettingsPage() {
         </dl>
       </Card>
 
-      <div className="mt-6 grid gap-4 md:grid-cols-2">
+      <h2 className="mb-3 mt-8 text-sm font-semibold uppercase tracking-wide text-gray-600">Manage</h2>
+      <div className="grid gap-4 md:grid-cols-2">
         {links.map((item) => (
-          <LinkCard key={item.to} item={item} />
+          <LinkCard key={`${item.to}-${item.title}`} item={item} />
         ))}
       </div>
     </PageWrapper>

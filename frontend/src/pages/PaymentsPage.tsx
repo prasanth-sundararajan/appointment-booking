@@ -6,7 +6,9 @@ import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { AnimatedList } from '@/components/ui/AnimatedList';
 import { Badge, formatStatus, paymentStatusTone } from '@/components/ui/Badge';
-import { Spinner } from '@/components/ui/Spinner';
+import { CardGridSkeleton, Skeleton } from '@/components/ui/Skeleton';
+import { EmptyState, ErrorState } from '@/components/common/EmptyState';
+import { cn } from '@/lib/cn';
 import { useAuth } from '@/hooks/useAuth';
 import { addDaysToKey, formatInTz, startOfDayUtc, todayInTz } from '@/lib/datetime';
 import { formatMoney } from '@/lib/money';
@@ -18,15 +20,15 @@ import type { PaymentRow, PaymentsQuery, PaymentsTotals } from '@/types';
 function TotalsCard({ totals }: { totals: PaymentsTotals }) {
   const items = [
     { label: 'Deposits collected', value: totals.collected_minor, className: 'text-gray-900' },
-    { label: 'Refunded', value: totals.refunded_minor, className: 'text-red-600' },
+    { label: 'Refunded', value: totals.refunded_minor, className: 'text-red-700' },
     { label: 'Net', value: totals.net_minor, className: 'text-emerald-700' },
   ];
   return (
     <AnimatedList className="mb-6 grid gap-4 sm:grid-cols-3">
       {items.map((item) => (
         <Card key={item.label}>
-          <p className="text-sm text-gray-500">{item.label}</p>
-          <p className={`mt-1 text-2xl font-bold ${item.className}`}>{formatMoney(item.value, totals.currency)}</p>
+          <p className="text-sm font-medium text-gray-600">{item.label}</p>
+          <p className={cn('mt-1 text-2xl font-bold tabular-nums', item.className)}>{formatMoney(item.value, totals.currency)}</p>
         </Card>
       ))}
     </AnimatedList>
@@ -35,44 +37,52 @@ function TotalsCard({ totals }: { totals: PaymentsTotals }) {
 
 function PaymentsTable({ rows, timezone }: { rows: PaymentRow[]; timezone: string }) {
   if (rows.length === 0) {
-    return <p className="py-10 text-center text-sm text-gray-500">No payments in this period.</p>;
+    return (
+      <EmptyState
+        icon="card"
+        className="border-0"
+        title="No payments in this period"
+        description="Deposits appear here as soon as customers pay. Try a wider date range."
+      />
+    );
   }
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-100 text-sm">
-        <thead>
-          <tr className="text-left text-xs uppercase tracking-wide text-gray-500">
-            <th className="px-3 py-2 font-medium">Date</th>
-            <th className="px-3 py-2 font-medium">Booking</th>
-            <th className="px-3 py-2 font-medium">Customer</th>
-            <th className="px-3 py-2 text-right font-medium">Deposit</th>
-            <th className="px-3 py-2 text-right font-medium">Refunded</th>
-            <th className="px-3 py-2 font-medium">Status</th>
+      <table className="min-w-full divide-y divide-gray-200 text-sm">
+        <caption className="sr-only">Payments</caption>
+        <thead className="bg-gray-50">
+          <tr className="text-left text-xs uppercase tracking-wide text-gray-600">
+            <th scope="col" className="px-3 py-3 font-semibold">Date</th>
+            <th scope="col" className="px-3 py-3 font-semibold">Booking</th>
+            <th scope="col" className="px-3 py-3 font-semibold">Customer</th>
+            <th scope="col" className="px-3 py-3 text-right font-semibold">Deposit</th>
+            <th scope="col" className="px-3 py-3 text-right font-semibold">Refunded</th>
+            <th scope="col" className="px-3 py-3 font-semibold">Status</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-50">
           {rows.map((p) => (
             <tr key={p.id} className="hover:bg-gray-50">
-              <td className="whitespace-nowrap px-3 py-2 text-gray-700">
+              <td className="whitespace-nowrap px-3 py-3 text-gray-700">
                 {formatInTz(p.created_at, timezone, 'd MMM yyyy, HH:mm')}
               </td>
-              <td className="px-3 py-2 text-gray-700">
+              <td className="px-3 py-3 text-gray-700">
                 #{p.booking_id}
-                {p.service_name && <span className="text-gray-500"> · {p.service_name}</span>}
+                {p.service_name && <span className="text-gray-600"> · {p.service_name}</span>}
                 {p.booking_start_at && (
-                  <span className="block text-xs text-gray-400">
+                  <span className="block text-xs text-gray-600">
                     {formatInTz(p.booking_start_at, timezone, 'd MMM, HH:mm')}
                   </span>
                 )}
               </td>
-              <td className="px-3 py-2 text-gray-700">{p.customer_name ?? p.customer_email ?? '-'}</td>
-              <td className="whitespace-nowrap px-3 py-2 text-right font-medium text-gray-900">
+              <td className="px-3 py-3 text-gray-700">{p.customer_name ?? p.customer_email ?? '-'}</td>
+              <td className="whitespace-nowrap px-3 py-3 text-right font-medium text-gray-900">
                 {formatMoney(p.amount_minor, p.currency)}
               </td>
-              <td className="whitespace-nowrap px-3 py-2 text-right text-red-600">
+              <td className="whitespace-nowrap px-3 py-3 text-right text-red-700">
                 {p.refunded_amount_minor > 0 ? formatMoney(p.refunded_amount_minor, p.currency) : '-'}
               </td>
-              <td className="px-3 py-2">
+              <td className="px-3 py-3">
                 <Badge tone={paymentStatusTone[p.status]}>{formatStatus(p.status)}</Badge>
                 {p.refund_failed && (
                   <span className="mt-1 block">
@@ -122,22 +132,22 @@ export default function PaymentsPage() {
 
   if (!slug) {
     return (
-      <PageWrapper title="Payments">
-        <p className="text-gray-600">Only the business owner can view payments.</p>
+      <PageWrapper contained={false}>
+        <EmptyState icon="lock" title="Owners only" description="Only the business owner can view payments." />
       </PageWrapper>
     );
   }
 
   return (
-    <PageWrapper title="Payments" subtitle={businessQuery.data ? `${businessQuery.data.name} deposits and refunds` : undefined}>
-      <div className="mb-6 flex flex-wrap gap-4">
+    <PageWrapper title="Payments" subtitle="Deposits collected and refunds issued. Dates are in the business timezone." contained={false}>
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:gap-4">
         <Input
           type="date"
           label="From"
           value={fromDate}
           max={toDate || undefined}
           onChange={(e) => setFromDate(e.target.value)}
-          containerClassName="w-44"
+          containerClassName="sm:w-44"
         />
         <Input
           type="date"
@@ -145,22 +155,25 @@ export default function PaymentsPage() {
           value={toDate}
           min={fromDate || undefined}
           onChange={(e) => setToDate(e.target.value)}
-          containerClassName="w-44"
+          containerClassName="sm:w-44"
         />
       </div>
 
       {(businessQuery.isLoading || payments.isLoading) && (
-        <div className="flex justify-center py-10">
-          <Spinner size="lg" />
-        </div>
+        <>
+          <CardGridSkeleton count={3} label="Loading payments" className="mb-6 grid gap-4 sm:grid-cols-3" />
+          <Skeleton className="h-64 rounded-card" />
+        </>
       )}
-      {payments.isError && <p className="text-red-600">{toApiError(payments.error).message}</p>}
+      {payments.isError && (
+        <ErrorState message={toApiError(payments.error).message} onRetry={() => void payments.refetch()} />
+      )}
       {payments.data && (
         <>
           <TotalsCard
             totals={{ ...payments.data.totals, currency: payments.data.items[0]?.currency ?? currency }}
           />
-          <Card hoverable={false} padded={false} className="p-2">
+          <Card padded={false} className="overflow-hidden">
             <PaymentsTable rows={payments.data.items} timezone={timezone} />
           </Card>
         </>

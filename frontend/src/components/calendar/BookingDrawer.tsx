@@ -72,7 +72,7 @@ export function BookingDrawer({ booking, businessId, timezone, staff, onClose }:
       {booking && (
         <div className="fixed inset-0 z-40">
           <motion.div
-            className="absolute inset-0 bg-gray-900/30"
+            className="absolute inset-0 bg-gray-950/40"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -92,40 +92,40 @@ export function BookingDrawer({ booking, businessId, timezone, staff, onClose }:
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-lg font-semibold text-gray-900">{bookingServiceName(booking)}</h2>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-600">
                   {formatInTz(booking.start_at, timezone, 'EEEE d MMM, HH:mm')} -{' '}
                   {formatInTz(booking.end_at, timezone, 'HH:mm')}
                 </p>
               </div>
-              <Button variant="ghost" size="sm" onClick={onClose} aria-label="Close details">
+              <Button variant="ghost" size="sm" onClick={onClose} aria-label="Close details" autoFocus>
                 Close
               </Button>
             </div>
 
             <dl className="mt-6 space-y-3 text-sm">
               <div className="flex justify-between">
-                <dt className="text-gray-500">Status</dt>
+                <dt className="text-gray-600">Status</dt>
                 <dd>
                   <Badge tone={bookingStatusTone[booking.status]}>{formatStatus(booking.status)}</Badge>
                 </dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-gray-500">Customer</dt>
+                <dt className="text-gray-600">Customer</dt>
                 <dd className="font-medium text-gray-900">{bookingCustomerName(booking)}</dd>
               </div>
               {(booking.customer_email ?? booking.customer?.email) && (
                 <div className="flex justify-between">
-                  <dt className="text-gray-500">Email</dt>
+                  <dt className="text-gray-600">Email</dt>
                   <dd className="text-gray-900">{booking.customer_email ?? booking.customer?.email}</dd>
                 </div>
               )}
               <div className="flex justify-between">
-                <dt className="text-gray-500">Staff</dt>
+                <dt className="text-gray-600">Staff</dt>
                 <dd className="font-medium text-gray-900">{bookingStaffName(booking, staff)}</dd>
               </div>
               {booking.customer_note && (
                 <div>
-                  <dt className="text-gray-500">Note</dt>
+                  <dt className="text-gray-600">Note</dt>
                   <dd className="mt-1 rounded-lg bg-gray-50 p-3 text-gray-800">{booking.customer_note}</dd>
                 </div>
               )}

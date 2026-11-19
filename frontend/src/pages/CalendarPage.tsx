@@ -4,13 +4,15 @@ import { useQuery } from '@tanstack/react-query';
 import { PageWrapper } from '@/components/ui/PageWrapper';
 import { Button } from '@/components/ui/Button';
 import { Select } from '@/components/ui/Select';
-import { Spinner } from '@/components/ui/Spinner';
+import { Skeleton } from '@/components/ui/Skeleton';
+import { EmptyState, ErrorState } from '@/components/common/EmptyState';
 import { DayView } from '@/components/calendar/DayView';
 import { WeekView } from '@/components/calendar/WeekView';
 import { BookingDrawer } from '@/components/calendar/BookingDrawer';
 import { useAuth } from '@/hooks/useAuth';
 import { useBusinessSocket } from '@/hooks/useBusinessSocket';
 import { cn } from '@/lib/cn';
+import { formatTimezone } from '@/lib/format';
 import { addDaysToKey, formatDateKey, startOfDayUtc, todayInTz, weekdayOfKey } from '@/lib/datetime';
 import { toApiError } from '@/services/api';
 import { businessesService, businessKeys } from '@/services/businesses';
@@ -79,8 +81,8 @@ export default function CalendarPage() {
 
   if (!slug) {
     return (
-      <PageWrapper title="Calendar">
-        <p className="text-gray-600">You do not have access to this business.</p>
+      <PageWrapper contained={false}>
+        <EmptyState icon="lock" title="No access" description="You do not own or work at this business." />
       </PageWrapper>
     );
   }
@@ -93,26 +95,47 @@ export default function CalendarPage() {
   return (
     <PageWrapper
       title="Calendar"
-      subtitle={business ? `${business.name} · times in ${timezone}` : undefined}
+      subtitle={business ? `Times in ${formatTimezone(timezone)}. Click a booking for details.` : undefined}
+      contained={false}
       actions={
-        <span className="inline-flex items-center gap-2 text-xs text-emerald-700">
+        <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800">
           <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" aria-hidden="true" />
           Live
         </span>
       }
     >
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => setAnchor(addDaysToKey(current, -step))} aria-label="Previous">
-            Prev
-          </Button>
-          <Button variant="ghost" size="sm" onClick={() => setAnchor(null)}>
-            Today
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => setAnchor(addDaysToKey(current, step))} aria-label="Next">
-            Next
-          </Button>
-          <h2 className="ml-2 text-lg font-semibold text-gray-900">{title}</h2>
+      <div className="mb-6 flex flex-col gap-4 rounded-card border border-gray-200 bg-white p-3 shadow-card md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1">
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-9 px-0"
+              onClick={() => setAnchor(addDaysToKey(current, -step))}
+              aria-label={view === 'day' ? 'Previous day' : 'Previous week'}
+            >
+              <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4" aria-hidden="true">
+                <path fillRule="evenodd" clipRule="evenodd" d="M12.8 4.2a.75.75 0 010 1.06L8.06 10l4.74 4.74a.75.75 0 11-1.06 1.06l-5.27-5.27a.75.75 0 010-1.06l5.27-5.27a.75.75 0 011.06 0z" />
+              </svg>
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setAnchor(null)} disabled={anchor === null || anchor === today}>
+              Today
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-9 px-0"
+              onClick={() => setAnchor(addDaysToKey(current, step))}
+              aria-label={view === 'day' ? 'Next day' : 'Next week'}
+            >
+              <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4" aria-hidden="true">
+                <path fillRule="evenodd" clipRule="evenodd" d="M7.2 4.2a.75.75 0 011.06 0l5.27 5.27a.75.75 0 010 1.06L8.26 15.8a.75.75 0 11-1.06-1.06L11.94 10 7.2 5.26a.75.75 0 010-1.06z" />
+              </svg>
+            </Button>
+          </div>
+          <h2 className="ml-1 text-base font-semibold text-gray-900 sm:text-lg" aria-live="polite">
+            {title}
+          </h2>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <Select
@@ -120,19 +143,18 @@ export default function CalendarPage() {
             options={staffOptions}
             value={staffFilter}
             onChange={(e) => setStaffFilter(e.target.value)}
-            containerClassName="w-44"
+            containerClassName="w-full sm:w-44"
           />
-          <div className="inline-flex rounded-xl bg-gray-100 p-1" role="tablist" aria-label="Calendar view">
+          <div className="inline-flex rounded-xl bg-gray-100 p-1" role="group" aria-label="Calendar view">
             {(['day', 'week'] as const).map((v) => (
               <button
                 key={v}
                 type="button"
-                role="tab"
-                aria-selected={view === v}
+                aria-pressed={view === v}
                 onClick={() => setView(v)}
                 className={cn(
-                  'rounded-lg px-3 py-1.5 text-sm font-medium capitalize',
-                  view === v ? 'bg-white text-brand-700 shadow-sm' : 'text-gray-600',
+                  'rounded-lg px-3 py-1.5 text-sm font-medium capitalize transition-colors',
+                  view === v ? 'bg-white text-brand-800 shadow-sm' : 'text-gray-700 hover:text-gray-900',
                 )}
               >
                 {v}
@@ -143,12 +165,29 @@ export default function CalendarPage() {
       </div>
 
       {(businessQuery.isLoading || bookingsQuery.isLoading) && (
-        <div className="flex justify-center py-10">
-          <Spinner size="lg" />
+        <div role="status" aria-busy="true" className="rounded-card border border-gray-200 bg-white p-4">
+          <span className="sr-only">Loading calendar</span>
+          <div className="space-y-3">
+            {Array.from({ length: 6 }, (_, i) => (
+              <div key={i} className="flex gap-3">
+                <Skeleton className="h-10 w-12" />
+                <Skeleton className="h-10 flex-1" />
+              </div>
+            ))}
+          </div>
         </div>
       )}
-      {businessQuery.isError && <p className="text-red-600">{toApiError(businessQuery.error).message}</p>}
-      {bookingsQuery.isError && <p className="text-red-600">{toApiError(bookingsQuery.error).message}</p>}
+      {businessQuery.isError && (
+        <ErrorState message={toApiError(businessQuery.error).message} onRetry={() => void businessQuery.refetch()} />
+      )}
+      {bookingsQuery.isError && (
+        <ErrorState message={toApiError(bookingsQuery.error).message} onRetry={() => void bookingsQuery.refetch()} />
+      )}
+      {business && bookingsQuery.isSuccess && bookings.length === 0 && (
+        <p className="mb-4 rounded-xl border border-dashed border-gray-300 bg-white p-4 text-center text-sm text-gray-600">
+          No bookings {view === 'day' ? 'on this day' : 'this week'}. Share your booking link from the sidebar to get some.
+        </p>
+      )}
 
       {business && bookingsQuery.isSuccess &&
         (view === 'day' ? (

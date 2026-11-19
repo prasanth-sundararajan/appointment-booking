@@ -6,10 +6,10 @@ import { useToast } from '@/hooks/useToast';
 export { ToastProvider } from '@/context/ToastContext';
 
 const toneStyles: Record<ToastTone, { bar: string; icon: string }> = {
-  success: { bar: 'bg-emerald-500', icon: 'text-emerald-500' },
-  error: { bar: 'bg-red-500', icon: 'text-red-500' },
-  info: { bar: 'bg-brand-500', icon: 'text-brand-500' },
-  warning: { bar: 'bg-amber-500', icon: 'text-amber-500' },
+  success: { bar: 'bg-emerald-500', icon: 'text-emerald-600' },
+  error: { bar: 'bg-red-500', icon: 'text-red-600' },
+  info: { bar: 'bg-brand-500', icon: 'text-brand-600' },
+  warning: { bar: 'bg-amber-500', icon: 'text-amber-600' },
 };
 
 const iconPath: Record<ToastTone, string> = {
@@ -26,41 +26,45 @@ export function Toaster() {
   return (
     <div
       aria-live="polite"
-      className="pointer-events-none fixed inset-x-0 bottom-0 z-[60] flex flex-col items-center gap-3 p-4 sm:items-end"
+      aria-relevant="additions"
+      className="pointer-events-none fixed inset-x-0 bottom-0 z-[60] flex flex-col items-center gap-3 p-4 sm:items-end sm:p-6"
     >
       <AnimatePresence initial={false}>
         {toasts.map((t) => (
           <motion.div
             key={t.id}
             layout
-            role="status"
-            initial={{ opacity: 0, y: 24, scale: 0.95 }}
+            role={t.tone === 'error' ? 'alert' : 'status'}
+            initial={{ opacity: 0, y: 24, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, x: 40, scale: 0.95 }}
-            transition={{ type: 'spring', damping: 24, stiffness: 300 }}
-            className="pointer-events-auto relative flex w-full max-w-sm overflow-hidden rounded-xl border border-gray-100 bg-white shadow-lg"
+            exit={{ opacity: 0, x: 40, scale: 0.96 }}
+            transition={{ type: 'spring', damping: 26, stiffness: 320 }}
+            className="pointer-events-auto relative flex w-full max-w-sm overflow-hidden rounded-xl border border-gray-200 bg-white shadow-pop"
           >
-            <span className={cn('w-1 shrink-0', toneStyles[t.tone].bar)} />
+            <span className={cn('w-1 shrink-0', toneStyles[t.tone].bar)} aria-hidden="true" />
             <div className="flex flex-1 items-start gap-3 p-4">
-              <svg viewBox="0 0 20 20" fill="currentColor" className={cn('mt-0.5 h-5 w-5 shrink-0', toneStyles[t.tone].icon)} aria-hidden="true">
+              <svg
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                className={cn('mt-0.5 h-5 w-5 shrink-0', toneStyles[t.tone].icon)}
+                aria-hidden="true"
+              >
                 <path fillRule="evenodd" d={iconPath[t.tone]} clipRule="evenodd" />
               </svg>
-              <div className="flex-1">
+              <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold text-gray-900">{t.title}</p>
-                {t.description && <p className="mt-0.5 text-sm text-gray-500">{t.description}</p>}
+                {t.description && <p className="mt-0.5 text-sm text-gray-600">{t.description}</p>}
               </div>
-              <motion.button
+              <button
                 type="button"
-                aria-label="Dismiss"
+                aria-label="Dismiss notification"
                 onClick={() => dismiss(t.id)}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="rounded p-0.5 text-gray-400 hover:text-gray-600"
+                className="-m-1 rounded-md p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
               >
                 <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4" aria-hidden="true">
                   <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
                 </svg>
-              </motion.button>
+              </button>
             </div>
           </motion.div>
         ))}

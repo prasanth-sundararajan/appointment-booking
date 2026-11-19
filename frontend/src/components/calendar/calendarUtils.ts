@@ -42,5 +42,5 @@ export const statusChipClass: Record<BookingStatus, string> = {
   completed: 'border-sky-300 bg-sky-50 text-sky-900',
   no_show: 'border-gray-300 bg-gray-100 text-gray-700',
   cancelled: 'border-red-200 bg-red-50 text-red-700 line-through',
-  expired: 'border-gray-200 bg-gray-50 text-gray-400',
+  expired: 'border-gray-200 bg-gray-50 text-gray-600',
 };

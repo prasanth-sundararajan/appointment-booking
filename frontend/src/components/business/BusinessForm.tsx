@@ -1,7 +1,7 @@
 import { useMemo, useState, type FormEvent, type ReactNode } from 'react';
 import { Card, CardHeader } from '@/components/ui/Card';
 import { GradientButton } from '@/components/ui/GradientButton';
-import { Input } from '@/components/ui/Input';
+import { Input, Textarea } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import {
   MAX_DEPOSIT_PERCENT,
@@ -26,32 +26,14 @@ export interface BusinessFormProps {
 
 function Section({ title, subtitle, children }: { title: string; subtitle?: string; children: ReactNode }) {
   return (
-    <Card hoverable={false}>
-      <CardHeader title={title} subtitle={subtitle} />
-      <div className="grid gap-4 sm:grid-cols-2">{children}</div>
+    <Card>
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div>
+          <CardHeader title={title} subtitle={subtitle} />
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:col-span-2">{children}</div>
+      </div>
     </Card>
-  );
-}
-
-function TextArea({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-}) {
-  return (
-    <label className="block sm:col-span-2">
-      <span className="mb-1 block text-sm font-medium text-gray-700">{label}</span>
-      <textarea
-        rows={3}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-xl border-2 border-gray-200 bg-white px-4 py-2.5 text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-brand-500"
-      />
-    </label>
   );
 }
 
@@ -96,7 +78,7 @@ export function BusinessForm({ initialValues, onSubmit, submitLabel, serverError
   return (
     <form noValidate onSubmit={handleSubmit} className="space-y-6">
       <Section title="Business details" subtitle="Shown on your public booking page.">
-        <Input label="Business name" value={values.name} onChange={(e) => set('name', e.target.value)} error={errorFor('name')} />
+        <Input label="Business name" required value={values.name} onChange={(e) => set('name', e.target.value)} error={errorFor('name')} />
         <Select
           label="Category"
           options={CATEGORY_OPTIONS}
@@ -104,7 +86,7 @@ export function BusinessForm({ initialValues, onSubmit, submitLabel, serverError
           onChange={(e) => set('category', asCategory(e.target.value))}
           error={errorFor('category')}
         />
-        <Input label="City" value={values.city} onChange={(e) => set('city', e.target.value)} error={errorFor('city')} />
+        <Input label="City" required value={values.city} onChange={(e) => set('city', e.target.value)} error={errorFor('city')} />
         <Input label="Address" value={values.address} onChange={(e) => set('address', e.target.value)} error={errorFor('address')} />
         <Input label="Phone" type="tel" value={values.phone} onChange={(e) => set('phone', e.target.value)} error={errorFor('phone')} />
         <Input
@@ -114,7 +96,13 @@ export function BusinessForm({ initialValues, onSubmit, submitLabel, serverError
           onChange={(e) => set('email', e.target.value)}
           error={errorFor('email')}
         />
-        <TextArea label="Description" value={values.description} onChange={(v) => set('description', v)} />
+        <Textarea
+          label="Description"
+          containerClassName="sm:col-span-2"
+          placeholder="Tell customers what you do and what to expect."
+          value={values.description}
+          onChange={(e) => set('description', e.target.value)}
+        />
       </Section>
 
       <Section title="Region" subtitle="Slots are calculated in this timezone. Deposits are charged in this currency.">
@@ -156,7 +144,7 @@ export function BusinessForm({ initialValues, onSubmit, submitLabel, serverError
           error={errorFor('cancellation_cutoff_hours')}
           hint="Default 8 hours."
         />
-        <div className="rounded-xl bg-brand-50 p-4 text-sm text-brand-900 sm:col-span-2" data-testid="refund-rule">
+        <div className="rounded-xl border border-brand-200 bg-brand-50 p-4 text-sm text-brand-950 sm:col-span-2" data-testid="refund-rule">
           <p className="font-semibold">How refunds work</p>
           <ul className="mt-2 list-disc space-y-1 pl-5">
             <li>
@@ -210,7 +198,12 @@ export function BusinessForm({ initialValues, onSubmit, submitLabel, serverError
         />
       </Section>
 
-      <div className="flex justify-end">
+      <div className="sticky bottom-0 z-10 -mx-4 flex items-center justify-end gap-3 border-t border-gray-200 bg-white/95 px-4 py-3 backdrop-blur sm:mx-0 sm:rounded-card sm:border sm:shadow-card">
+        {Object.values(errors).some(Boolean) && (
+          <p className="mr-auto text-sm text-red-700" role="alert">
+            Please fix the highlighted fields.
+          </p>
+        )}
         <GradientButton type="submit" isLoading={submitting}>
           {submitLabel}
         </GradientButton>

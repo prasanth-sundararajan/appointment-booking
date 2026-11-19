@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { MeshBackground } from '@/components/layout/MeshBackground';
-import { GlassCard } from '@/components/ui/GlassCard';
-import { PageWrapper } from '@/components/ui/PageWrapper';
+import { AuthShell } from '@/components/layout/AuthShell';
 import { LoginForm } from '@/components/forms/LoginForm';
 import { GoogleButton, OrDivider } from '@/components/forms/GoogleButton';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
+import { homePathFor } from '@/lib/roles';
 import { toApiError } from '@/services/api';
 import type { LoginRequest, Me } from '@/types';
 
@@ -16,8 +15,7 @@ interface FromState {
 
 function landingPathFor(user: Me, from?: string): string {
   if (from && from.startsWith('/') && !from.startsWith('/login')) return from;
-  const isBusinessUser = user.role !== 'customer' || user.owned_businesses.length > 0 || user.staff_memberships.length > 0;
-  return isBusinessUser ? '/dashboard' : '/explore';
+  return homePathFor(user);
 }
 
 export default function LoginPage() {
@@ -49,31 +47,30 @@ export default function LoginPage() {
       navigate(landingPathFor(me, from), { replace: true });
     } catch (error) {
       const apiError = toApiError(error);
-      setServerErrors({ email: apiError.fieldErrors.username ?? apiError.fieldErrors.email, password: apiError.fieldErrors.password });
+      setServerErrors({
+        email: apiError.fieldErrors.username ?? apiError.fieldErrors.email,
+        password: apiError.fieldErrors.password ?? (apiError.status === 401 ? 'Incorrect email or password' : undefined),
+      });
       toast.error('Could not log in', apiError.status === 401 ? 'Incorrect email or password.' : apiError.message);
     }
   };
 
   return (
-    <>
-      <MeshBackground />
-      <PageWrapper className="flex justify-center">
-        <GlassCard hoverable={false} className="w-full max-w-md">
-          <h1 className="text-2xl font-bold text-gray-900">Log in</h1>
-          <p className="mt-1 text-sm text-gray-500">Welcome back to SlotEase.</p>
-          <div className="mt-6">
-            <GoogleButton />
-            <OrDivider />
-            <LoginForm onSubmit={handleSubmit} serverErrors={serverErrors} />
-          </div>
-          <p className="mt-6 text-center text-sm text-gray-600">
-            New here?{' '}
-            <Link to="/register" state={location.state} className="font-medium text-brand-600 hover:underline">
-              Create an account
-            </Link>
-          </p>
-        </GlassCard>
-      </PageWrapper>
-    </>
+    <AuthShell
+      title="Log in"
+      subtitle={from ? 'Log in to continue where you left off.' : 'Welcome back to SlotEase.'}
+      footer={
+        <>
+          New here?{' '}
+          <Link to="/register" state={location.state} className="link">
+            Create an account
+          </Link>
+        </>
+      }
+    >
+      <GoogleButton />
+      <OrDivider />
+      <LoginForm onSubmit={handleSubmit} serverErrors={serverErrors} />
+    </AuthShell>
   );
 }

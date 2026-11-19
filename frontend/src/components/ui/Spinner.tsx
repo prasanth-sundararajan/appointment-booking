@@ -16,21 +16,16 @@ export interface SpinnerProps {
 
 export function Spinner({ size = 'md', className, label = 'Loading' }: SpinnerProps) {
   return (
-    <span role="status" aria-label={label} className={cn('inline-flex', className)}>
-      <span
-        className={cn(
-          'animate-spin rounded-full border-current border-t-transparent text-brand-500',
-          sizes[size],
-        )}
-      />
+    <span role="status" aria-label={label} className={cn('inline-flex text-brand-600', className)}>
+      <span className={cn('animate-spin rounded-full border-current border-t-transparent', sizes[size])} />
     </span>
   );
 }
 
-export function FullPageSpinner() {
+export function FullPageSpinner({ label = 'Loading' }: { label?: string }) {
   return (
     <div className="flex min-h-[50vh] items-center justify-center">
-      <Spinner size="lg" />
+      <Spinner size="lg" label={label} />
     </div>
   );
 }

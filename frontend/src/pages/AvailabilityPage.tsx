@@ -3,17 +3,20 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { fromZonedTime } from 'date-fns-tz';
-import { EmptyState, ErrorState, LoadingBlock } from '@/components/common/EmptyState';
-import { Button } from '@/components/ui/Button';
+import { EmptyState, ErrorState } from '@/components/common/EmptyState';
+import { Button, ButtonLink } from '@/components/ui/Button';
+import { Checkbox } from '@/components/ui/Checkbox';
 import { Card, CardHeader } from '@/components/ui/Card';
 import { GradientButton } from '@/components/ui/GradientButton';
 import { Input } from '@/components/ui/Input';
-import { Modal } from '@/components/ui/Modal';
+import { Modal, ModalActions } from '@/components/ui/Modal';
 import { PageWrapper } from '@/components/ui/PageWrapper';
 import { Select } from '@/components/ui/Select';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { useDashboardBusiness } from '@/hooks/useMyBusinesses';
 import { useToast } from '@/hooks/useToast';
 import { formatInTz } from '@/lib/datetime';
+import { formatTimezone } from '@/lib/format';
 import { WEEKDAY_LABELS } from '@/lib/options';
 import { toApiError } from '@/services/api';
 import { availabilityKeys, availabilityService } from '@/services/availability';
@@ -67,6 +70,23 @@ function validateWeek(week: Week): (string | undefined)[] {
   });
 }
 
+function CardSkeleton({ rows, label }: { rows: number; label: string }) {
+  return (
+    <Card>
+      <div role="status" aria-busy="true" className="space-y-4">
+        <span className="sr-only">{label}</span>
+        <Skeleton className="h-5 w-40" />
+        {Array.from({ length: rows }, (_, i) => (
+          <div key={i} className="flex items-center gap-4">
+            <Skeleton className="h-5 w-28" />
+            <Skeleton className="h-9 flex-1" />
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+}
+
 function WeeklyHoursEditor({ staffId }: { staffId: number }) {
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -101,14 +121,16 @@ function WeeklyHoursEditor({ staffId }: { staffId: number }) {
     setDirty(true);
   };
 
-  if (query.isLoading) return <LoadingBlock />;
+  if (query.isLoading) return <CardSkeleton rows={7} label="Loading weekly hours" />;
   if (query.isError) return <ErrorState message={query.error.message} onRetry={() => void query.refetch()} />;
 
+  const openDays = week.filter((d) => d.length > 0).length;
+
   return (
-    <Card hoverable={false}>
+    <Card>
       <CardHeader
         title="Weekly hours"
-        subtitle="Times are in the business timezone. Add several ranges for breaks."
+        subtitle={`Times are in the business timezone. Add a second range to block out a break. ${openDays} of 7 days open.`}
         action={
           <Button
             variant="ghost"
@@ -126,23 +148,19 @@ function WeeklyHoursEditor({ staffId }: { staffId: number }) {
           const open = intervals.length > 0;
           return (
             <div key={day} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-start">
-              <label className="flex w-40 shrink-0 items-center gap-3 pt-2">
-                <input
-                  type="checkbox"
-                  checked={open}
-                  aria-label={`${WEEKDAY_LABELS[day]} open`}
-                  onChange={(e) =>
-                    change((draft) => {
-                      draft[day] = e.target.checked ? [{ ...DEFAULT_INTERVAL }] : [];
-                      return draft;
-                    })
-                  }
-                  className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
-                />
-                <span className="text-sm font-medium text-gray-900">{WEEKDAY_LABELS[day]}</span>
-              </label>
+              <Checkbox
+                containerClassName="w-40 shrink-0 pt-2"
+                checked={open}
+                label={WEEKDAY_LABELS[day]}
+                onChange={(e) =>
+                  change((draft) => {
+                    draft[day] = e.target.checked ? [{ ...DEFAULT_INTERVAL }] : [];
+                    return draft;
+                  })
+                }
+              />
               <div className="flex-1 space-y-2">
-                {!open && <p className="pt-2 text-sm text-gray-400">Closed</p>}
+                {!open && <p className="pt-2 text-sm text-gray-600">Closed</p>}
                 <AnimatePresence initial={false}>
                   {intervals.map((interval, idx) => (
                     <motion.div
@@ -163,9 +181,9 @@ function WeeklyHoursEditor({ staffId }: { staffId: number }) {
                             return draft;
                           })
                         }
-                        className="rounded-lg border-2 border-gray-200 px-3 py-1.5 text-sm outline-none focus:border-brand-500"
+                        className="control w-32 tabular-nums"
                       />
-                      <span className="text-gray-400">to</span>
+                      <span className="text-sm text-gray-600">to</span>
                       <input
                         type="time"
                         step={900}
@@ -177,12 +195,12 @@ function WeeklyHoursEditor({ staffId }: { staffId: number }) {
                             return draft;
                           })
                         }
-                        className="rounded-lg border-2 border-gray-200 px-3 py-1.5 text-sm outline-none focus:border-brand-500"
+                        className="control w-32 tabular-nums"
                       />
                       <Button
                         variant="ghost"
                         size="sm"
-                        aria-label="Remove range"
+                        aria-label={`Remove ${WEEKDAY_LABELS[day]} range ${idx + 1}`}
                         onClick={() =>
                           change((draft) => {
                             draft[day].splice(idx, 1);
@@ -211,14 +229,22 @@ function WeeklyHoursEditor({ staffId }: { staffId: number }) {
                     + Add range
                   </Button>
                 )}
-                {errors[day] && <p className="text-sm text-red-600">{errors[day]}</p>}
+                {errors[day] && (
+                  <p className="text-sm text-red-700" role="alert">
+                    {errors[day]}
+                  </p>
+                )}
               </div>
             </div>
           );
         })}
       </div>
-      <div className="mt-4 flex items-center justify-end gap-3">
-        {dirty && <span className="text-sm text-gray-500">Unsaved changes</span>}
+      <div className="sticky bottom-0 -mx-5 -mb-5 mt-4 flex items-center justify-end gap-3 rounded-b-card border-t border-gray-100 bg-white/95 px-5 py-4 backdrop-blur sm:-mx-6 sm:-mb-6 sm:px-6">
+        {dirty && (
+          <span className="text-sm font-medium text-amber-800" role="status">
+            Unsaved changes
+          </span>
+        )}
         <GradientButton
           disabled={!dirty || hasErrors}
           isLoading={save.isPending}
@@ -270,21 +296,26 @@ function TimeOffFormModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Add time off" description={`Times are in ${timezone.replace(/_/g, ' ')}.`}>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Add time off"
+      description={`No slots are offered in this period. Times are in ${formatTimezone(timezone)}.`}
+    >
       <form noValidate onSubmit={handleSubmit} className="space-y-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <Input label="From" type="datetime-local" value={start} onChange={(e) => setStart(e.target.value)} />
           <Input label="Until" type="datetime-local" value={end} onChange={(e) => setEnd(e.target.value)} error={error} />
         </div>
         <Input label="Reason (optional)" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Holiday, training..." />
-        <div className="flex justify-end gap-3 pt-2">
+        <ModalActions>
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
           <GradientButton type="submit" isLoading={isSaving}>
             Add time off
           </GradientButton>
-        </div>
+        </ModalActions>
       </form>
     </Modal>
   );
@@ -324,22 +355,28 @@ function TimeOffList({ staffId, timezone }: { staffId: number; timezone: string 
     .sort((a, b) => a.start_at.localeCompare(b.start_at));
 
   return (
-    <Card hoverable={false}>
+    <Card>
       <CardHeader
         title="Time off"
         subtitle="No slots are offered during time off."
         action={
           <Button variant="secondary" size="sm" onClick={() => setOpen(true)}>
-            Add
+            Add time off
           </Button>
         }
       />
       {query.isLoading ? (
-        <LoadingBlock />
+        <div role="status" aria-busy="true" className="space-y-2">
+          <span className="sr-only">Loading time off</span>
+          <Skeleton className="h-14 rounded-xl" />
+          <Skeleton className="h-14 rounded-xl" />
+        </div>
       ) : query.isError ? (
         <ErrorState message={query.error.message} onRetry={() => void query.refetch()} />
       ) : items.length === 0 ? (
-        <p className="text-sm text-gray-500">No upcoming time off.</p>
+        <p className="rounded-xl border border-dashed border-gray-300 p-4 text-center text-sm text-gray-600">
+          No upcoming time off. Add holidays or appointments to block those times.
+        </p>
       ) : (
         <ul className="space-y-2">
           <AnimatePresence initial={false}>
@@ -356,12 +393,11 @@ function TimeOffList({ staffId, timezone }: { staffId: number; timezone: string 
                   <p className="font-medium text-gray-900">
                     {formatInTz(t.start_at, timezone, 'EEE d MMM, HH:mm')} &ndash; {formatInTz(t.end_at, timezone, 'EEE d MMM, HH:mm')}
                   </p>
-                  {t.reason && <p className="truncate text-gray-500">{t.reason}</p>}
+                  {t.reason && <p className="truncate text-gray-600">{t.reason}</p>}
                 </div>
                 <Button
-                  variant="ghost"
+                  variant="danger-ghost"
                   size="sm"
-                  className="text-red-600 hover:bg-red-50"
                   isLoading={remove.isPending && remove.variables === t.id}
                   onClick={() => remove.mutate(t.id)}
                 >
@@ -413,8 +449,8 @@ export default function AvailabilityPage() {
       actions={
         isOwner && staff.length > 1 ? (
           <Select
-            aria-label="Staff member"
-            containerClassName="w-56"
+            label="Staff member"
+            containerClassName="w-full sm:w-56"
             options={staff.map((s) => ({ value: String(s.id), label: s.display_name }))}
             value={selectedId ? String(selectedId) : ''}
             onChange={(e) => setParams({ staff: e.target.value }, { replace: true })}
@@ -423,13 +459,25 @@ export default function AvailabilityPage() {
       }
     >
       {staffQuery.isLoading ? (
-        <LoadingBlock />
+        <CardSkeleton rows={7} label="Loading staff" />
       ) : staffQuery.isError ? (
         <ErrorState message={staffQuery.error.message} onRetry={() => void staffQuery.refetch()} />
       ) : !selectedId ? (
         <EmptyState
+          icon="users"
           title="No staff yet"
-          description={isOwner ? 'Invite a staff member (you can invite yourself) to set working hours.' : 'Your staff profile was not found.'}
+          description={
+            isOwner
+              ? 'Hours belong to staff members. Invite someone (you can invite yourself), then set their weekly hours here.'
+              : 'Your staff profile was not found.'
+          }
+          action={
+            isOwner ? (
+              <ButtonLink to={`/dashboard/b/${businessId}/staff`} variant="gradient">
+                Invite staff
+              </ButtonLink>
+            ) : undefined
+          }
         />
       ) : (
         <div className="grid gap-6 xl:grid-cols-3">

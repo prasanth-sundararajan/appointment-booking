@@ -1,17 +1,19 @@
 import { useState, type ReactNode } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { EmptyState } from '@/components/common/EmptyState';
 import { useQuery } from '@tanstack/react-query';
 import { PageWrapper } from '@/components/ui/PageWrapper';
 import { Card, CardHeader } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
+import { Button, ButtonLink } from '@/components/ui/Button';
 import { Badge, bookingStatusTone, formatStatus, paymentStatusTone } from '@/components/ui/Badge';
-import { FullPageSpinner } from '@/components/ui/Spinner';
+import { PageSkeleton } from '@/components/ui/Skeleton';
 import { CancelDialog } from '@/components/booking/CancelDialog';
 import { RescheduleDialog } from '@/components/booking/RescheduleDialog';
 import { HoldCountdown } from '@/components/booking/HoldCountdown';
 import { formatInTz, hoursUntil } from '@/lib/datetime';
 import { formatMoney } from '@/lib/money';
 import { refundRuleText } from '@/lib/deposit';
+import { formatDuration, formatTimezone } from '@/lib/format';
 import { toApiError } from '@/services/api';
 import { bookingKeys, getBooking } from '@/services/bookings';
 import type { BookingDetail } from '@/types';
@@ -19,8 +21,8 @@ import type { BookingDetail } from '@/types';
 function Row({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="flex flex-wrap justify-between gap-2 border-b border-gray-100 py-3 text-sm last:border-0">
-      <dt className="text-gray-500">{label}</dt>
-      <dd className="font-medium text-gray-900">{children}</dd>
+      <dt className="text-gray-600">{label}</dt>
+      <dd className="text-right font-medium text-gray-900">{children}</dd>
     </div>
   );
 }
@@ -30,16 +32,17 @@ function BookingSummary({ booking }: { booking: BookingDetail }) {
   return (
     <dl>
       <Row label="Service">
-        {booking.service.name} ({booking.service.duration_minutes} min)
+        {booking.service.name} ({formatDuration(booking.service.duration_minutes)})
       </Row>
       <Row label="Business">
-        <Link to={`/b/${booking.business.slug}`} className="text-brand-700 hover:underline">
+        <Link to={`/b/${booking.business.slug}`} className="link">
           {booking.business.name}
         </Link>
       </Row>
       <Row label="With">{booking.staff.display_name}</Row>
       <Row label="When">
-        {formatInTz(booking.start_at, tz, 'EEEE d MMMM yyyy, HH:mm')} - {formatInTz(booking.end_at, tz, 'HH:mm')} ({tz})
+        {formatInTz(booking.start_at, tz, 'EEEE d MMMM yyyy, HH:mm')} - {formatInTz(booking.end_at, tz, 'HH:mm')}
+        <span className="block text-xs font-normal text-gray-600">{formatTimezone(tz)} time</span>
       </Row>
       <Row label="Price">{formatMoney(booking.service.price_minor, booking.business.currency)}</Row>
       {booking.payment && (
@@ -70,14 +73,23 @@ export default function BookingDetailPage() {
     enabled: Number.isFinite(bookingId),
   });
 
-  if (query.isLoading) return <FullPageSpinner />;
+  if (query.isLoading) {
+    return (
+      <PageWrapper>
+        <PageSkeleton label="Loading booking" />
+      </PageWrapper>
+    );
+  }
   if (query.isError || !query.data) {
     return (
-      <PageWrapper title="Booking not found">
-        <p className="text-gray-600">{query.error ? toApiError(query.error).message : 'Unknown booking.'}</p>
-        <Link to="/bookings" className="mt-4 inline-block text-brand-700 underline">
-          Back to my bookings
-        </Link>
+      <PageWrapper>
+        <EmptyState
+          as="h1"
+          icon="search"
+          title="Booking not found"
+          description={query.error ? toApiError(query.error).message : 'This booking does not exist or is not yours.'}
+          action={<ButtonLink to="/bookings">Back to my bookings</ButtonLink>}
+        />
       </PageWrapper>
     );
   }
@@ -91,36 +103,43 @@ export default function BookingDetailPage() {
   return (
     <PageWrapper
       title={booking.service.name}
-      subtitle={booking.business.name}
-      actions={<Badge tone={bookingStatusTone[booking.status]}>{formatStatus(booking.status)}</Badge>}
+      subtitle={`${booking.business.name} · ${formatInTz(booking.start_at, booking.business.timezone, 'EEE d MMM, HH:mm')}`}
+      backTo={{ to: '/bookings', label: 'My bookings' }}
+      actions={
+        <Badge tone={bookingStatusTone[booking.status]} dot className="px-3 py-1 text-sm">
+          {formatStatus(booking.status)}
+        </Badge>
+      }
     >
-      <div className="grid gap-6 lg:grid-cols-3">
-        <Card hoverable={false} className="lg:col-span-2">
+      <div className="grid gap-6 lg:grid-cols-3 lg:items-start">
+        <Card className="lg:col-span-2">
           <CardHeader title="Booking summary" />
           <BookingSummary booking={booking} />
         </Card>
 
-        <Card hoverable={false} className="space-y-4">
-          <CardHeader title="Manage" subtitle={refundRuleText(cutoff)} />
+        <Card className="space-y-4 lg:sticky lg:top-24">
+          <CardHeader title="Manage booking" />
           {booking.status === 'pending_payment' && booking.hold_expires_at && (
             <HoldCountdown expiresAt={booking.hold_expires_at} />
           )}
+          <p className="rounded-lg bg-gray-50 p-3 text-sm text-gray-700">{refundRuleText(cutoff)}</p>
           {canReschedule && (
             <Button fullWidth variant="outline" onClick={() => setRescheduleOpen(true)}>
               Reschedule
             </Button>
           )}
           {booking.status === 'confirmed' && isFuture && !canReschedule && (
-            <p className="text-sm text-gray-500">Rescheduling closes {cutoff}h before the start time.</p>
+            <p className="text-sm text-gray-600">Rescheduling closes {cutoff}h before the start time.</p>
           )}
           {canCancel && (
-            <Button fullWidth variant="danger" onClick={() => setCancelOpen(true)}>
+            <Button fullWidth variant="danger-ghost" className="border border-red-200" onClick={() => setCancelOpen(true)}>
               Cancel booking
             </Button>
           )}
-          {!canCancel && !canReschedule && (
-            <p className="text-sm text-gray-500">This booking can no longer be changed.</p>
-          )}
+          {!canCancel && !canReschedule && <p className="text-sm text-gray-600">This booking can no longer be changed.</p>}
+          <ButtonLink to={`/b/${booking.business.slug}`} variant="ghost" fullWidth>
+            Visit {booking.business.name}
+          </ButtonLink>
         </Card>
       </div>
 

@@ -1,74 +1,40 @@
 import { useState, type FormEvent } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
-import { cn } from '@/lib/cn';
-import { EmptyState, ErrorState, LoadingBlock } from '@/components/common/EmptyState';
+import { EmptyState, ErrorState } from '@/components/common/EmptyState';
+import { ServiceChecklist } from '@/components/staff/ServiceChecklist';
 import { AnimatedList } from '@/components/ui/AnimatedList';
 import { Badge } from '@/components/ui/Badge';
-import { Button } from '@/components/ui/Button';
+import { Button, ButtonLink } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { GradientButton } from '@/components/ui/GradientButton';
 import { Input } from '@/components/ui/Input';
-import { Modal } from '@/components/ui/Modal';
+import { Modal, ModalActions } from '@/components/ui/Modal';
 import { PageWrapper } from '@/components/ui/PageWrapper';
+import { ListSkeleton } from '@/components/ui/Skeleton';
+import { useDashboardBusiness } from '@/hooks/useMyBusinesses';
 import { useToast } from '@/hooks/useToast';
 import { isEmail } from '@/lib/authValidation';
+import { initialsOf } from '@/lib/roles';
 import { toApiError } from '@/services/api';
 import { catalogKeys, catalogService } from '@/services/catalog';
 import { staffKeys, staffService } from '@/services/staff';
 import type { ApiError, Service, StaffInvite, StaffMember, StaffUpdate } from '@/types';
 
-function ServiceChecklist({
-  services,
-  selected,
-  onChange,
-}: {
-  services: Service[];
-  selected: number[];
-  onChange: (ids: number[]) => void;
-}) {
-  if (services.length === 0) {
-    return <p className="text-sm text-gray-500">Add services first, then assign them here.</p>;
-  }
-  const toggle = (id: number) =>
-    onChange(selected.includes(id) ? selected.filter((s) => s !== id) : [...selected, id]);
-  return (
-    <div className="flex flex-wrap gap-2" role="group" aria-label="Services">
-      {services.map((service) => {
-        const active = selected.includes(service.id);
-        return (
-          <motion.button
-            key={service.id}
-            type="button"
-            aria-pressed={active}
-            onClick={() => toggle(service.id)}
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.96 }}
-            className={cn(
-              'rounded-full px-3 py-1.5 text-sm font-medium transition-colors',
-              active ? 'bg-brand-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-brand-50',
-              !service.is_active && 'opacity-60',
-            )}
-          >
-            {service.name}
-          </motion.button>
-        );
-      })}
-    </div>
-  );
-}
-
 function InviteStaffModal({
   isOpen,
   onClose,
   services,
+  currency,
+  servicesPath,
   onInvite,
   isSaving,
 }: {
   isOpen: boolean;
   onClose: () => void;
   services: Service[];
+  currency: string;
+  servicesPath: string;
   onInvite: (payload: StaffInvite) => void;
   isSaving: boolean;
 }) {
@@ -81,7 +47,8 @@ function InviteStaffModal({
     event.preventDefault();
     const next: typeof errors = {};
     if (!displayName.trim()) next.display_name = 'Name is required';
-    if (!isEmail(email)) next.email = 'Enter a valid email';
+    if (!email.trim()) next.email = 'Email is required';
+    else if (!isEmail(email)) next.email = 'Enter a valid email';
     setErrors(next);
     if (Object.keys(next).length > 0) return;
     onInvite({ display_name: displayName.trim(), email: email.trim().toLowerCase(), service_ids: serviceIds });
@@ -92,23 +59,53 @@ function InviteStaffModal({
       isOpen={isOpen}
       onClose={onClose}
       title="Invite staff"
-      description="We'll email them a link to join. They need to sign in with this email to accept."
+      description="We'll email them a link to join. They sign in with this email to accept. You can invite yourself too."
     >
       <form noValidate onSubmit={handleSubmit} className="space-y-4">
-        <Input label="Display name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} error={errors.display_name} />
-        <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} error={errors.email} />
-        <div>
-          <p className="mb-2 text-sm font-medium text-gray-700">Services they offer</p>
-          <ServiceChecklist services={services} selected={serviceIds} onChange={setServiceIds} />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Input
+            label="Display name"
+            placeholder="e.g. Sam"
+            hint="Shown to customers when they book."
+            value={displayName}
+            onChange={(e) => {
+              setDisplayName(e.target.value);
+              setErrors((err) => ({ ...err, display_name: undefined }));
+            }}
+            error={errors.display_name}
+          />
+          <Input
+            label="Email"
+            type="email"
+            autoComplete="off"
+            placeholder="sam@example.com"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setErrors((err) => ({ ...err, email: undefined }));
+            }}
+            error={errors.email}
+          />
         </div>
-        <div className="flex justify-end gap-3 pt-2">
+        <ServiceChecklist
+          services={services}
+          selected={serviceIds}
+          onChange={setServiceIds}
+          currency={currency}
+          emptyAction={
+            <ButtonLink to={servicesPath} variant="outline" size="sm">
+              Add services
+            </ButtonLink>
+          }
+        />
+        <ModalActions>
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <GradientButton type="submit" isLoading={isSaving}>
+          <GradientButton type="submit" isLoading={isSaving} loadingText="Sending invite">
             Send invite
           </GradientButton>
-        </div>
+        </ModalActions>
       </form>
     </Modal>
   );
@@ -117,35 +114,51 @@ function InviteStaffModal({
 function AssignServicesModal({
   member,
   services,
+  currency,
+  servicesPath,
   onClose,
   onSave,
   isSaving,
 }: {
   member: StaffMember;
   services: Service[];
+  currency: string;
+  servicesPath: string;
   onClose: () => void;
   onSave: (ids: number[]) => void;
   isSaving: boolean;
 }) {
   const [selected, setSelected] = useState<number[]>(member.service_ids);
+  const unchanged =
+    selected.length === member.service_ids.length && selected.every((id) => member.service_ids.includes(id));
   return (
     <Modal
       isOpen
       onClose={onClose}
-      title={`Services for ${member.display_name}`}
-      description="Customers can only book this person for the services selected here."
+      title={`Assign services to ${member.display_name}`}
+      description="Tick every service this person performs. Customers can only book them for the services checked here."
       footer={
         <>
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <GradientButton isLoading={isSaving} onClick={() => onSave(selected)}>
-            Save
+          <GradientButton isLoading={isSaving} disabled={unchanged} onClick={() => onSave(selected)}>
+            Save services
           </GradientButton>
         </>
       }
     >
-      <ServiceChecklist services={services} selected={selected} onChange={setSelected} />
+      <ServiceChecklist
+        services={services}
+        selected={selected}
+        onChange={setSelected}
+        currency={currency}
+        emptyAction={
+          <ButtonLink to={servicesPath} variant="outline" size="sm">
+            Add services
+          </ButtonLink>
+        }
+      />
     </Modal>
   );
 }
@@ -155,6 +168,9 @@ export default function StaffPage() {
   const businessId = Number(id);
   const toast = useToast();
   const queryClient = useQueryClient();
+  const { business } = useDashboardBusiness(businessId);
+  const currency = business?.currency ?? 'USD';
+  const servicesPath = `/dashboard/b/${businessId}/services`;
   const [inviteOpen, setInviteOpen] = useState(false);
   const [assigning, setAssigning] = useState<StaffMember | null>(null);
   const [toRemove, setToRemove] = useState<StaffMember | null>(null);
@@ -208,70 +224,99 @@ export default function StaffPage() {
   });
 
   const staff = staffQuery.data ?? [];
+  const unassignedCount = staff.filter((m) => m.is_active && m.service_ids.length === 0).length;
 
   return (
     <PageWrapper
       title="Staff"
       subtitle="Invite your team and choose which services each person offers."
       contained={false}
-      actions={<GradientButton onClick={() => setInviteOpen(true)}>Invite staff</GradientButton>}
+      actions={staff.length > 0 && <GradientButton onClick={() => setInviteOpen(true)}>Invite staff</GradientButton>}
     >
       {staffQuery.isLoading ? (
-        <LoadingBlock />
+        <ListSkeleton rows={3} label="Loading staff" />
       ) : staffQuery.isError ? (
         <ErrorState message={staffQuery.error.message} onRetry={() => void staffQuery.refetch()} />
       ) : staff.length === 0 ? (
         <EmptyState
+          icon="users"
           title="No staff yet"
-          description="Invite yourself or your team. Each staff member gets their own hours and calendar."
+          description="Invite yourself or your team. Each person gets their own services, hours and calendar, and customers can only book people who have services assigned."
           action={<GradientButton onClick={() => setInviteOpen(true)}>Invite staff</GradientButton>}
         />
       ) : (
-        <AnimatedList className="space-y-3">
-          {staff.map((member) => (
-            <Card key={member.id} className="flex flex-col gap-4 md:flex-row md:items-center">
-              <div className="flex min-w-0 flex-1 items-start gap-3">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-100 font-semibold text-brand-700">
-                  {member.display_name.charAt(0).toUpperCase()}
-                </span>
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="font-semibold text-gray-900">{member.display_name}</h3>
-                    {member.user_id === null && <Badge tone="yellow">Invite pending</Badge>}
-                    {!member.is_active && <Badge tone="gray">Inactive</Badge>}
+        <>
+          {unassignedCount > 0 && (
+            <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900" role="status">
+              <strong className="font-semibold">
+                {unassignedCount === 1 ? '1 team member has' : `${unassignedCount} team members have`} no services.
+              </strong>{' '}
+              Customers can&apos;t book them until you use <span className="font-semibold">Assign services</span>.
+            </div>
+          )}
+          <AnimatedList as="ul" className="space-y-3">
+            {staff.map((member) => (
+              <Card key={member.id} className="flex flex-col gap-4 md:flex-row md:items-center">
+                <div className="flex min-w-0 flex-1 items-start gap-3">
+                  <span
+                    aria-hidden="true"
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-100 font-semibold text-brand-800"
+                  >
+                    {initialsOf(member.display_name)}
+                  </span>
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h2 className="font-semibold text-gray-900">{member.display_name}</h2>
+                      {member.user_id === null && <Badge tone="yellow">Invite pending</Badge>}
+                      {!member.is_active && <Badge tone="gray">Inactive</Badge>}
+                    </div>
+                    <p className="truncate text-sm text-gray-600">{member.email}</p>
+                    {member.service_ids.length === 0 ? (
+                      <p className="mt-2 text-sm font-medium text-amber-800">No services assigned</p>
+                    ) : (
+                      <ul className="mt-2 flex flex-wrap gap-1.5" aria-label={`Services for ${member.display_name}`}>
+                        {member.service_ids.map((sid) => (
+                          <li key={sid}>
+                            <Badge tone="gray">{serviceName(sid)}</Badge>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
-                  <p className="truncate text-sm text-gray-500">{member.email}</p>
-                  <p className="mt-1 text-xs text-gray-500">
-                    {member.service_ids.length === 0
-                      ? 'No services assigned'
-                      : member.service_ids.map(serviceName).join(', ')}
-                  </p>
                 </div>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <Button variant="outline" size="sm" onClick={() => setAssigning(member)}>
-                  Services
-                </Button>
-                <Link
-                  to={`/dashboard/b/${businessId}/availability?staff=${member.id}`}
-                  className="inline-flex h-8 items-center rounded-xl border border-gray-300 bg-white px-3 text-sm font-medium text-gray-800 hover:bg-gray-50"
-                >
-                  Hours
-                </Link>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => update.mutate({ staffId: member.id, payload: { is_active: !member.is_active } })}
-                >
-                  {member.is_active ? 'Deactivate' : 'Activate'}
-                </Button>
-                <Button variant="ghost" size="sm" className="text-red-600 hover:bg-red-50" onClick={() => setToRemove(member)}>
-                  Remove
-                </Button>
-              </div>
-            </Card>
-          ))}
-        </AnimatedList>
+                <div className="flex flex-wrap gap-2 border-t border-gray-100 pt-3 md:border-0 md:pt-0">
+                  <Button
+                    variant={member.service_ids.length === 0 ? 'primary' : 'outline'}
+                    size="sm"
+                    onClick={() => setAssigning(member)}
+                    aria-label={`Assign services to ${member.display_name}`}
+                  >
+                    Assign services
+                  </Button>
+                  <ButtonLink
+                    to={`/dashboard/b/${businessId}/availability?staff=${member.id}`}
+                    variant="outline"
+                    size="sm"
+                    aria-label={`Working hours for ${member.display_name}`}
+                  >
+                    Hours
+                  </ButtonLink>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    isLoading={update.isPending && update.variables?.staffId === member.id && update.variables.payload.is_active !== undefined}
+                    onClick={() => update.mutate({ staffId: member.id, payload: { is_active: !member.is_active } })}
+                  >
+                    {member.is_active ? 'Deactivate' : 'Activate'}
+                  </Button>
+                  <Button variant="danger-ghost" size="sm" onClick={() => setToRemove(member)}>
+                    Remove
+                  </Button>
+                </div>
+              </Card>
+            ))}
+          </AnimatedList>
+        </>
       )}
 
       {inviteOpen && (
@@ -279,6 +324,8 @@ export default function StaffPage() {
           isOpen={inviteOpen}
           onClose={() => setInviteOpen(false)}
           services={services}
+          currency={currency}
+          servicesPath={servicesPath}
           onInvite={(payload) => invite.mutate(payload)}
           isSaving={invite.isPending}
         />
@@ -288,6 +335,8 @@ export default function StaffPage() {
         <AssignServicesModal
           member={assigning}
           services={services}
+          currency={currency}
+          servicesPath={servicesPath}
           onClose={() => setAssigning(null)}
           onSave={(ids) => update.mutate({ staffId: assigning.id, payload: { service_ids: ids } })}
           isSaving={update.isPending}
@@ -297,8 +346,9 @@ export default function StaffPage() {
       <Modal
         isOpen={toRemove !== null}
         onClose={() => setToRemove(null)}
+        size="sm"
         title={`Remove ${toRemove?.display_name ?? 'staff member'}?`}
-        description="This can't be undone. Staff with upcoming confirmed bookings can't be removed."
+        description="This can't be undone. Staff with upcoming confirmed bookings can't be removed; deactivate them instead."
         footer={
           <>
             <Button variant="outline" onClick={() => setToRemove(null)}>
