@@ -1,7 +1,7 @@
 import type { BusinessCategory, BusinessCreate } from '@/types';
 import { minorUnitDigits } from './money';
 
-export const DEFAULT_DEPOSIT_PERCENT = 20;
+export const DEFAULT_DEPOSIT_PERCENT = 15;
 export const MIN_DEPOSIT_PERCENT = 10;
 export const MAX_DEPOSIT_PERCENT = 100;
 export const DEFAULT_CANCELLATION_CUTOFF_HOURS = 8;

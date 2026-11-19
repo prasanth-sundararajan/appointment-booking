@@ -52,7 +52,7 @@ class Business(TimestampMixin, Base):
     currency: Mapped[str] = mapped_column(String(3), nullable=False, default="INR")  # ISO 4217
 
     deposit_percent: Mapped[int] = mapped_column(
-        Integer, nullable=False, default=20, server_default="20"
+        Integer, nullable=False, default=15, server_default="20"
     )
     cancellation_cutoff_hours: Mapped[int] = mapped_column(
         Integer, nullable=False, default=8, server_default="8"

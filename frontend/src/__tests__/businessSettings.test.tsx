@@ -21,9 +21,9 @@ function values(overrides: Partial<BusinessFormValues> = {}): BusinessFormValues
 }
 
 describe('validateBusinessForm', () => {
-  it('defaults to a 20% deposit and 8h cutoff', () => {
+  it('defaults to a 15% deposit and 8h cutoff', () => {
     const defaults = defaultBusinessFormValues();
-    expect(defaults.deposit_percent).toBe('20');
+    expect(defaults.deposit_percent).toBe('15');
     expect(defaults.cancellation_cutoff_hours).toBe('8');
   });
 
@@ -77,7 +77,7 @@ describe('BusinessForm', () => {
     render(<BusinessForm initialValues={values()} onSubmit={vi.fn()} submitLabel="Save" />);
     const rule = screen.getByTestId('refund-rule');
     expect(rule).toHaveTextContent('at least 8h before');
-    expect(rule).toHaveTextContent('£10.00 deposit (20%)');
+    expect(rule).toHaveTextContent('£7.50 deposit (15%)');
 
     const cutoff = screen.getByLabelText('Cancellation cutoff (hours)');
     await userEvent.clear(cutoff);
@@ -90,7 +90,7 @@ describe('BusinessForm', () => {
     render(<BusinessForm initialValues={values()} onSubmit={onSubmit} submitLabel="Save settings" />);
     await userEvent.click(screen.getByRole('button', { name: 'Save settings' }));
     expect(onSubmit).toHaveBeenCalledWith(
-      expect.objectContaining({ name: 'Glow Salon', deposit_percent: 20, cancellation_cutoff_hours: 8, currency: 'GBP' }),
+      expect.objectContaining({ name: 'Glow Salon', deposit_percent: 15, cancellation_cutoff_hours: 8, currency: 'GBP' }),
     );
   });
 });

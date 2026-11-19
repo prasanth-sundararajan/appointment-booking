@@ -40,7 +40,7 @@ class Settings(BaseSettings):
     DODO_ENVIRONMENT: Literal["test_mode", "live_mode"] = "test_mode"
 
     # Booking defaults
-    DEFAULT_DEPOSIT_PERCENT: int = 20
+    DEFAULT_DEPOSIT_PERCENT: int = 15
     MIN_DEPOSIT_PERCENT: int = 10
     DEFAULT_CANCELLATION_CUTOFF_HOURS: int = 8
     HOLD_MINUTES: int = 10

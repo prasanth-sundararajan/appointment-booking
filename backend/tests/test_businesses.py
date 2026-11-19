@@ -25,7 +25,7 @@ def test_create_business_defaults_and_role_upgrade(
     resp = _create(client, user)
     assert resp.status_code == 201
     body = resp.json()
-    assert body["deposit_percent"] == 20
+    assert body["deposit_percent"] == 15
     assert body["cancellation_cutoff_hours"] == 8
     assert body["slug"] == "my-salon"
     assert body["currency"] == "INR" and body["timezone"] == "UTC"
