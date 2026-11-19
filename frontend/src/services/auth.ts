@@ -35,6 +35,10 @@ export const authService = {
     return patch<User, ProfileUpdate>('/auth/me', payload);
   },
 
+  becomeOwner(): Promise<User> {
+    return post<User>('/auth/me/become-owner');
+  },
+
   googleLoginUrl(): string {
     return `${env.apiUrl}/auth/google`;
   },

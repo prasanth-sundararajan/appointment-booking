@@ -12,7 +12,7 @@ from app.config import settings
 from app.database import get_db
 from app.dependencies import get_current_user
 from app.exceptions import AppError
-from app.models import User
+from app.models import User, UserRole
 from app.rate_limit import limiter
 from app.schemas.auth import LoginResponse, RegisterRequest
 from app.schemas.user import MeResponse, UserRead, UserUpdate
@@ -105,6 +105,18 @@ async def update_me(
     data: UserUpdate, user: User = Depends(get_current_user), db: Session = Depends(get_db)
 ) -> User:
     return auth_service.update_profile(db, user, data)
+
+
+@router.post("/me/become-owner", response_model=UserRead)
+async def become_owner(
+    user: User = Depends(get_current_user), db: Session = Depends(get_db)
+) -> User:
+    """Let a customer account start running a business."""
+    if user.role == UserRole.customer:
+        user.role = UserRole.owner
+        db.commit()
+        db.refresh(user)
+    return user
 
 
 # ---------------------------------------------------------------- Google sign-in

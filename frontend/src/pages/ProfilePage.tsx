@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
@@ -22,6 +23,8 @@ export default function ProfilePage() {
     setFullName(user?.full_name ?? '');
   }, [user?.full_name]);
 
+  const navigate = useNavigate();
+
   const mutation = useMutation<User, ApiError, ProfileUpdate>({
     mutationFn: (payload) => authService.updateMe(payload),
     onSuccess: async () => {
@@ -33,6 +36,16 @@ export default function ProfilePage() {
       setError(apiError.fieldErrors.full_name);
       toast.error('Could not update profile', apiError.message);
     },
+  });
+
+  const ownerMutation = useMutation<User, ApiError, void>({
+    mutationFn: () => authService.becomeOwner(),
+    onSuccess: async () => {
+      await reload();
+      toast.success('You can now run a business', 'Create it from your dashboard.');
+      navigate('/dashboard/businesses/new');
+    },
+    onError: (err) => toast.error('Could not switch account', toApiError(err).message),
   });
 
   if (!user) return null;
@@ -72,6 +85,16 @@ export default function ProfilePage() {
                 <Badge tone="brand">{formatStatus(user.role)}</Badge>
               </dd>
             </div>
+            {user.role === 'customer' && (
+              <GradientButton
+                type="button"
+                className="w-full"
+                isLoading={ownerMutation.isPending}
+                onClick={() => ownerMutation.mutate()}
+              >
+                I run a business
+              </GradientButton>
+            )}
             <div className="flex justify-between gap-2">
               <dt className="text-gray-500">Sign-in</dt>
               <dd className="text-gray-900">{user.oauth_provider === 'google' ? 'Google' : 'Email & password'}</dd>
