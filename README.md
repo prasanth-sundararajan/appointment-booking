@@ -160,3 +160,23 @@ npm run dev
 # Docker
 docker-compose up -d
 ```
+
+---
+
+## Live demo
+
+**https://www.kowsalyagroups.com/techstack/appointment-booking/**
+
+## Screenshots
+
+| Landing | Explore |
+|---|---|
+| ![Landing](docs/screenshots/landing.png) | ![Explore](docs/screenshots/explore.png) |
+
+| Business page | Login |
+|---|---|
+| ![Business page](docs/screenshots/business-page.png) | ![Login](docs/screenshots/login.png) |
+
+| Mobile |
+|---|
+| ![Mobile landing](docs/screenshots/mobile-landing.png) |
