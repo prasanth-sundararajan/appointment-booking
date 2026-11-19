@@ -30,7 +30,7 @@ jobs:
             set -e
             cd /opt/slotease
             git pull --ff-only origin main
-            docker compose -f docker-compose.prod.yml up -d --build --remove-orphans
+            docker compose -f docker-compose.vps.yml up -d --build --remove-orphans
             docker image prune -f
             sleep 15
             curl -fsS "https://$(grep -E '^DOMAIN=' .env | cut -d= -f2)/health"
