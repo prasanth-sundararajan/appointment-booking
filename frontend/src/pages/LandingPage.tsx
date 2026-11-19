@@ -81,16 +81,16 @@ function BookingPreview() {
         <div className="mt-5 space-y-1.5 rounded-xl bg-gray-50 p-4 text-sm">
           <div className="flex justify-between text-gray-700">
             <span>Price</span>
-            <span>{formatMoney(4500, 'USD', 'en-US')}</span>
+            <span>{formatMoney(50000, 'INR', 'en-IN')}</span>
           </div>
           <div className="flex justify-between font-semibold text-brand-800">
-            <span>Deposit today (20%)</span>
-            <span>{formatMoney(900, 'USD', 'en-US')}</span>
+            <span>Deposit today (15%)</span>
+            <span>{formatMoney(7500, 'INR', 'en-IN')}</span>
           </div>
           <p className="pt-1 text-xs text-gray-600">Cancel at least 8h before for a full refund.</p>
         </div>
         <span className="mt-4 block rounded-lg bg-brand-600 py-2.5 text-center text-sm font-semibold text-white">
-          Pay {formatMoney(900, 'USD', 'en-US')} deposit
+          Pay {formatMoney(7500, 'INR', 'en-IN')} deposit
         </span>
       </div>
     </div>
