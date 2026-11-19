@@ -36,6 +36,7 @@ class Settings(BaseSettings):
     DODO_API_KEY: str = ""
     DODO_WEBHOOK_SECRET: str = ""
     DODO_DEPOSIT_PRODUCT_ID: str = ""
+    ROOT_PATH: str = ""
     DODO_ENVIRONMENT: Literal["test_mode", "live_mode"] = "test_mode"
 
     # Booking defaults

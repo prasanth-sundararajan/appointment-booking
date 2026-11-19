@@ -34,7 +34,7 @@ router = APIRouter()
 
 SETTINGS_PATH = "/settings/calendar"
 STATE_COOKIE = "slotease_gcal_state"
-STATE_COOKIE_PATH = "/api/calendar/google/callback"
+STATE_COOKIE_PATH = f"{settings.ROOT_PATH}/api/calendar/google/callback"
 
 
 def _frontend_redirect(result: str, reason: str | None = None) -> RedirectResponse:

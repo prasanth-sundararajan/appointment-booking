@@ -100,7 +100,7 @@ export function AppProviders({ children, queryClient }: { children: ReactNode; q
 export default function App() {
   return (
     <AppProviders>
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
         <AppRoutes />
       </BrowserRouter>
     </AppProviders>

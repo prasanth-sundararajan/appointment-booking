@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 REFRESH_COOKIE = "refresh_token"
-REFRESH_COOKIE_PATH = "/auth"
+REFRESH_COOKIE_PATH = f"{settings.ROOT_PATH}/auth"
 
 
 def _set_refresh_cookie(response: Response, token: str) -> None:

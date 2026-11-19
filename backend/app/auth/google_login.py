@@ -26,7 +26,7 @@ SCOPES = "openid email profile"
 
 STATE_COOKIE = "g_oauth_state"
 VERIFIER_COOKIE = "g_oauth_verifier"
-COOKIE_PATH = "/auth/google"
+COOKIE_PATH = f"{settings.ROOT_PATH}/auth/google"
 COOKIE_MAX_AGE = 600  # seconds
 
 

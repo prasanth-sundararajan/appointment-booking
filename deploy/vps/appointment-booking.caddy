@@ -1,0 +1,5 @@
+# SlotEase route, imported into the shared Caddy site block (copy to /opt/reviewlens/sites.d/).
+redir /techstack/appointment-booking /techstack/appointment-booking/ 308
+handle_path /techstack/appointment-booking/* {
+	reverse_proxy slotease-web:80
+}

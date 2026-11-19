@@ -58,5 +58,11 @@ def test_run_locked_swallows_job_errors() -> None:
 def test_build_scheduler_registers_jobs() -> None:
     scheduler = jobs.build_scheduler()
     ids = {job.id for job in scheduler.get_jobs()}
-    assert ids == {"expire_holds", "refresh_busy_blocks", "renew_watches", "retry_calendar_pushes"}
+    assert ids == {
+        "expire_holds",
+        "refresh_busy_blocks",
+        "renew_watches",
+        "retry_calendar_pushes",
+        "retry_pending_refunds",
+    }
     jobs.shutdown_scheduler(scheduler)  # not running: no-op
