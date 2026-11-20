@@ -250,6 +250,7 @@ def make_business(db: Session, make_user: Callable[..., User]) -> Callable[..., 
         values.update(kw)
         business = Business(
             owner_id=owner.id,
+            deposit_percent=20,
             name=name,
             slug=slug,
             **values,

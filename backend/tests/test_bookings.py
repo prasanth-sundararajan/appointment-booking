@@ -510,7 +510,7 @@ def test_payment_list(
 ) -> None:
     created = book(client, world, at(world.day, 10)).json()
     pay(client, created["booking_id"], payments)
-    cancelled = _confirmed(make_booking, world, 48)
+    cancelled = make_booking(world.service, world.staff, world.customer, at(world.day, 14))
     _cancel(client, cancelled, world.customer)
     resp = client.get(f"/api/businesses/{world.business.id}/payments", headers=auth(world.owner))
     assert resp.status_code == 200
