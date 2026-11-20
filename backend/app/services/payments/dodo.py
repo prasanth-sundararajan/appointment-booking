@@ -29,6 +29,9 @@ _BASE_URLS = {
 }
 
 
+_CURRENCY_COUNTRY: dict[str, str] = {"INR": "IN", "USD": "US", "GBP": "GB", "AED": "AE"}
+
+
 def _deposit_product_id(currency: str) -> str:
     """Dodo charges against a product. A "pay what you want" product is used for deposits
     and `product_cart[].amount` sets the amount per checkout.
@@ -117,6 +120,13 @@ class DodoPaymentProvider:
             "customer": {"email": customer_email, "name": customer_name or customer_email},
             # Verified: only honoured when Adaptive Pricing is enabled; otherwise ignored.
             "billing_currency": currency.upper(),
+            # Prefill the country so the hosted checkout asks for fewer address fields.
+            **(
+                {"billing_address": {"country": _CURRENCY_COUNTRY[currency.upper()]}}
+                if currency.upper() in _CURRENCY_COUNTRY
+                else {}
+            ),
+            "customization": {"theme": "dark", "show_order_details": True},
             # Dodo appends `payment_id` and `status` query params on redirect.
             "return_url": return_url,
             "metadata": {"booking_id": str(booking_id), "description": description[:200]},
