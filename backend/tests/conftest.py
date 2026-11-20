@@ -443,3 +443,13 @@ def pay(client: TestClient, booking_id: int, payments: FakePaymentProvider) -> A
         "payment.succeeded",
         {"payment_id": checkout["payment_id"], "metadata": {"booking_id": str(booking_id)}},
     )
+
+
+@pytest.fixture(autouse=True)
+def _skip_email_dns(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Tests use example.com addresses; skip the live DNS deliverability lookup."""
+    import app.routers.contact as contact_router
+    import app.routers.guest_bookings as guest_router
+
+    monkeypatch.setattr(guest_router, "ensure_deliverable", lambda email: None)
+    monkeypatch.setattr(contact_router, "ensure_deliverable", lambda email: None)

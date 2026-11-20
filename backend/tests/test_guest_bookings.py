@@ -68,3 +68,17 @@ def test_honeypot_creates_nothing(client: TestClient, free_world: World, db: Ses
     r = client.post(_url(free_world), json=_payload(free_world, website="spam"))
     assert r.status_code == 200 and r.json()["booking_id"] is None
     assert db.query(Booking).count() == 0
+
+
+def test_undeliverable_email_rejected(
+    client: TestClient, free_world: World, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import app.routers.guest_bookings as guest_router
+    from app.exceptions import ValidationAppError
+
+    def reject(email: str) -> None:
+        raise ValidationAppError("We couldn't verify that email address.")
+
+    monkeypatch.setattr(guest_router, "ensure_deliverable", reject)
+    r = client.post(_url(free_world), json=_payload(free_world, email="typo@gmial.con"))
+    assert r.status_code == 422

@@ -4,11 +4,13 @@ import logging
 from typing import Literal
 
 from fastapi import APIRouter, BackgroundTasks, Request
+from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel, EmailStr, Field
 
 from app.config import settings
 from app.rate_limit import limiter
 from app.services.email import send_email_sync
+from app.services.email_check import ensure_deliverable
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api", tags=["contact"])
@@ -34,6 +36,7 @@ async def contact(
 ) -> ContactResponse:
     if data.website:  # bots fill hidden fields; pretend success
         return ContactResponse(ok=True)
+    await run_in_threadpool(ensure_deliverable, str(data.email))
     to = settings.CONTACT_TO or settings.SMTP_USER
     if not to:
         logger.warning("Contact form received but CONTACT_TO/SMTP_USER is not set")

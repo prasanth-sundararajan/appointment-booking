@@ -18,6 +18,7 @@ from app.exceptions import ForbiddenError, NotFoundError
 from app.models import Business, Service, User, UserRole
 from app.rate_limit import limiter
 from app.services import booking_service as svc
+from app.services.email_check import ensure_deliverable
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/public", tags=["guest-booking"])
@@ -65,6 +66,7 @@ async def create_guest_booking(
         return GuestBookingResponse(ok=True)
     if slug not in _allowed_slugs():
         raise ForbiddenError("Guest booking is not available for this business.")
+    await run_in_threadpool(ensure_deliverable, str(data.email))
 
     def _run() -> tuple[GuestBookingResponse, svc.SideEffects]:
         business = db.scalar(select(Business).where(Business.slug == slug, Business.is_active))
