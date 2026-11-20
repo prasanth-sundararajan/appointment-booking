@@ -328,7 +328,12 @@ class HttpxGoogleCalendarClient:
     # -- events
     def create_event(self, access_token: str, calendar_id: str, body: JSONDict) -> str:
         created = self._request(
-            "POST", self._cal_url(calendar_id, "/events"), access_token=access_token, json=body
+            "POST",
+            # conferenceDataVersion=1 lets Google create the Meet link; sendUpdates=all emails
+            # the invite (with the Meet link) to attendees.
+            self._cal_url(calendar_id, "/events") + "?conferenceDataVersion=1&sendUpdates=all",
+            access_token=access_token,
+            json=body,
         )
         event_id = created.get("id")
         if not isinstance(event_id, str):
@@ -340,7 +345,8 @@ class HttpxGoogleCalendarClient:
     ) -> None:
         self._request(
             "PATCH",
-            self._cal_url(calendar_id, f"/events/{quote(event_id, safe='')}"),
+            self._cal_url(calendar_id, f"/events/{quote(event_id, safe='')}")
+            + "?conferenceDataVersion=1&sendUpdates=all",
             access_token=access_token,
             json=body,
         )
@@ -348,7 +354,7 @@ class HttpxGoogleCalendarClient:
     def delete_event(self, access_token: str, calendar_id: str, event_id: str) -> None:
         self._request(
             "DELETE",
-            self._cal_url(calendar_id, f"/events/{quote(event_id, safe='')}"),
+            self._cal_url(calendar_id, f"/events/{quote(event_id, safe='')}") + "?sendUpdates=all",
             access_token=access_token,
         )
 

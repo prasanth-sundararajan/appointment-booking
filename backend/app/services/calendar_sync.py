@@ -106,6 +106,31 @@ def _event_body(booking: Booking) -> gc.JSONDict:
         "end": {"dateTime": booking.end_at.isoformat(), "timeZone": tz},
         "extendedProperties": {"private": {"slotease_booking_id": str(booking.id)}},
         "reminders": {"useDefault": True},
+        **_meeting_fields(booking),
+    }
+
+
+def _is_online_meeting(booking: Booking) -> bool:
+    """Only businesses listed in MEET_BUSINESS_SLUGS get Google Meet links and client invites."""
+    slugs = {x.strip() for x in settings.MEET_BUSINESS_SLUGS.split(",") if x.strip()}
+    return booking.business is not None and booking.business.slug in slugs
+
+
+def _meeting_fields(booking: Booking) -> gc.JSONDict:
+    if not _is_online_meeting(booking) or booking.customer is None:
+        return {}
+    customer = booking.customer
+    return {
+        "attendees": [
+            {"email": customer.email, "displayName": customer.full_name or customer.email}
+        ],
+        "conferenceData": {
+            "createRequest": {
+                "requestId": f"slotease-booking-{booking.id}",
+                "conferenceSolutionKey": {"type": "hangoutsMeet"},
+            }
+        },
+        "guestsCanModify": False,
     }
 
 
