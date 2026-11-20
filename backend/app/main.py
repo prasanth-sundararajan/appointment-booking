@@ -24,6 +24,7 @@ from app.routers import (
     businesses,
     calendar,
     contact,
+    guest_bookings,
     payments,
     services,
     slots,
@@ -96,6 +97,7 @@ def create_app() -> FastAPI:
     app.include_router(calendar.router, prefix="/api/calendar", tags=["calendar"])
     app.include_router(ws.router)
     app.include_router(contact.router)
+    app.include_router(guest_bookings.router)
 
     return app
 

@@ -52,6 +52,7 @@ class Settings(BaseSettings):
     SMTP_PASSWORD: str = ""
     EMAIL_FROM: str = "no-reply@localhost"
     CONTACT_TO: str = ""
+    GUEST_BOOKING_SLUGS: str = "prasanth-sundararajan"
 
     # Rate limiting (slowapi/limits storage). memory:// is per worker process; use a
     # shared store such as redis://redis:6379/0 when running several workers.
