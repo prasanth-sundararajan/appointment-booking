@@ -1,147 +1,42 @@
-# MicroSaaS Template
+# SlotEase: Multi-Business Appointment Booking SaaS
 
-> **Clone. Define. Build.** Full-stack SaaS in minutes.
+🌐 **Live demo:** https://www.kowsalyagroups.com/techstack/appointment-booking/
 
----
+Salons, clinics, tutors and consultants get their own public booking page. Customers see open slots in real time,
+pay a deposit and book; owners and staff see new bookings live, and everything syncs both ways with Google Calendar.
 
-## Quick Start
+![Landing](docs/screenshots/landing.png)
 
-```bash
-# 1. Clone
-git clone https://github.com/manojkanur/MicroSaaS-Template-Private.git my-saas
-cd my-saas
+## Features
 
-# 2. Define your product
-# Edit INITIAL.md with your product details
+- **Multi-tenant:** one platform, many businesses, each with services, staff and weekly availability
+- **Real-time slots** over WebSockets, with database-level protection against double-booking
+- **Deposits and refunds** through Dodo Payments (15% deposit, webhook-driven)
+- **Two-way Google Calendar sync** for staff
+- **Roles:** customer, business owner and staff; JWT and Google sign-in
+- **Quality:** 221 automated tests, 85% backend coverage
 
-# 3. Generate blueprint
-/generate-prp INITIAL.md
+## Tech stack
 
-# 4. Build with parallel agents
-/execute-prp PRPs/[name]-prp.md
-```
+| Layer | Choice |
+|---|---|
+| Backend | FastAPI, Python 3.11, SQLAlchemy, Alembic |
+| Frontend | React, TypeScript, Vite, Tailwind CSS, Framer Motion |
+| Database | PostgreSQL |
+| Real-time | WebSockets (FastAPI) |
+| Payments | Dodo Payments |
+| Calendar | Google Calendar API |
+| Deploy | Docker Compose on a VPS, Nginx, HTTPS |
 
----
+## Screenshots
 
-## What You Get
+| Explore | Business page |
+|---|---|
+| ![Explore](docs/screenshots/explore.png) | ![Business page](docs/screenshots/business-page.png) |
 
-- FastAPI backend with JWT + Google OAuth
-- React frontend with modern UI (Framer Motion)
-- PostgreSQL database with migrations
-- Docker + CI/CD ready
-- 80%+ test coverage
-
----
-
-## How It Works
-
-```
-INITIAL.md → /generate-prp → PRP blueprint → /execute-prp → Full App
-
-Phase 1 (Parallel):
-├─ DATABASE-AGENT  → Models + migrations
-├─ BACKEND-AGENT   → API structure
-├─ FRONTEND-AGENT  → React setup
-└─ DEVOPS-AGENT    → Docker + CI
-
-Phase 2 (Per Module):
-├─ Backend endpoints
-└─ Frontend pages
-
-Phase 3 (Parallel):
-├─ TEST-AGENT      → 80%+ coverage
-└─ REVIEW-AGENT    → Security audit
-```
-
----
-
-## Files
-
-| File | Purpose |
-|------|---------|
-| `INITIAL.md` | Define your product |
-| `CLAUDE.md` | Project rules |
-| `skills/*.md` | Code patterns (5 files) |
-| `agents/*.md` | Agent definitions |
-| `.claude/commands/` | Custom commands |
-
----
-
-## Skills (5 files)
-
-| Skill | Contains |
-|-------|----------|
-| `BACKEND.md` | FastAPI + JWT + OAuth + Errors |
-| `FRONTEND.md` | React + UI Kit + API integration |
-| `DATABASE.md` | SQLAlchemy + Alembic |
-| `TESTING.md` | pytest + Vitest |
-| `DEPLOYMENT.md` | Docker + GitHub Actions |
-
----
-
-## Commands
-
-| Command | Description |
-|---------|-------------|
-| `/setup-project` | Interactive wizard |
-| `/generate-prp` | Create implementation blueprint |
-| `/execute-prp` | Build with parallel agents |
-
----
-
-## Tech Stack
-
-- **Backend:** FastAPI + Python 3.11+
-- **Frontend:** React + TypeScript + Vite
-- **Database:** PostgreSQL + SQLAlchemy
-- **Auth:** JWT + Google OAuth
-- **UI:** Chakra UI or Tailwind + Framer Motion
-- **Deploy:** Docker + GitHub Actions
-
----
-
-## Example
-
-```bash
-# Define an invoice SaaS in INITIAL.md:
-# - Module: Invoices (CRUD)
-# - Module: Clients (CRUD)
-# - Module: Dashboard
-
-/generate-prp INITIAL.md
-# Creates PRPs/invoice-saas-prp.md
-
-/execute-prp PRPs/invoice-saas-prp.md
-# 4 agents build in parallel
-# ~20-30 minutes for complete app
-```
-
----
-
-## Output Structure
-
-```
-my-saas/
-├── backend/
-│   ├── app/
-│   │   ├── main.py
-│   │   ├── models/
-│   │   ├── routers/
-│   │   ├── services/
-│   │   └── auth/
-│   ├── alembic/
-│   └── tests/
-├── frontend/
-│   └── src/
-│       ├── components/
-│       ├── pages/
-│       ├── hooks/
-│       └── services/
-├── docker-compose.yml
-└── .github/workflows/
-```
-
----
+| Login | Mobile |
+|---|---|
+| ![Login](docs/screenshots/login.png) | ![Mobile landing](docs/screenshots/mobile-landing.png) |
 
 ## Run Locally
 
@@ -163,20 +58,12 @@ docker-compose up -d
 
 ---
 
-## Live demo
+## How it was built
 
-**https://www.kowsalyagroups.com/techstack/appointment-booking/**
+The product brief is in [`INITIAL.md`](INITIAL.md). It was built with an agent-driven MicroSaaS workflow:
+the brief becomes a blueprint in [`PRPs/`](PRPs), and specialised agents ([`agents/`](agents)) build the database,
+backend, frontend, DevOps and tests in parallel, following the patterns in [`skills/`](skills).
 
-## Screenshots
+## Author
 
-| Landing | Explore |
-|---|---|
-| ![Landing](docs/screenshots/landing.png) | ![Explore](docs/screenshots/explore.png) |
-
-| Business page | Login |
-|---|---|
-| ![Business page](docs/screenshots/business-page.png) | ![Login](docs/screenshots/login.png) |
-
-| Mobile |
-|---|
-| ![Mobile landing](docs/screenshots/mobile-landing.png) |
+**Prasanth Sundararajan** · [Portfolio](https://www.kowsalyagroups.com/prasanth/portfolio/) · [LinkedIn](https://www.linkedin.com/in/prasanth-s-a093a7109/) · [GitHub](https://github.com/prasanth-sundararajan)
